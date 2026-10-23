@@ -1,0 +1,9 @@
+{
+  "byte_identical_repeat": {
+    "predictions.csv": true,
+    "cell_metrics.csv": true,
+    "permutation_importance.csv": true,
+    "acceptance_flags.json": true
+  },
+  "all_passed": true
+}

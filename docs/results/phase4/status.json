@@ -1,0 +1,16 @@
+{
+  "phase": "4",
+  "freeze_complete": true,
+  "raw_external_data_acquired": true,
+  "raw_schema_verified": true,
+  "feature_compatibility": "incompatible with unchanged frozen feature requirements: missing cell temperature and ambient temperature",
+  "external_evaluation_performed": false,
+  "external_metrics": null,
+  "external_retraining_performed": false,
+  "cells": [
+    "CS2_35",
+    "CS2_36"
+  ],
+  "scientific_blocker": "Required temperature_start, temperature_rise and ambient features are not supplied; no values were invented or imputed",
+  "frozen_manifest_sha256": "605e1ca90cb223d9fbb2f076be1db1cdff00bd8f3cc603e28255769c9c3cdafb"
+}

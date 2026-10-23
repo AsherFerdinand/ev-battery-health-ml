@@ -1,0 +1,36 @@
+{
+  "primary_research_candidate": {
+    "model": "random_forest",
+    "window": "15min",
+    "features": "base"
+  },
+  "universal_acceptance_pass": false,
+  "failed_results": [
+    {
+      "experiment": "benchmark",
+      "window": "15min",
+      "protocol": "temporal_70_30",
+      "feature_set": "base",
+      "model": "random_forest",
+      "cell": "B0006",
+      "n": 51,
+      "mae_pp": 5.0464603487,
+      "bias_pp": 5.0464603487,
+      "rmse_pp": 5.9845573572,
+      "max_error_pp": 11.0707829136,
+      "flag_mae_gt5": true
+    }
+  ],
+  "recommendation_type": "provisional balanced-task candidate; not deployment approval",
+  "external_validation": false,
+  "unseen_cell_challenger": {
+    "model": "hist_gradient_boosting",
+    "window": "15min",
+    "features": "focused"
+  },
+  "known_cell_reference": {
+    "model": "ridge",
+    "window": "15min",
+    "features": "base"
+  }
+}

@@ -1,0 +1,32 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.mpl-cache/
+.pytest_cache/
+.coverage
+htmlcov/
+# Acquired/generated data, dashboards, model binaries and local work
+/data/
+/reports/
+/models/
+/work/
+*.zip
+*.mat
+*.xlsx
+*.xls
+*.joblib
+*.pkl
+*.pickle
+# Credentials and machine/editor state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+gh_config/
+hosts.yml
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
