@@ -270,3 +270,9 @@ Next: freeze the provisional baseline/challenger and evaluate compatible untouch
 - **CALCE:** [University of Maryland battery data](https://calce.umd.edu/data). Archives were obtained from the provider and inspected locally. Consult and cite the provider's relevant experiment papers when publishing work based on its data. No CALCE raw data is redistributed here.
 
 Original project code is licensed under the [MIT licence](LICENSE). The grant does not cover third-party datasets, measurements, dependencies, logos or other third-party materials. See [licensing scope and attribution](LICENSE_NOTES.md). Badges are static project metadata, not live CI or certification claims.
+
+## Workbench development roadmap
+
+v1.1 adds a separate offline synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for testing under structural mismatch. Generate the default pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. The generator writes compressed, seeded datasets to `data/synthetic/`, separate from NASA experimental data.
+
+See the [synthetic modelling report](docs/synthetic-battery.md) for conventions, reproduction commands and verification. The [workbench roadmap](docs/workbench-roadmap.md) covers future SOC EKF and hybrid estimator comparisons, independent validation, and the educational interface.
