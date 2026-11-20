@@ -110,7 +110,8 @@ def build(full=False, refresh=False):
     marker = output.with_suffix(".cache")
     sources = [ROOT / name for name in (
         "build_workbench.py", "capacity_experiment.py", "soc_estimation.py", "battery_sim.py",
-        "workbench_template.html", "requirements-lock.txt", "synthetic_battery.py")]
+        "workbench_template.html", "requirements-lock.txt", "synthetic_battery.py",
+        "parameter_estimation.py")]
     fingerprint = _cache_key(sources + sorted(raw.glob("B*.mat")), full)
     if not refresh and all(path.exists() for path in (output, summary, marker)):
         if marker.read_text(encoding="utf-8") == fingerprint:
@@ -121,16 +122,21 @@ def build(full=False, refresh=False):
     experiment = run_experiment(full)
     playback = experiment.pop("scenarios")
     surfaces = experiment.pop("surfaces")
+    # Corrected SOC already exists in each EKF diagnostic state.
+    for case in playback:
+        for trial in case["trials"].values():
+            for name in ("Hybrid A", "Hybrid B"):
+                del trial["soc"][name]
     payload = {
-        "scenarios": playback, "surfaces": surfaces,
+        "scenarios": playback, "surfaces": surfaces, "ml_details": experiment.pop("ml_details"),
         "selected_model": experiment["selected_model"], "window_s": experiment["window_s"],
         "mode": experiment["mode"], "nominal_c": experiment["nominal_c"],
         "nasa": nasa_replay(raw), "physics": physics_lab(),
         "validation": experiment["validation_soh_mae"], "test": experiment["test_soh_mae"],
-        "identifiability": experiment["identifiability"],
+        "identifiability": experiment["identifiability"], "hybrid_b": experiment["hybrid_b"],
     }
     experiment["demonstrations"] = [
-        {key: case[key] for key in ("name", "plant", "truth_soh")}
+        {key: case[key] for key in ("name", "plant", "truth_soh", "parameter_estimates", "inference_ms")}
         | {"metrics": case["trials"]["Scenario assumption"]["metrics"]} for case in playback
     ]
     reports.mkdir(parents=True, exist_ok=True)

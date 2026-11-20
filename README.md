@@ -282,3 +282,7 @@ See the [synthetic modelling report](docs/synthetic-battery.md) for conventions,
 Launch the offline educational workbench with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Explore the cell cutaway, NASA and synthetic traces, equivalent circuits, capacity models, EKF diagnostics and Hybrid A. The browser plays precomputed Python results.
 
 The synthetic comparison found that a better capacity estimate could still increase SOC error. See the [SOC workbench report](docs/soc-workbench.md) for the full results and reproduction commands.
+
+### Hybrid B visual workbench v1.4–v1.5
+
+The same offline launch now compares Hybrid B with the v1.3 estimators. Explore its causal capacity and ohmic-resistance updates, representative trained-model traces, synchronized EKF equations and directional ion flow. Run `build_workbench.py --full --no-open` with the project Python to regenerate the complete synthetic comparison, including the separate RC stress cohort. [Engineering report](docs/hybrid-b-workbench.md)

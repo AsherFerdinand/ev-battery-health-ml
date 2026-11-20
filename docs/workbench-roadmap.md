@@ -10,10 +10,14 @@ The repository runs battery experiments as Python entry points. The NASA pipelin
 
 The successor branch adds the standalone Thevenin EKF, Coulomb Counting, a matched synthetic oracle and Hybrid A. Training and validation use disjoint simulated battery identities and load-profile families. Test reporting separates matched Thevenin and structurally mismatched diffusion plants. The workbench reads compressed Python playback output and serves it on loopback with no frontend dependencies. [Architecture, experiments and reproduction](soc-workbench.md)
 
+## v1.4–v1.5 checkpoint
+
+Hybrid B learns available capacity and reference-temperature series resistance with a causal update in the shared EKF. The branch keeps the v1.3 cohorts and scores and adds a separate RC stress cohort. The workbench shows actual model paths and updates, an interactive cell cutaway and paired Hybrid B traces. [Hybrid B engineering report](hybrid-b-workbench.md)
+
 ## Future estimator experiments
 
 - Compare longer or designed excitation windows with the 180 s capacity baseline. Investigate uncertainty when SOC, resistance and capacity have similar voltage effects.
-- Assess Hybrid B only with identifiable capacity, R0, R1 and C1 references and physical bounds on predictions. Keep experimental parameter identification contingent on suitable excitation, time coverage, thermal measurements and independent validation.
+- Assess RC adaptation with independently designed excitation, known sensor bias and defensible parameter references. Experimental identification requires appropriate thermal measurements and independent validation.
 - Extend structural-mismatch validation with separately pinned PyBaMM trajectories and document the chemistry and reference definitions. Report an oracle only when the plant defines the needed parameters or a documented projection is defensible.
 
 ## Educational workbench and extension points
@@ -25,7 +29,7 @@ The successor branch adds the standalone Thevenin EKF, Coulomb Counting, a match
 | Battery physics laboratory | Inputs for load, temperature and circuit parameters reveal voltage contributions, RC time constants and bulk versus surface state. |
 | ML explorer | Ridge coefficients, Random Forest aggregation and HistGradientBoosting updates explain model assumptions, feature windows and evaluation splits. |
 | EKF explorer | A stepped trace exposes prediction, measurement residual, gain, correction and covariance. |
-| Hybrid laboratory | Controlled scenarios compare Coulomb Counting, fixed EKF, Hybrid A and eligible oracle runs on identical inputs. |
+| Hybrid laboratory | Controlled scenarios compare Coulomb Counting, fixed EKF, Hybrid A, Hybrid B and eligible oracle runs on identical inputs. |
 | Results and reports | Reproduction settings, errors, limitations and per-scenario evidence stay inspectable and exportable. |
 
 The current views use plain HTML, CSS and JavaScript, SVG rendering and one compressed export of Python experiment outputs. Consider TypeScript and React if shared state and component reuse justify a toolchain. Three.js is a candidate for the cutaway if custom camera controls, picking and accessible inspection justify its asset cost. Keep the illustrative geometry procedural and load the renderer on demand. A Python service is warranted only if interactive simulation cannot use precomputed scenarios or a thin portable bridge. Keep one numerical implementation per model, with explicit parity tests before introducing another runtime.

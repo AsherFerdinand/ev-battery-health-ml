@@ -64,10 +64,12 @@ def _surface_ocv(surface):
     return 3.15 + 0.95 * surface + 0.14 * np.tanh((surface - 0.41) / 0.18)
 
 
+def resistance_temperature_factor(temp_k):
+    return np.exp(0.018 * (298.15 - temp_k))
+
+
 def _r0(cell, temp):
-    return cell.r0_ohm * cell.resistance_scale * np.exp(
-        0.018 * (298.15 - temp)
-    )
+    return cell.r0_ohm * cell.resistance_scale * resistance_temperature_factor(temp)
 
 
 def _temperature(cell, temp, heat_w, dt):

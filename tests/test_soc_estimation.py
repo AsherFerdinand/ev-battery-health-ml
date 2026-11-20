@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from battery_sim import Cell, simulate
-from soc_estimation import (Measurements, Thevenin, coulomb_count, thevenin_ekf,
+from battery_sim import Cell, resistance_temperature_factor, simulate
+from soc_estimation import (AdaptiveUpdate, Measurements, Thevenin, coulomb_count, thevenin_ekf,
                             transition, voltage_observation)
 
 
@@ -53,3 +53,28 @@ class SOCTests(unittest.TestCase):
         self.assertNotEqual(base["predicted_state"][51, 0], hybrid["predicted_state"][51, 0])
         np.testing.assert_array_equal(hybrid["capacity_c"][:50], 7200)
         np.testing.assert_array_equal(hybrid["capacity_c"][50:], cell.capacity_c)
+
+
+    def test_full_adaptation_preserves_prefix_and_covariance(self):
+        _, _, samples = matched_measurements()
+        update = AdaptiveUpdate(60, 5400, .055)
+        fixed = thevenin_ekf(samples, .5, 7200)
+        adaptive = thevenin_ekf(samples, .5, 7200, adaptive_update=update)
+        for field in ("predicted_voltage_v", "estimated_soc", "covariance"):
+            np.testing.assert_array_equal(adaptive[field][:61], fixed[field][:61])
+        temperature = samples.temperature_k[61]
+        r0 = update.r0_ref_ohm * resistance_temperature_factor(temperature)
+        expected = voltage_observation(adaptive["predicted_state"][61],
+                                       samples.current_a[61], r0)[0]
+        self.assertAlmostEqual(expected, adaptive["predicted_voltage_v"][61])
+        self.assertTrue(np.all(np.linalg.eigvalsh(adaptive["covariance"]) >= 0))
+        np.testing.assert_array_equal(adaptive["capacity_c"][:60], 7200)
+        np.testing.assert_array_equal(adaptive["capacity_c"][60:], 5400)
+        modified = samples.temperature_k.copy()
+        modified[62:] += 20
+        changed = Measurements(samples.time_s, samples.current_a, samples.voltage_v, modified)
+        future = thevenin_ekf(changed, .5, 7200, adaptive_update=update)
+        np.testing.assert_array_equal(future["estimated_soc"][:62], adaptive["estimated_soc"][:62])
+        self.assertNotEqual(future["predicted_voltage_v"][62], adaptive["predicted_voltage_v"][62])
+        with self.assertRaises(ValueError):
+            thevenin_ekf(samples, .5, 7200, adaptive_update=AdaptiveUpdate(60, 5400, -.01))

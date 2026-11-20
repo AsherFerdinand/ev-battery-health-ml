@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from battery_sim import Cell, lumped_ocv, lumped_ocv_slope, rc_gain
+from battery_sim import (Cell, lumped_ocv, lumped_ocv_slope, rc_gain,
+                         resistance_temperature_factor)
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,13 @@ class Thevenin:
         return series
 
 
+@dataclass(frozen=True)
+class AdaptiveUpdate:
+    after_sample: int
+    capacity_c: float
+    r0_ref_ohm: float
+
+
 def _validate(initial_soc, capacity_c):
     if not 0 <= initial_soc <= 1 or not np.isfinite(capacity_c) or capacity_c <= 0:
         raise ValueError("Provide a fractional initial SOC and positive capacity in coulombs.")
@@ -82,20 +90,32 @@ def coulomb_count(measurements, initial_soc, capacity_c, params=Thevenin()):
 
 
 def thevenin_ekf(measurements, initial_soc, capacity_c, params=Thevenin(), *,
-                 capacity_update=None):
-    """Update capacity once after the voltage correction at the nominated sample.
+                 capacity_update=None, adaptive_update=None):
+    """Apply at most one update after the nominated voltage correction.
 
-    The new capacity first affects the transition out of that sample.
+    Capacity first affects the following transition. Adaptive R0 first affects
+    the following observation and uses that observation's measured temperature.
     """
     _validate(initial_soc, capacity_c)
     time, amps, volts = (measurements.time_s, measurements.current_a, measurements.voltage_v)
     n = time.size
     r0 = params.series(n)
+    if adaptive_update is not None:
+        if capacity_update is not None:
+            raise ValueError("Use one capacity-only or adaptive update.")
+        capacity_update = (adaptive_update.after_sample, adaptive_update.capacity_c)
+        reference_r0 = adaptive_update.r0_ref_ohm
+        if not np.isfinite(reference_r0) or reference_r0 <= 0:
+            raise ValueError("Adaptive reference R0 must be finite and positive.")
     if capacity_update is not None:
         index, updated = capacity_update
         if not isinstance(index, (int, np.integer)) or not 0 <= index < n - 1:
             raise ValueError("Capacity update requires a sample with a following interval.")
         _validate(initial_soc, updated)
+        if adaptive_update is not None:
+            r0 = r0.copy()
+            temperatures = np.clip(measurements.temperature_k[index+1:], 260., 335.)
+            r0[index+1:] = reference_r0 * resistance_temperature_factor(temperatures)
 
     state = np.array([initial_soc, 0.])
     covariance = np.diag([0.12**2, 0.020**2])

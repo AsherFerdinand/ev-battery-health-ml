@@ -1,6 +1,7 @@
 """Synthetic capacity learning, scenario evaluation and workbench data export."""
 
 from dataclasses import dataclass, replace
+from itertools import islice
 from time import perf_counter
 
 import numpy as np
@@ -11,7 +12,8 @@ from sklearn.preprocessing import StandardScaler
 from threadpoolctl import threadpool_limits
 
 from battery_sim import Cell, simulate
-from soc_estimation import Measurements, Thevenin, coulomb_count, thevenin_ekf
+from soc_estimation import (AdaptiveUpdate, Measurements, Thevenin, coulomb_count,
+                            thevenin_ekf)
 from synthetic_battery import SENSOR_STD
 
 
@@ -59,11 +61,11 @@ def signals(case, duration=720):
     return data
 
 
-def feature_window(samples):
+def feature_window(samples, seconds=WINDOW_S):
     elapsed = samples.time_s - samples.time_s[0]
-    end = int(np.searchsorted(elapsed, WINDOW_S))
-    if end >= elapsed.size or end < 2 or elapsed[end] != WINDOW_S:
-        raise ValueError("Features require the sample at 180 s and its causal prefix.")
+    end = int(np.searchsorted(elapsed, seconds))
+    if end >= elapsed.size or end < 2 or elapsed[end] != seconds:
+        raise ValueError(f"Features require the sample at {seconds} s and its causal prefix.")
     voltage = samples.voltage_v[:end+1]
     current = samples.current_a[:end+1]
     temp = samples.temperature_k[:end+1]
@@ -103,16 +105,20 @@ def predict_soh(model, features):
     return np.clip(model.predict(np.atleast_2d(features)), *SOH_BOUNDS)
 
 
-def fit_capacity(train, validation):
-    train_x, train_y = training_matrix(train)
-    val_x, val_y = training_matrix(validation)
-    models = {
+def model_candidates():
+    return {
         "Ridge": make_pipeline(StandardScaler(), Ridge(alpha=3)),
         "Random Forest": RandomForestRegressor(
             n_estimators=64, min_samples_leaf=3, n_jobs=1, random_state=SEED),
         "HistGradientBoosting": HistGradientBoostingRegressor(
             max_iter=70, max_leaf_nodes=9, min_samples_leaf=8, random_state=SEED),
     }
+
+
+def fit_capacity(train, validation):
+    train_x, train_y = training_matrix(train)
+    val_x, val_y = training_matrix(validation)
+    models = model_candidates()
     metrics = {}
     for name, model in models.items():
         model.fit(train_x, train_y)
@@ -127,7 +133,7 @@ def _run(label, method, *args, **kwargs):
     return label, (result, (perf_counter() - started) * 1000)
 
 
-def benchmark(case, data, samples, model, initial_guess=None):
+def benchmark(case, data, samples, model, initial_guess=None, *, adaptive_update=None):
     guess = case.initial_guess if initial_guess is None else initial_guess
     index, features = feature_window(samples)
     updated = float(predict_soh(model, features)[0]) * NOMINAL_C
@@ -137,6 +143,9 @@ def benchmark(case, data, samples, model, initial_guess=None):
         _run("Hybrid A", thevenin_ekf, samples, guess, NOMINAL_C,
              capacity_update=(index, updated)),
     ])
+    if adaptive_update is not None:
+        results.update([_run("Hybrid B", thevenin_ekf, samples, guess, NOMINAL_C,
+                             adaptive_update=adaptive_update)])
     if case.plant == "thevenin":
         oracle = Thevenin(data["ref_r0_ohm"], data["ref_r1_ohm"][0], data["ref_c1_f"][0])
         results.update([_run("Oracle EKF", thevenin_ekf, samples, guess,
@@ -144,7 +153,7 @@ def benchmark(case, data, samples, model, initial_guess=None):
     return results
 
 
-def score(data, samples, result, elapsed_ms):
+def score(data, samples, result, elapsed_ms, adaptive_index=None):
     k = int(np.searchsorted(samples.time_s, WINDOW_S))
     error = 100*(result["estimated_soc"] - data["truth_soc"])
     absolute = np.abs(error)
@@ -152,7 +161,7 @@ def score(data, samples, result, elapsed_ms):
     converged = np.flatnonzero(within == 30)
     capacity_error = result["capacity_c"][-1] - data["ref_available_capacity_c"][0]
     voltage_error = result["predicted_voltage_v"] - data["truth_voltage_v"]
-    return {
+    metrics = {
         "mae_pp": absolute.mean(), "rmse_pp": np.sqrt(np.mean(error**2)),
         "max_pp": absolute.max(), "bias_pp": error.mean(),
         "capacity_error_ah": capacity_error / 3600, "soh_error_pp": 100*capacity_error/NOMINAL_C,
@@ -161,6 +170,11 @@ def score(data, samples, result, elapsed_ms):
         "pre_mae_pp": absolute[:k+1].mean(), "post_mae_pp": absolute[k+1:].mean(),
         "execution_ms": elapsed_ms,
     }
+
+    if adaptive_index is not None:
+        metrics["adaptive_pre_mae_pp"] = absolute[:adaptive_index+1].mean()
+        metrics["adaptive_post_mae_pp"] = absolute[adaptive_index+1:].mean()
+    return metrics
 
 
 def demonstrations():
@@ -199,28 +213,92 @@ def prediction_surfaces(models, train_x):
                        for name, model in models.items()}}
 
 
-def evaluate(case, model, *, playback=False):
+def trained_model_details(models, train_x, train_y):
+    ridge = models["Ridge"]
+    scaled = ridge[0].transform(train_x)
+    index = np.argmin(np.sum(scaled**2, axis=1))
+    example = train_x[index:index+1]
+    prediction = float(ridge.predict(example)[0])
+    forest = models["Random Forest"]
+    paths = []
+    for tree in forest.estimators_[:3]:
+        steps = []
+        for node in tree.decision_path(example).indices:
+            feature = tree.tree_.feature[node]
+            if feature < 0:
+                continue
+            threshold = tree.tree_.threshold[node]
+            operator = "≤" if example[0, feature] <= threshold else ">"
+            steps.append(f"{FEATURES[feature]}: {example[0, feature]:.4g} {operator} {threshold:.4g}")
+        paths.append({"value": float(tree.predict(example)[0]), "path": steps})
+    boosting = models["HistGradientBoosting"]
+    return {
+        "ridge": {"feature_names": FEATURES, "coefficients": ridge[1].coef_.tolist(),
+                  "alpha": ridge[1].alpha, "intercept": float(ridge[1].intercept_),
+                  "observation": float(train_y[index]), "prediction": prediction,
+                  "residual": float(train_y[index] - prediction)},
+        "forest": {"trees": paths, "prediction": float(forest.predict(example)[0]),
+                   "tree_count": len(forest.estimators_)},
+        "boosting": {"predictions": [float(stage[0]) for stage in
+                                      islice(boosting.staged_predict(example), 8)],
+                     "learning_rate": boosting.learning_rate},
+    }
+
+
+def evaluate(case, model, *, playback=False, adaptive=None):
     data = signals(case)
     samples = Measurements.from_dataset(data)
+    adaptive_index = adaptive_update = None
+    parameter_values = None
+    if adaptive is not None:
+        from parameter_estimation import PARAMETERS, references
+
+        started = perf_counter()
+        adaptive_index, prediction = adaptive.predict(samples)
+        inference_ms = (perf_counter() - started) * 1000
+        priors = (NOMINAL_C, Cell.r0_ohm)
+        if prediction is not None:
+            adaptive_update = AdaptiveUpdate(adaptive_index, *prediction)
+        parameter_values = {
+            spec["key"]: {"fixed": prior, "estimated": estimate, "reference": float(reference)}
+            for spec, prior, estimate, reference in zip(
+                PARAMETERS, priors, prediction if prediction is not None else (None, None),
+                references(case))
+        }
     trials = {}
     for guess, label in ((case.initial_guess, "Scenario assumption"), (.5, "50% initial SOC"),
                          (.9, "90% initial SOC")) if playback else ((None, "Scenario assumption"),):
-        results = benchmark(case, data, samples, model, guess)
+        results = benchmark(case, data, samples, model, guess, adaptive_update=adaptive_update)
+        if adaptive is not None and adaptive_update is None:
+            results["Hybrid B"] = results["Fixed EKF"]
         trials[label] = {
-            "metrics": {name: score(data, samples, *run) for name, run in results.items()},
+            "metrics": {name: score(data, samples, *run, adaptive_index)
+                        for name, run in results.items()},
         }
         if playback:
+            trace_fields = (
+                "predicted_state", "corrected_state", "predicted_voltage_v", "innovation_v",
+                "kalman_gain", "covariance", "capacity_c",
+            )
             hybrid = results["Hybrid A"][0]
             trials[label].update({
                 "initial_soc": guess,
                 "soc": {name: run[0]["estimated_soc"].tolist() for name, run in results.items()},
-                "diagnostics": {name: hybrid[name].tolist() for name in (
-                    "predicted_state", "corrected_state", "predicted_voltage_v", "innovation_v",
-                    "kalman_gain", "covariance", "capacity_c")},
+                "diagnostics": {name: hybrid[name].tolist() for name in trace_fields},
             })
+            if adaptive is not None:
+                trials[label]["adaptive"] = {
+                    "parameters": parameter_values,
+                    "update_applied": adaptive_update is not None,
+                    "fixed_voltage_v": results["Fixed EKF"][0]["predicted_voltage_v"].tolist(),
+                    "diagnostics": {name: results["Hybrid B"][0][name].tolist()
+                                    for name in trace_fields},
+                }
     return {
         "name": case.name, "plant": case.plant, "family": case.family,
         "truth_soh": case.cell.soh, "trials": trials,
+        **({"parameter_estimates": parameter_values, "inference_ms": inference_ms}
+           if adaptive is not None else {}),
         **({"time": samples.time_s.tolist(), "current": samples.current_a.tolist(),
             "voltage": samples.voltage_v.tolist(), "temperature": samples.temperature_k.tolist(),
             "truth": data["truth_soc"].tolist()} if playback else {}),
@@ -228,10 +306,13 @@ def evaluate(case, model, *, playback=False):
 
 
 def run_experiment(full=False):
+    from parameter_estimation import fit_parameters, rc_variation
+
     groups = population(48 if full else 10)
     with threadpool_limits(limits=1):
         models, validation, winner, train_x = fit_capacity(groups["train"], groups["validation"])
         model = models[winner]
+        adaptive = fit_parameters(groups["train"], groups["validation"])
         capacity_tests = {}
         comparison = {}
         for plant in ("thevenin", "diffusion"):
@@ -241,13 +322,27 @@ def run_experiment(full=False):
                 name: float(np.mean(np.abs(predict_soh(fitted, x) - y)))
                 for name, fitted in models.items()
             }
-            comparison[plant] = [evaluate(case, model) for case in cases]
+            comparison[plant] = [evaluate(case, model, adaptive=adaptive) for case in cases]
+        if full:
+            comparison["thevenin_rc_stress"] = [
+                evaluate(rc_variation(case), model, adaptive=adaptive) for case in groups["test"]
+            ]
+        examples = demonstrations()
+        examples.append(rc_variation(replace(
+            examples[2], name="Warm · RC dynamics shifted", seed=1825,
+            cell=replace(examples[2].cell, r1_ohm=.031, c1_f=1200))))
         return {
             "seed": SEED, "mode": "full" if full else "quick", "selected_model": winner,
             "splits": {key: [case.name for case in cases] for key, cases in groups.items()},
             "validation_soh_mae": validation, "test_soh_mae": capacity_tests,
             "holdout": comparison, "identifiability": identifiability_example(),
             "surfaces": prediction_surfaces(models, train_x),
-            "scenarios": [evaluate(case, model, playback=True) for case in demonstrations()],
+            "ml_details": trained_model_details(
+                models, train_x, np.array([case.cell.soh for case in groups["train"]])),
+            "scenarios": [evaluate(case, model, playback=True, adaptive=adaptive)
+                          for case in examples],
+            "hybrid_b": adaptive.details() | {
+                "policy": "Temperature adjusts R₀ after the update. R₁ and C₁ stay fixed."
+            },
             "window_s": WINDOW_S, "nominal_c": NOMINAL_C,
         }

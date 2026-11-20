@@ -27,6 +27,7 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 #cutaway button[aria-pressed=true]{background:#e0f3be}.illustration{width:100%;max-height:330px;display:block}.equation{font:15px ui-monospace,monospace;background:#ecf1e9;padding:8px;border-radius:6px;overflow-wrap:anywhere}
 @media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:23px 13px}.columns{grid-template-columns:1fr}}
 @media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:14px 16px}.brand{margin:0 0 10px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:19px 14px}header{margin-bottom:16px}}
+.ion-flow{stroke:#286b7d;stroke-width:3;stroke-dasharray:7 5}.learning-controls label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.learning-controls input{max-width:100%}.trained-detail li{margin:4px 0}.trained-detail table{font-size:13px}.formula-stack{display:grid;gap:6px;margin-top:10px}.formula-stack p{margin:0}
 </style>
 </head>
 <body>
@@ -40,19 +41,24 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 <main>
 <header><span class="context" id="context">Synthetic experiment</span><small id="mode"></small></header>
 <section id="hybrid" class="view">
-<h1>Hybrid A laboratory</h1><p class="intro">Compare four ways to track charge on the same measurements. At 180 s, Hybrid A uses a learned capacity for subsequent EKF predictions.</p>
+<h1 id="hybrid-title">Hybrid A laboratory</h1><p class="intro" id="hybrid-intro">Compare four ways to track charge on the same measurements. At 180 s, Hybrid A uses a learned capacity for subsequent EKF predictions.</p>
 <div class="controls scenario-controls"></div><div class="playback playback-controls"></div>
 <div class="columns">
 <div class="card"><h2>State of charge</h2><div id="hybrid-chart"></div><p class="note" id="oracle-note"></p></div>
-<div class="card"><h2>Measurements to SOC</h2><div class="flow"><span>Sensors</span>› <span>Features</span>› <span>ML SOH</span>› <span>Capacity</span>› <span>EKF SOC</span></div><p class="note" id="update-note"></p><dl class="readouts" id="hybrid-readouts"></dl></div>
+<div class="card"><h2>Measurements to SOC</h2><div class="flow" id="hybrid-flow"><span>Sensors</span>› <span>Features</span>› <span>ML SOH</span>› <span>Capacity</span>› <span>EKF SOC</span></div><p class="note" id="update-note"></p><dl class="readouts" id="hybrid-readouts"></dl></div>
 </div>
+<div id="adaptive-panel" hidden>
+<div class="columns">
+<div class="card"><h2>One-step voltage predictions</h2><div id="adaptive-voltage"></div></div>
+<div class="card"><h2>Battery parameters</h2><p id="adaptive-timing" class="note"></p><div id="adaptive-parameters" class="table-wrap"></div><p id="adaptive-result" class="note"></p></div>
+</div></div>
 <div class="card"><h2>Full-trajectory errors</h2><p class="note" id="tradeoff"></p><div class="table-wrap" id="metrics"></div></div>
 </section>
 <section id="ekf" class="view" hidden>
-<h1>Extended Kalman filter</h1><p class="intro">Follow one Hybrid A filter correction at a time. Pick a different initial SOC to inspect convergence with the same sensor readings.</p>
-<div class="controls scenario-controls"></div><div class="playback playback-controls"></div>
+<h1>Extended Kalman filter</h1><p class="intro">Follow one filter correction at a time. Pick a different initial SOC to inspect convergence with the same sensor readings.</p>
+<div class="controls scenario-controls"></div><div class="playback playback-controls"></div><div class="controls" id="ekf-estimator"></div>
 <div class="columns">
-<div class="card"><h2>Voltage prediction and measurement</h2><div id="ekf-chart"></div><p class="equation">innovation = measured voltage − predicted voltage</p></div>
+<div class="card"><h2>Voltage prediction and measurement</h2><div id="ekf-chart"></div><div class="formula-stack" id="ekf-equations"></div></div>
 <div class="card"><h2>Predict, compare, correct</h2><p>Current predicts charge and polarisation. The voltage residual is weighted by the Kalman gain and corrects both states. The covariance describes the filter’s internal uncertainty.</p><dl class="readouts" id="ekf-readouts"></dl></div>
 </div>
 <div class="card"><h2>State correction and uncertainty</h2><div id="ekf-soc"></div><p class="note">The shaded band is ±2 filter standard deviations around corrected SOC.</p><p class="equation">x⁺ = x⁻ + K (Vₘ − V̂)&nbsp; · &nbsp;σ(SOC) = √P₀₀</p></div>
@@ -68,6 +74,7 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 <div class="controls" id="ml-controls"></div>
 <div class="columns"><div class="card"><h2>Trained prediction surface</h2><div id="surface"></div><p class="note">Six other features are fixed at their training medians. Axes cover marginal training ranges, so some plotted combinations may be rare.</p></div>
 <div class="card"><h2>How the algorithm learns</h2><p id="ml-explanation"></p><div id="ml-example"></div><p class="note">The small worked example illustrates the algorithm. The surface uses the trained capacity model.</p></div></div>
+<div class="card trained-detail" id="trained-detail" hidden><h2>Inside the trained model</h2><div id="trained-material" class="table-wrap"></div></div>
 <div class="card"><h2>Measured inputs and held-out errors</h2><p>Use samples through 180 s, inclusive. Features summarize start voltage, voltage change and spread, current level and spread, integrated charge, mean temperature and temperature change. Available capacity is nominal capacity × predicted SOH.</p><div class="table-wrap" id="ml-metrics"></div><p class="note" id="identifiability"></p></div>
 </section>
 <section id="data" class="view" hidden>
@@ -78,7 +85,7 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 <section id="fundamentals" class="view" hidden>
 <h1>Battery fundamentals</h1><p class="intro">Explore a representative cylindrical lithium-ion cell. The layers are separated for inspection. Geometry is illustrative and does not depict a NASA test specimen.</p>
 <div class="columns"><div class="card"><h2>Cylindrical cell cutaway</h2><div id="cutaway"></div></div><div class="card"><h2 id="layer-title"></h2><p id="layer-detail"></p></div></div>
-<div class="columns pair"><div class="card"><h2>SOC and SOH</h2><p>SOC is charge remaining divided by the capacity currently available. Capacity-based SOH is available capacity divided by fresh nominal capacity. An aged cell can be fully charged and still store less charge than a fresh one.</p></div><div class="card"><h2>Capacity loss and resistance</h2><p>Loss of cyclable lithium and active material reduces capacity. Increased internal resistance increases voltage sag and heating under load. These effects can vary independently.</p></div></div>
+<div class="columns pair"><div class="card"><h2>Charge and ageing example</h2><div class="learning-controls" id="age-demo"></div><dl class="readouts" id="age-readouts"></dl></div><div class="card"><h2>SOC and SOH</h2><p>SOC is charge remaining divided by the capacity currently available. Capacity-based SOH is available capacity divided by fresh nominal capacity. An aged cell can be fully charged and still store less charge than a fresh one.</p></div><div class="card"><h2>Capacity loss and resistance</h2><p>Loss of cyclable lithium and active material reduces capacity. Increased internal resistance increases voltage sag and heating under load. These effects can vary independently.</p></div></div>
 </section>
 <noscript>JavaScript is required to play the exported experiment traces.</noscript>
 </main>
@@ -88,14 +95,26 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 'use strict';
 async function startWorkbench(){
 const payload = document.getElementById('workbench-data');
-const binary = Uint8Array.from(atob(payload.textContent), char => char.charCodeAt(0));
+const unpackBase64 = encoded => {
+  if(Uint8Array.fromBase64) return Uint8Array.fromBase64(encoded);
+  const raw=atob(encoded), bytes=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
+  return bytes;
+};
+const binary = unpackBase64(payload.textContent);
 payload.remove();
 const decompressed = new Blob([binary]).stream().pipeThrough(new DecompressionStream('gzip'));
 const data = await new Response(decompressed).json();
+for(const scenario of data.scenarios){
+  for(const run of Object.values(scenario.trials)){
+    run.soc['Hybrid A'] ??= run.diagnostics.corrected_state.map(x=>x[0]);
+    if(run.adaptive)run.soc['Hybrid B'] ??= run.adaptive.diagnostics.corrected_state.map(x=>x[0]);
+  }
+}
 const $ = id => document.getElementById(id);
-const colors = ['#172e30','#348897','#a9502b','#187955','#7164a6'];
-const state = {view:'hybrid', scenario:0, trial:0, k:180, timer:null, dataset:'Synthetic',
-  cell:Object.keys(data.nasa)[0], cycle:0, nk:0, layer:0, spread:1};
+const colors = ['#172e30','#348897','#a9502b','#187955','#7164a6','#805a13'];
+const state = {view:'hybrid', scenario:0, trial:0, k:data.hybrid_b?.window_s??180, ekfMode:0, timer:null, dataset:'Synthetic',
+  cell:Object.keys(data.nasa)[0], cycle:0, nk:0, layer:0, spread:1, ionMode:0};
 const active = () => data.scenarios[state.scenario];
 const trial = () => Object.values(active().trials)[state.trial];
 const fmt = (x, decimals=2) => Number(x).toFixed(decimals);
@@ -126,7 +145,10 @@ function chart(id, time, series, k, opts={}) {
     markup+='<path d="M'+l+' '+yy+'H'+(w-r)+'" stroke="#dce5df"/><text text-anchor="end" x="'+(l-7)+'" y="'+(yy+4)+'">'+fmt(value,opts.decimals??2)+'</text><text text-anchor="middle" x="'+x(tt)+'" y="'+(h-16)+'">'+Math.round(tt)+'</text>';
   }
   markup+='<text text-anchor="end" x="'+(w-r)+'" y="'+h+'">Time (s)</text>';
-  if(opts.update!==undefined) markup+='<path d="M'+x(opts.update)+' '+t+'V'+(h-b)+'" stroke="#6c8076" stroke-dasharray="4 5"/>';
+  for(const marker of opts.markers??(opts.update===undefined?[]:[{time:opts.update}])){
+    markup+='<path d="M'+x(marker.time)+' '+t+'V'+(h-b)+'" stroke="#6c8076" stroke-dasharray="4 5"/>';
+    if(marker.label)markup+='<text x="'+(x(marker.time)+4)+'" y="11">'+marker.label+'</text>';
+  }
   const stride=Math.max(1,Math.ceil(k/360));
   const indices=Array.from({length:Math.ceil(k/stride)},(_,i)=>i*stride);
   indices.push(k);
@@ -187,26 +209,74 @@ function syncPlayback(){
 }
 function renderHybrid(){
   const c=active(), run=trial(), k=state.k;
-  const series=[{name:'Synthetic reference (%)',values:c.truth.map(x=>100*x),dashed:true},
-    ...Object.entries(run.soc).map(([name,values])=>({name,values:values.map(x=>100*x)}))];
-  chart('hybrid-chart',c.time,series,k,{label:'State of charge comparison',update:data.window_s,decimals:1});
+  const estimates=['Coulomb Counting','Fixed EKF','Hybrid A','Hybrid B','Oracle EKF'];
+  const series=[{name:'Synthetic reference (%)',values:c.truth.map(x=>100*x),dashed:true}];
+  estimates.forEach((name,i)=>{
+    if(run.soc[name])series.push({name,values:run.soc[name].map(x=>100*x),color:colors[i+1]});
+  });
+  const bWindow=data.hybrid_b?.window_s;
+  const markers=[{time:data.window_s,label:bWindow===data.window_s?'A/B':'A'}];
+  if(bWindow!==undefined&&bWindow!==data.window_s)markers.push({time:bWindow,label:'B'});
+  chart('hybrid-chart',c.time,series,k,{label:'State of charge comparison',markers,decimals:1});
   $('oracle-note').textContent=run.soc['Oracle EKF']?'The oracle uses reference ECM parameters with the same noisy measurements.':'The diffusion plant supplies no physically defined Thevenin R₁ and C₁. Oracle EKF is unavailable.';
   const before=c.time[k]<data.window_s;
   $('update-note').textContent=before?'Assuming nominal 2.00 Ah until the measurement window closes.':
     data.selected_model+' used the first 180 s. Capacity changes at 180 s and affects the following interval.';
-  $('hybrid-readouts').innerHTML=labelValue('Capacity for next step',fmt(run.diagnostics.capacity_c[k]/3600)+' Ah')+
-    labelValue('Estimated SOH',before?'Awaiting window':pct(run.diagnostics.capacity_c[k]/data.nominal_c))+
-    labelValue('Hybrid SOC',pct(run.soc['Hybrid A'][k]))+labelValue('Reference SOC',pct(c.truth[k]))+
+  $('hybrid-readouts').innerHTML=labelValue('Hybrid A capacity for next step',fmt(run.diagnostics.capacity_c[k]/3600)+' Ah')+
+    labelValue('Hybrid A estimated SOH',before?'Awaiting window':pct(run.diagnostics.capacity_c[k]/data.nominal_c))+
+    labelValue('Hybrid A SOC',pct(run.soc['Hybrid A'][k]))+labelValue('Reference SOC',pct(c.truth[k]))+
     labelValue('Reference SOH',pct(c.truth_soh));
   const diff=run.metrics['Hybrid A'].post_mae_pp-run.metrics['Fixed EKF'].post_mae_pp;
-  $('tradeoff').textContent='After the update, Hybrid A’s SOC MAE is '+fmt(Math.abs(diff),3)+' pp '+(diff>0?'higher':'lower')+' than fixed EKF for this run. The two filters share the same voltage correction and differ only in the capacity used to propagate charge.';
-  $('metrics').innerHTML='<table><thead><tr><th>Estimator</th><th>SOC MAE (pp)</th><th>After update (pp)</th><th>Voltage RMSE (mV)</th></tr></thead><tbody>'+
-    Object.entries(run.metrics).map(([name,m])=>'<tr><th>'+name+'</th><td>'+fmt(m.mae_pp)+'</td><td>'+fmt(m.post_mae_pp)+'</td><td>'+fmt(m.voltage_rmse_mv,1)+'</td></tr>').join('')+'</tbody></table>';
+  const comparison=Math.abs(diff)<0.0005?'effectively equal to fixed EKF':
+    fmt(Math.abs(diff),3)+' pp '+(diff>0?'higher':'lower')+' than fixed EKF';
+  $('tradeoff').textContent='After its '+data.window_s+' s update, Hybrid A’s SOC MAE is '+comparison+
+    ' for this run. Both filters use the same voltage observation model. Hybrid A changes the assumed capacity used to propagate charge.';
+  renderAdaptive(c,run,k);
+  $('metrics').innerHTML='<table><thead><tr><th>Estimator</th><th>SOC MAE (pp)</th><th>'+ (bWindow==null?'After update':'After '+bWindow+' s') +' (pp)</th><th>Voltage RMSE (mV)</th></tr></thead><tbody>'+
+    Object.entries(run.metrics).map(([name,m])=>'<tr><th>'+name+'</th><td>'+fmt(m.mae_pp)+'</td><td>'+fmt(m.adaptive_post_mae_pp??m.post_mae_pp)+'</td><td>'+fmt(m.voltage_rmse_mv,1)+'</td></tr>').join('')+'</tbody></table>';
+}
+function renderAdaptive(c,run,k){
+  const config=data.hybrid_b, adaptive=run.adaptive;
+  $('adaptive-panel').hidden=!config||!adaptive;
+  if(!config||!adaptive)return;
+  chart('adaptive-voltage',c.time,[
+    {name:'Measured (V)',values:c.voltage},
+    {name:'Fixed EKF (V)',values:adaptive.fixed_voltage_v},
+    {name:'Hybrid B (V)',values:adaptive.diagnostics.predicted_voltage_v},
+  ],k,{label:'Measured and predicted terminal voltage',update:config.window_s});
+  const before=c.time[k]<config.window_s;
+  $('adaptive-timing').textContent=before?
+    'Collecting measured features through '+config.window_s+' s. Hybrid B is using its fixed priors.':
+    'Window closes at '+config.window_s+' s. The estimates first affect prediction on the following interval.';
+  if(!before&&!adaptive.update_applied)
+    $('adaptive-timing').textContent='Too few current steps for an update. Hybrid B keeps its fixed priors.';
+  if(!before&&adaptive.parameters.capacity_c.estimated===data.nominal_c)
+    $('adaptive-timing').textContent+=' Capacity reached the nominal upper bound, leaving its prior unchanged.';
+  if(config.policy)$('adaptive-timing').textContent+=' '+config.policy;
+  $('adaptive-parameters').innerHTML='<table><thead><tr><th>Parameter</th><th>Fixed</th><th>Hybrid B</th><th>Reference</th></tr></thead><tbody>'+
+    config.parameters.map(({key,label,unit})=>{
+      const value=adaptive.parameters[key], format=v=>v==null?'Unavailable':fmt(v,unit==='Ω'?5:2)+' '+unit;
+      const model=config.models?.[key];
+      return '<tr><th>'+label+(model?'<br><small>'+model+'</small>':'')+'</th><td>'+format(value.fixed)+'</td><td>'+
+        format(before?value.fixed:value.estimated)+'</td><td>'+format(value.reference)+'</td></tr>';
+    }).join('')+'</tbody></table>';
+  const b=run.metrics['Hybrid B'], fixed=run.metrics['Fixed EKF'];
+  const change=b.mae_pp-fixed.mae_pp;
+  const voltage=b.voltage_rmse_mv-fixed.voltage_rmse_mv;
+  const describe=(value,unit)=>Math.abs(value)<0.0005?'effectively equal to fixed EKF':
+    fmt(Math.abs(value),3)+' '+unit+' '+(value>0?'higher':'lower')+' than fixed EKF';
+  $('adaptive-result').textContent='Across this trajectory, Hybrid B’s SOC MAE is '+describe(change,'pp')+
+    ' and voltage RMSE is '+describe(voltage,'mV')+'. Compare both errors to see when a better voltage fit tracks SOC more closely.';
 }
 function renderEkf(){
-  const c=active(), d=trial().diagnostics,k=state.k;
+  const c=active(), run=trial(), k=state.k;
+  const d=(state.ekfMode?run.adaptive?.diagnostics:null)??run.diagnostics;
   chart('ekf-chart',c.time,[{name:'Measured voltage (V)',values:c.voltage},{name:'Predicted voltage (V)',values:d.predicted_voltage_v}],k,{label:'Measured and one-step predicted voltage'});
-  const p=d.covariance[k];
+  const p=d.covariance[k], prior=d.predicted_state[k], correctedState=d.corrected_state[k];
+  $('ekf-equations').innerHTML='<p class="equation">Innovation = '+fmt(c.voltage[k],4)+' V − '+
+    fmt(d.predicted_voltage_v[k],4)+' V = '+fmt(1000*d.innovation_v[k],2)+' mV</p>'+
+    '<p class="equation">SOC⁺ = clip(SOC⁻ + gain × innovation) · '+pct(prior[0])+' → '+pct(correctedState[0])+'</p>'+
+    '<p class="equation">σ(SOC) = √P₀₀ = '+fmt(100*Math.sqrt(p[0][0]),3)+' pp</p>';
   $('ekf-readouts').innerHTML=[
     ['Predicted SOC',pct(d.predicted_state[k][0])],['Corrected SOC',pct(d.corrected_state[k][0])],
     ['Predicted polarisation',fmt(1000*d.predicted_state[k][1])+' mV'],['Corrected polarisation',fmt(1000*d.corrected_state[k][1])+' mV'],
@@ -309,8 +379,37 @@ function renderMl(){
   workedExample();
   $('ml-metrics').innerHTML='<table><thead><tr><th>Model</th><th>Validation (pp)</th><th>Thevenin test (pp)</th><th>Diffusion test (pp)</th></tr></thead><tbody>'+
     mlNames.map(n=>'<tr><th>'+n+(n===data.selected_model?' · selected':'')+'</th><td>'+fmt(100*data.validation[n])+'</td><td>'+fmt(100*data.test.thevenin[n])+'</td><td>'+fmt(100*data.test.diffusion[n])+'</td></tr>').join('')+'</tbody></table>';
+  renderTrainedModel();
   const confound=data.identifiability;
   $('identifiability').textContent='In a paired simulation, '+confound.delta_soh_pp+' pp of capacity SOH difference produced only '+fmt(confound.first_30_s_rms_mv,1)+' mV RMS voltage separation in the first 30 s, versus '+confound.nominal_voltage_noise_mv+' mV nominal sensor noise. Changes in resistance and initial SOC can mask capacity.';
+}
+function renderTrainedModel(){
+  const details=data.ml_details;
+  $('trained-detail').hidden=!details;
+  if(!details)return;
+  if(mlIndex===0){
+    const model=details.ridge;
+    const rows=model.feature_names.map((feature,i)=>'<tr><th>'+feature+'</th><td>'+
+      fmt(model.coefficients[i],5)+'</td></tr>').join('');
+    const fit=model.residual==null?'':' Training example: observed '+pct(model.observation)+
+      ', predicted '+pct(model.prediction)+', residual '+fmt(model.residual*100,2)+' pp.';
+    $('trained-material').innerHTML='<p>Fitted on standardised features with L2 α = '+fmt(model.alpha)+
+      ' and intercept '+fmt(model.intercept,4)+'. A positive coefficient raises predicted SOH as that input increases.'+fit+
+      '</p><table><thead><tr><th>Feature</th><th>SOH coefficient per standard deviation</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }else if(mlIndex===1){
+    const model=details.forest;
+    $('trained-material').innerHTML='<p>The '+model.tree_count+' trees average to '+pct(model.prediction)+
+      ' SOH for this example before clipping. These are individual paths for the same input.</p>'+
+      model.trees.map((tree,i)=>'<details '+(i===0?'open':'')+'><summary>Tree '+(i+1)+
+        ' · leaf '+pct(tree.value)+'</summary><ol>'+tree.path.map(step=>'<li>'+step+'</li>').join('')+
+        '</ol></details>').join('');
+  }else{
+    const model=details.boosting;
+    const rows=model.predictions.map((prediction,i)=>'<tr><th>'+(i+1)+'</th><td>'+pct(prediction)+
+      '</td><td>'+(i?fmt(100*(prediction-model.predictions[i-1]),3)+' pp':'—')+'</td></tr>').join('');
+    $('trained-material').innerHTML='<p>Early cumulative SOH predictions for one training example. Each step adds a fitted tree contribution scaled by learning rate '+
+      fmt(model.learning_rate,3)+'.</p><table><thead><tr><th>Stage</th><th>Predicted SOH</th><th>Step change</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
 }
 const layers=[
   ['Anode','#65564c','During discharge the graphite anode releases lithium ions into the electrolyte and electrons into the external circuit.'],
@@ -325,18 +424,52 @@ function renderCutaway(){
     const x=122+i*(31+state.spread*16), y=117+i*7, ry=73-i*6, rx=42-i*3;
     svg+='<path d="M'+x+' '+(y-ry)+'h39a'+rx+' '+ry+' 0 0 1 0 '+(2*ry)+'h-39z" fill="'+color+'" opacity=".55"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+color+'" stroke="'+(state.layer===i?'#182e30':'#fff')+'" stroke-width="'+(state.layer===i?4:1.5)+'"><title>'+name+'</title></ellipse>';
   });
+  if(state.ionMode){
+    const charge=state.ionMode===2, anode=122, cathode=122+2*(31+state.spread*16);
+    const start=charge?cathode:anode, end=charge?anode:cathode;
+    svg+='<defs><marker id="ion-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path fill="#286b7d" d="M0 0L6 3 0 6Z"/></marker></defs>'+
+      '<path class="ion-flow" d="M'+start+' 216 H'+end+'" marker-end="url(#ion-arrow)"/>'+
+      '<text x="105" y="246" fill="#286b7d">Li⁺ · '+(charge?'cathode to anode':'anode to cathode')+'</text>';
+  }
   $('cutaway-drawing').innerHTML=svg+'</svg>';
+  $('ion-note').textContent=[
+    'Choose charge or discharge to trace lithium ions through the electrolyte and separator.',
+    'During discharge, lithium ions move from anode toward cathode. Electrons take the external circuit.',
+    'During charge, an external source drives lithium ions from cathode toward anode.',
+  ][state.ionMode];
   $('layer-title').textContent=layers[state.layer][0];$('layer-detail').textContent=layers[state.layer][2];
   $('cutaway').querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===state.layer)));
 }
 function setupCutaway(){
   if($('cutaway-drawing'))return;
-  $('cutaway').innerHTML='<div id="cutaway-drawing"></div><div class="controls" id="layer-buttons"></div><label>Layer spacing <input id="spread" type="range" min="0" max="2" step=".1" value="1"></label>';
+  $('cutaway').innerHTML='<div id="cutaway-drawing"></div><div class="controls" id="layer-buttons"></div><div class="controls" id="cell-controls"><label>Layer spacing <input id="spread" type="range" min="0" max="2" step=".1" value="1"></label></div><p id="ion-note" class="note"></p>';
+  $('cell-controls').append(select('Ion movement',['Inspect layers','Discharge','Charge'],0,i=>{
+    state.ionMode=i;renderCutaway();
+  }));
   layers.forEach(([name],i)=>{
     const button=document.createElement('button');button.textContent=name;
     button.onclick=()=>{state.layer=i;renderCutaway();};$('layer-buttons').append(button);
   });
   $('spread').oninput=event=>{state.spread=Number(event.target.value);renderCutaway();};
+  const controls=[
+    ['State of charge (%)','soc',0,100,80],['Capacity SOH (%)','soh',55,100,85],
+    ['Internal resistance (mΩ)','resistance',25,100,40],
+  ];
+  $('age-demo').innerHTML=controls.map(([label,id,min,max,value])=>'<label>'+label+
+    '<input id="age-'+id+'" type="range" min="'+min+'" max="'+max+'" value="'+value+'"><output></output></label>').join('')+
+    '<p class="note">Illustrative 2.00 Ah fresh cell under a 2 A discharge. The example varies capacity and resistance independently.</p>';
+  const update=()=>{
+    const [soc,soh,milliohms]=controls.map(([,id])=>{
+      const input=$('age-'+id);
+      input.nextElementSibling.textContent=input.value;
+      return Number(input.value);
+    });
+    $('age-readouts').innerHTML=labelValue('Available capacity',fmt(2*soh/100)+' Ah')+
+      labelValue('Charge remaining',fmt(2*soh*soc/10000)+' Ah')+labelValue('Instantaneous sag at 2 A',fmt(2*milliohms,0)+' mV')+
+      labelValue('Ohmic heating at 2 A',fmt(4*milliohms,0)+' mW');
+  };
+  $('age-demo').oninput=update;
+  update();
 }
 function updateScenarioControls(){
   document.querySelectorAll('.scenario-controls').forEach(el=>{
@@ -381,6 +514,15 @@ document.querySelectorAll('nav button').forEach(button=>button.onclick=()=>navig
 document.querySelectorAll('.playback-controls').forEach(el=>setupPlayback(el));
 setupPlayback($('nasa-playback'),true);
 updateScenarioControls();updateNasaControls();
+if(data.hybrid_b){
+  $('hybrid-title').textContent='Hybrid B laboratory';
+  document.querySelector('[data-view="hybrid"]').textContent='Hybrid B laboratory';
+  $('hybrid-intro').textContent='Compare five ways to estimate charge from the same measurements. Hybrid A adapts capacity and Hybrid B adapts its supported battery parameters. Eligible matched scenarios include an oracle for reference.';
+  $('hybrid-flow').innerHTML='<span>Measurements</span>› <span>ML features</span>› <span>Estimated parameters</span>› <span>Adaptive model</span>› <span>EKF</span>› <span>SOC</span>';
+  $('ekf-estimator').append(select('Filter trace',['Hybrid A','Hybrid B'],0,i=>{
+    stop();state.ekfMode=i;render();
+  }));
+}
 $('dataset-controls').append(select('Dataset',['Synthetic','NASA'],0,index=>{stop();state.dataset=index?'NASA':'Synthetic';render();}));
 [['Model',circuitNames],['Pulse current',['0.8 A','1.6 A','2.4 A']],['Resistance scale',['0.7×','1×','1.5×']],['Capacitance scale',['0.5×','1×','2×']]].forEach(([name,options],i)=>
   $('physics-controls').append(select(name,options,lab[i],index=>{lab[i]=index;renderPhysics();})));

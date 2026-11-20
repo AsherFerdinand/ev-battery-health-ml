@@ -19,7 +19,24 @@ for (const scenario of data.scenarios) {
   const index = scenario.time.indexOf(data.window_s);
   for (const trial of Object.values(scenario.trials)) {
     const d = trial.diagnostics;
-    const hybrid = trial.soc['Hybrid A'];
+    const hybrid = d.corrected_state.map(pair => pair[0]);
+    const b = trial.adaptive.diagnostics;
+    const kB = scenario.time.indexOf(data.hybrid_b.window_s);
+    assert.ok(trial.adaptive.update_applied);
+    assert.deepEqual(b.corrected_state.slice(0, kB+1).map(pair => pair[0]),
+                     trial.soc['Fixed EKF'].slice(0, kB+1));
+    assert.deepEqual(b.predicted_voltage_v.slice(0, kB+1),
+                     trial.adaptive.fixed_voltage_v.slice(0, kB+1));
+    const parameters = trial.adaptive.parameters;
+    assert.equal(b.capacity_c[kB-1], data.nominal_c);
+    assert.equal(b.capacity_c[kB], parameters.capacity_c.estimated);
+    assert.ok(parameters.r0_ref_ohm.estimated >= .020 && parameters.r0_ref_ohm.estimated <= .080);
+    let bPost = 0;
+    for (let i=kB+1; i<scenario.time.length; i++){
+      assert.ok(Math.abs(scenario.voltage[i] - b.predicted_voltage_v[i] - b.innovation_v[i]) < 1e-12);
+      bPost += 100*Math.abs(b.corrected_state[i][0]-scenario.truth[i]);
+    }
+    assert.ok(Math.abs(bPost/(scenario.time.length-kB-1)-trial.metrics['Hybrid B'].adaptive_post_mae_pp) < 1e-12);
     assert.deepEqual(hybrid.slice(0, index+1), trial.soc['Fixed EKF'].slice(0, index+1));
     assert.equal(d.capacity_c[index-1], 7200);
     assert.ok(d.capacity_c[index] >= 3960 && d.capacity_c[index] <= 7200);
@@ -34,6 +51,6 @@ for (const scenario of data.scenarios) {
     traces++;
   }
 }
-assert.equal(traces, 15);
+assert.equal(traces, 18);
 assert.equal(Object.keys(data.physics).length, 63);
-console.log('Workbench export checks passed for 15 trace sets and 63 circuit examples.');
+console.log('Workbench export checks passed for 18 paired trace sets and 63 circuit examples.');
