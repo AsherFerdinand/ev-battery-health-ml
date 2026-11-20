@@ -48,8 +48,16 @@ class Cell:
         return self.nominal_ah * self.soh * 3600.0
 
 
-def _lumped_ocv(soc):
+def lumped_ocv(soc):
     return 3.05 + 1.05 * soc + 0.08 * np.tanh((soc - 0.52) / 0.15)
+
+
+def lumped_ocv_slope(soc):
+    return 1.05 + (0.08 / 0.15) * (1 - np.tanh((soc - 0.52) / 0.15)**2)
+
+
+def rc_gain(dt, resistance, capacitance):
+    return -np.expm1(-dt / (resistance * capacitance))
 
 
 def _surface_ocv(surface):
@@ -138,7 +146,7 @@ def _simulate_ecm(time, current, cell, branches):
     capacitance = np.array([cell.c1_f, cell.c2_f])[:branches]
     branch_v = np.zeros((time.size, branches))
     if branches:
-        gain = -np.expm1(-dt[:, None] / (resistance * capacitance))
+        gain = rc_gain(dt[:, None], resistance, capacitance)
         targets = current[:-1, None] * resistance
         for k, interval_gain in enumerate(gain):
             branch_v[k + 1] = branch_v[k] + interval_gain * (targets[k] - branch_v[k])
@@ -152,7 +160,7 @@ def _simulate_ecm(time, current, cell, branches):
     result = {
         "truth_soc": soc,
         "truth_temperature_k": temp_k,
-        "truth_voltage_v": _lumped_ocv(soc) - current * r0 - branch_v.sum(axis=1),
+        "truth_voltage_v": lumped_ocv(soc) - current * r0 - branch_v.sum(axis=1),
         "ref_r0_ohm": r0,
     }
     for index in range(branches):

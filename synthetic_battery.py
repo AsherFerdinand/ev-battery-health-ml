@@ -10,6 +10,9 @@ import numpy as np
 from battery_sim import Cell, MODELS, simulate
 
 
+SENSOR_STD = {"current_a": 0.015, "voltage_v": 0.003, "temperature_k": 0.12}
+
+
 PROFILES = {
     # (duration in seconds, held current in amperes)
     "pulse": ((30, 0), (80, 1.4), (90, 0), (45, -0.65), (115, 0)),
@@ -33,9 +36,8 @@ def dataset(model, profile_name, cell, seed, noise_scale):
         raise ValueError("Noise scale must be finite and nonnegative.")
     time, current = profile(profile_name)
     result = simulate(time, current, cell, model)
-    sigmas = {"current_a": 0.015, "voltage_v": 0.003, "temperature_k": 0.12}
     rng = np.random.Generator(np.random.PCG64(seed))
-    for channel, sigma in sigmas.items():
+    for channel, sigma in SENSOR_STD.items():
         noise = rng.normal(0, noise_scale * sigma, time.size)
         result[f"measured_{channel}"] = result[f"truth_{channel}"] + noise
     result["metadata_json"] = np.array(json.dumps({
@@ -49,7 +51,7 @@ def dataset(model, profile_name, cell, seed, noise_scale):
         "rng": "NumPy PCG64",
         "numpy_version": np.__version__,
         "measurement_noise_std": {
-            channel: noise_scale * sigma for channel, sigma in sigmas.items()
+            channel: noise_scale * sigma for channel, sigma in SENSOR_STD.items()
         },
     }, sort_keys=True))
     return result

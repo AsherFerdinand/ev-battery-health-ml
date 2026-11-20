@@ -276,3 +276,9 @@ Original project code is licensed under the [MIT licence](LICENSE). The grant do
 v1.1 adds a separate offline synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for testing under structural mismatch. Generate the default pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. The generator writes compressed, seeded datasets to `data/synthetic/`, separate from NASA experimental data.
 
 See the [synthetic modelling report](docs/synthetic-battery.md) for conventions, reproduction commands and verification. The [workbench roadmap](docs/workbench-roadmap.md) covers future SOC EKF and hybrid estimator comparisons, independent validation, and the educational interface.
+
+### SOC workbench v1.2–v1.3
+
+Launch the offline educational workbench with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Explore the cell cutaway, NASA and synthetic traces, equivalent circuits, capacity models, EKF diagnostics and Hybrid A. The browser plays precomputed Python results.
+
+The synthetic comparison found that a better capacity estimate could still increase SOC error. See the [SOC workbench report](docs/soc-workbench.md) for the full results and reproduction commands.

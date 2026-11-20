@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Battery State Workbench</title>
+<style>
+:root{color-scheme:light;--ink:#152a2c;--muted:#52666a;--paper:#f4f6f1;--card:#fff;--line:#d8e1dc;--green:#087d68;--lime:#d3f08a;--orange:#a94922}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+aside{background:#142b2c;color:#d8e5de;padding:29px 19px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:11px;align-items:center;font-size:16px;font-weight:720;line-height:1.22;margin-bottom:38px;color:white}
+.brand svg{flex:none;color:var(--lime)}nav{display:grid;gap:7px}nav button{text-align:left;background:none;border:0;color:inherit;width:100%;padding:10px 13px}nav button:hover{background:#274545}nav [aria-current=page]{background:var(--lime);color:#172d29;font-weight:700}aside footer{margin:30px 13px 0;font-size:13px;color:#b6ccc1}aside a{color:inherit}
+main{min-width:0;width:100%;max-width:1420px;padding:36px clamp(20px,4vw,58px) 50px;margin:auto;align-self:start}
+header{border-bottom:1px solid var(--line);margin-bottom:23px;padding-bottom:17px;display:flex;justify-content:space-between;gap:15px;align-items:center}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(28px,3.5vw,46px);line-height:1.1;letter-spacing:-.044em;margin:8px 0 12px}h2{font-size:20px;letter-spacing:-.02em;margin-bottom:8px}h3{font-size:16px;margin-bottom:6px}
+p+ p{margin-top:10px}.intro{color:var(--muted);max-width:75ch;margin-bottom:22px}.context{font-weight:680;font-size:13px;letter-spacing:.015em;color:var(--green)}
+.controls,.playback,.switch,.legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.controls{margin-bottom:13px}.controls label,.switch label{display:flex;align-items:center;gap:7px}.playback{margin:12px 0 18px}.playback input{flex:1;min-width:120px}.playback output{min-width:75px;text-align:right}
+button,select{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:7px 11px}button{cursor:pointer}button:hover,select:hover{border-color:var(--green)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.primary{background:#143e37;color:#f7fff7;border-color:#143e37}.primary:hover{background:var(--green)}input{accent-color:var(--green)}
+.card{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:17px 20px;margin-bottom:14px;min-width:0}.columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px}.pair{grid-template-columns:repeat(2,minmax(0,1fr))}
+.plot{width:100%;display:block;min-height:125px}.plot text{font:12px system-ui;fill:var(--muted)}.legend{font-size:13px;margin-top:7px}.legend span{white-space:nowrap}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:6px}
+.note,small{color:var(--muted)}output,.number,td{font-variant-numeric:tabular-nums}.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:12px}.readouts div{padding:10px 12px;background:#f9fbf7}.readouts dt{font-size:13px;color:var(--muted)}.readouts dd{margin:0;font-weight:700;font-size:17px}
+.flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:4px 0 10px}.flow span{padding:5px 9px;background:#eaf3ea;border-radius:5px;font-size:13px;font-weight:650}
+table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;border-bottom:1px solid var(--line)}thead th{color:var(--muted);font-size:13px}.table-wrap{overflow:auto}.bad{color:var(--orange)}.good{color:var(--green)}[hidden]{display:none!important}
+#cutaway button[aria-pressed=true]{background:#e0f3be}.illustration{width:100%;max-height:330px;display:block}.equation{font:15px ui-monospace,monospace;background:#ecf1e9;padding:8px;border-radius:6px;overflow-wrap:anywhere}
+@media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:23px 13px}.columns{grid-template-columns:1fr}}
+@media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:14px 16px}.brand{margin:0 0 10px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:19px 14px}header{margin-bottom:16px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+<div class="brand"><svg width="30" height="24" viewBox="0 0 32 24" aria-hidden="true"><rect x="1" y="4" width="26" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M28 9h3v6h-3M14 6l-5 7h5l-1 5 6-8h-6z" fill="currentColor"/></svg><span>Battery State<br>Workbench</span></div>
+<nav aria-label="Workbench sections">
+<button data-view="hybrid" aria-current="page">Hybrid A laboratory</button><button data-view="ekf">Kalman filter</button><button data-view="physics">Battery physics</button><button data-view="ml">Machine learning</button><button data-view="data">Dataset explorer</button><button data-view="fundamentals">Battery fundamentals</button>
+</nav><footer><a href="dashboard.html">Original NASA dashboard ↗</a></footer>
+</aside>
+<main>
+<header><span class="context" id="context">Synthetic experiment</span><small id="mode"></small></header>
+<section id="hybrid" class="view">
+<h1>Hybrid A laboratory</h1><p class="intro">Compare four ways to track charge on the same measurements. At 180 s, Hybrid A uses a learned capacity for subsequent EKF predictions.</p>
+<div class="controls scenario-controls"></div><div class="playback playback-controls"></div>
+<div class="columns">
+<div class="card"><h2>State of charge</h2><div id="hybrid-chart"></div><p class="note" id="oracle-note"></p></div>
+<div class="card"><h2>Measurements to SOC</h2><div class="flow"><span>Sensors</span>› <span>Features</span>› <span>ML SOH</span>› <span>Capacity</span>› <span>EKF SOC</span></div><p class="note" id="update-note"></p><dl class="readouts" id="hybrid-readouts"></dl></div>
+</div>
+<div class="card"><h2>Full-trajectory errors</h2><p class="note" id="tradeoff"></p><div class="table-wrap" id="metrics"></div></div>
+</section>
+<section id="ekf" class="view" hidden>
+<h1>Extended Kalman filter</h1><p class="intro">Follow one Hybrid A filter correction at a time. Pick a different initial SOC to inspect convergence with the same sensor readings.</p>
+<div class="controls scenario-controls"></div><div class="playback playback-controls"></div>
+<div class="columns">
+<div class="card"><h2>Voltage prediction and measurement</h2><div id="ekf-chart"></div><p class="equation">innovation = measured voltage − predicted voltage</p></div>
+<div class="card"><h2>Predict, compare, correct</h2><p>Current predicts charge and polarisation. The voltage residual is weighted by the Kalman gain and corrects both states. The covariance describes the filter’s internal uncertainty.</p><dl class="readouts" id="ekf-readouts"></dl></div>
+</div>
+<div class="card"><h2>State correction and uncertainty</h2><div id="ekf-soc"></div><p class="note">The shaded band is ±2 filter standard deviations around corrected SOC.</p><p class="equation">x⁺ = x⁻ + K (Vₘ − V̂)&nbsp; · &nbsp;σ(SOC) = √P₀₀</p></div>
+</section>
+<section id="physics" class="view" hidden>
+<h1>Battery physics laboratory</h1><p class="intro">Change a pulsed load and circuit parameters. Watch the instantaneous drop at load onset and the slower relaxation after the pulse ends.</p>
+<div class="controls" id="physics-controls"></div>
+<div class="columns"><div class="card"><h2>Voltage drops</h2><div id="physics-chart"></div><div id="terminal-chart"></div><p class="note">Discharge starts at 10 s. The cell rests again from 55 s. Each RC branch reaches about 63% of its steady drop in one time constant under a constant load.</p></div>
+<div class="card"><h2>Equivalent circuit</h2><div id="circuit"></div><p class="equation">V = OCV(SOC) − I·R₀ − Σvᵣ꜀</p><dl class="readouts" id="physics-readouts"></dl></div></div>
+</section>
+<section id="ml" class="view" hidden>
+<h1>Machine learning explorer</h1><p class="intro">Compare how three algorithms turn early voltage, current and temperature into a capacity estimate.</p>
+<div class="controls" id="ml-controls"></div>
+<div class="columns"><div class="card"><h2>Trained prediction surface</h2><div id="surface"></div><p class="note">Six other features are fixed at their training medians. Axes cover marginal training ranges, so some plotted combinations may be rare.</p></div>
+<div class="card"><h2>How the algorithm learns</h2><p id="ml-explanation"></p><div id="ml-example"></div><p class="note">The small worked example illustrates the algorithm. The surface uses the trained capacity model.</p></div></div>
+<div class="card"><h2>Measured inputs and held-out errors</h2><p>Use samples through 180 s, inclusive. Features summarize start voltage, voltage change and spread, current level and spread, integrated charge, mean temperature and temperature change. Available capacity is nominal capacity × predicted SOH.</p><div class="table-wrap" id="ml-metrics"></div><p class="note" id="identifiability"></p></div>
+</section>
+<section id="data" class="view" hidden>
+<h1>Dataset explorer</h1><div class="controls" id="dataset-controls"></div>
+<div id="synthetic-data"><p class="intro">The simulator supplies reference SOC and SOH. The three noisy sensor traces are the estimator inputs.</p><div class="controls scenario-controls"></div><div class="playback playback-controls"></div><div class="card" id="synthetic-chart"></div></div>
+<div id="nasa-data" hidden><p class="intro">NASA Ames experimental discharge recordings. Capacity comes from the experiment. Reported SOH divides that capacity by 2 Ah. The recordings do not provide independent SOC truth.</p><div class="controls" id="nasa-controls"></div><div class="playback" id="nasa-playback"></div><div class="card" id="nasa-chart"></div><a href="dashboard.html">Open the existing NASA research dashboard</a></div>
+</section>
+<section id="fundamentals" class="view" hidden>
+<h1>Battery fundamentals</h1><p class="intro">Explore a representative cylindrical lithium-ion cell. The layers are separated for inspection. Geometry is illustrative and does not depict a NASA test specimen.</p>
+<div class="columns"><div class="card"><h2>Cylindrical cell cutaway</h2><div id="cutaway"></div></div><div class="card"><h2 id="layer-title"></h2><p id="layer-detail"></p></div></div>
+<div class="columns pair"><div class="card"><h2>SOC and SOH</h2><p>SOC is charge remaining divided by the capacity currently available. Capacity-based SOH is available capacity divided by fresh nominal capacity. An aged cell can be fully charged and still store less charge than a fresh one.</p></div><div class="card"><h2>Capacity loss and resistance</h2><p>Loss of cyclable lithium and active material reduces capacity. Increased internal resistance increases voltage sag and heating under load. These effects can vary independently.</p></div></div>
+</section>
+<noscript>JavaScript is required to play the exported experiment traces.</noscript>
+</main>
+</div>
+<script id="workbench-data" type="application/octet-stream">__WORKBENCH_DATA__</script>
+<script>
+'use strict';
+async function startWorkbench(){
+const payload = document.getElementById('workbench-data');
+const binary = Uint8Array.from(atob(payload.textContent), char => char.charCodeAt(0));
+payload.remove();
+const decompressed = new Blob([binary]).stream().pipeThrough(new DecompressionStream('gzip'));
+const data = await new Response(decompressed).json();
+const $ = id => document.getElementById(id);
+const colors = ['#172e30','#348897','#a9502b','#187955','#7164a6'];
+const state = {view:'hybrid', scenario:0, trial:0, k:180, timer:null, dataset:'Synthetic',
+  cell:Object.keys(data.nasa)[0], cycle:0, nk:0, layer:0, spread:1};
+const active = () => data.scenarios[state.scenario];
+const trial = () => Object.values(active().trials)[state.trial];
+const fmt = (x, decimals=2) => Number(x).toFixed(decimals);
+const pct = x => fmt(x*100)+'%';
+const labelValue = (label,value) => '<div><dt>'+label+'</dt><dd>'+value+'</dd></div>';
+function select(label, values, current, update) {
+  const container = document.createElement('label');
+  container.textContent = label;
+  const element = document.createElement('select');
+  element.setAttribute('aria-label',label);
+  values.forEach((name,i) => element.add(new Option(name, i)));
+  element.selectedIndex = current;
+  element.onchange = () => update(element.selectedIndex);
+  container.append(element);
+  return container;
+}
+function chart(id, time, series, k, opts={}) {
+  const w=660,h=258,l=55,r=18,t=13,b=38;
+  const valid = series.flatMap(track => track.values);
+  if(opts.band) valid.push(...opts.band[0],...opts.band[1]);
+  const minimum = opts.min ?? Math.min(...valid), maximum = opts.max ?? Math.max(...valid);
+  const range = Math.max(maximum-minimum, 1e-5);
+  const x = v => l+(w-l-r)*(v-time[0])/Math.max(time.at(-1)-time[0],1);
+  const y = v => h-b-(h-b-t)*(v-minimum)/range;
+  let markup = '<svg class="plot" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+opts.label+'">';
+  for(let n=0;n<5;n++){
+    const value=minimum+range*n/4, yy=y(value), tt=time[0]+(time.at(-1)-time[0])*n/4;
+    markup+='<path d="M'+l+' '+yy+'H'+(w-r)+'" stroke="#dce5df"/><text text-anchor="end" x="'+(l-7)+'" y="'+(yy+4)+'">'+fmt(value,opts.decimals??2)+'</text><text text-anchor="middle" x="'+x(tt)+'" y="'+(h-16)+'">'+Math.round(tt)+'</text>';
+  }
+  markup+='<text text-anchor="end" x="'+(w-r)+'" y="'+h+'">Time (s)</text>';
+  if(opts.update!==undefined) markup+='<path d="M'+x(opts.update)+' '+t+'V'+(h-b)+'" stroke="#6c8076" stroke-dasharray="4 5"/>';
+  const stride=Math.max(1,Math.ceil(k/360));
+  const indices=Array.from({length:Math.ceil(k/stride)},(_,i)=>i*stride);
+  indices.push(k);
+  const points=(values,indexes)=>indexes.map(i=>fmt(x(time[i]),1)+','+fmt(y(values[i]),1)).join(' ');
+  if(opts.band){
+    const [lower,upper]=opts.band;
+    markup+='<polygon points="'+points(upper,indices)+' '+points(lower,[...indices].reverse())+'" fill="#c8dcd2" opacity=".65"/>';
+  }
+  series.forEach((track,j)=>{
+    const color=track.color??colors[j];
+    const vertices=points(track.values,indices);
+    markup+='<polyline points="'+vertices+'" fill="none" stroke="'+color+'" stroke-width="2" '+(track.dashed?'stroke-dasharray="5 4"':'')+'/><circle cx="'+x(time[k])+'" cy="'+y(track.values[k])+'" r="3" fill="'+color+'"/>';
+  });
+  $(id).innerHTML=markup+'</svg><div class="legend">'+series.map((s,i)=>'<span><i style="background:'+(s.color??colors[i])+'"></i>'+s.name+'</span>').join('')+'</div>';
+}
+function setupPlayback(container,nasa=false) {
+  const play=document.createElement('button'), reset=document.createElement('button'), step=document.createElement('button');
+  const slider=document.createElement('input'), output=document.createElement('output');
+  play.className='primary'; play.textContent='Play'; reset.textContent='Reset'; step.textContent='Step';
+  slider.type='range'; slider.min=0; slider.setAttribute('aria-label','Playback position');
+  play.onclick=()=>state.timer===null?playReplay():stop();
+  reset.onclick=()=>{stop(); position(0,nasa);};
+  step.onclick=()=>{stop(); position((nasa?state.nk:state.k)+1,nasa);};
+  slider.oninput=()=>{stop();position(Number(slider.value),nasa);};
+  container.replaceChildren(play,reset,step,slider,output);
+}
+function nasaCycle(){return data.nasa[state.cell]?.[state.cycle];}
+function isNasa(){return state.view==='data'&&state.dataset==='NASA';}
+function position(k,nasa=false){
+  const max=nasa?(nasaCycle()?.trace.length??1)-1:active().time.length-1;
+  if(nasa) state.nk=Math.min(max,Math.max(0,k));
+  else state.k=Math.min(max,Math.max(0,k));
+  render();
+  if(k>=max) stop();
+}
+function stop(){
+  if(state.timer!==null) clearInterval(state.timer);
+  state.timer=null;
+  document.querySelectorAll('.playback .primary').forEach(el=>el.textContent='Play');
+}
+function playReplay(){
+  if(document.hidden)return;
+  const nasa=isNasa(), max=nasa?(nasaCycle()?.trace.length??1)-1:active().time.length-1;
+  if(max<=0) return;
+  if((nasa?state.nk:state.k)>=max) position(0,nasa);
+  state.timer=setInterval(()=>position((nasa?state.nk:state.k)+(nasa?1:4),nasa),110);
+  syncPlayback();
+}
+function syncPlayback(){
+  const nasa=isNasa(), el=nasa?$('nasa-playback'):$(state.view).querySelector('.playback-controls');
+  if(!el)return;
+  const trace=nasa?nasaCycle()?.trace:active().time;
+  if(!trace)return;
+  const k=nasa?state.nk:state.k, input=el.querySelector('input');
+  input.max=trace.length-1;input.value=k;
+  el.querySelector('output').textContent=fmt(nasa?trace[k][0]:trace[k],0)+' s';
+  el.querySelector('.primary').textContent=state.timer===null?'Play':'Pause';
+}
+function renderHybrid(){
+  const c=active(), run=trial(), k=state.k;
+  const series=[{name:'Synthetic reference (%)',values:c.truth.map(x=>100*x),dashed:true},
+    ...Object.entries(run.soc).map(([name,values])=>({name,values:values.map(x=>100*x)}))];
+  chart('hybrid-chart',c.time,series,k,{label:'State of charge comparison',update:data.window_s,decimals:1});
+  $('oracle-note').textContent=run.soc['Oracle EKF']?'The oracle uses reference ECM parameters with the same noisy measurements.':'The diffusion plant supplies no physically defined Thevenin R₁ and C₁. Oracle EKF is unavailable.';
+  const before=c.time[k]<data.window_s;
+  $('update-note').textContent=before?'Assuming nominal 2.00 Ah until the measurement window closes.':
+    data.selected_model+' used the first 180 s. Capacity changes at 180 s and affects the following interval.';
+  $('hybrid-readouts').innerHTML=labelValue('Capacity for next step',fmt(run.diagnostics.capacity_c[k]/3600)+' Ah')+
+    labelValue('Estimated SOH',before?'Awaiting window':pct(run.diagnostics.capacity_c[k]/data.nominal_c))+
+    labelValue('Hybrid SOC',pct(run.soc['Hybrid A'][k]))+labelValue('Reference SOC',pct(c.truth[k]))+
+    labelValue('Reference SOH',pct(c.truth_soh));
+  const diff=run.metrics['Hybrid A'].post_mae_pp-run.metrics['Fixed EKF'].post_mae_pp;
+  $('tradeoff').textContent='After the update, Hybrid A’s SOC MAE is '+fmt(Math.abs(diff),3)+' pp '+(diff>0?'higher':'lower')+' than fixed EKF for this run. The two filters share the same voltage correction and differ only in the capacity used to propagate charge.';
+  $('metrics').innerHTML='<table><thead><tr><th>Estimator</th><th>SOC MAE (pp)</th><th>After update (pp)</th><th>Voltage RMSE (mV)</th></tr></thead><tbody>'+
+    Object.entries(run.metrics).map(([name,m])=>'<tr><th>'+name+'</th><td>'+fmt(m.mae_pp)+'</td><td>'+fmt(m.post_mae_pp)+'</td><td>'+fmt(m.voltage_rmse_mv,1)+'</td></tr>').join('')+'</tbody></table>';
+}
+function renderEkf(){
+  const c=active(), d=trial().diagnostics,k=state.k;
+  chart('ekf-chart',c.time,[{name:'Measured voltage (V)',values:c.voltage},{name:'Predicted voltage (V)',values:d.predicted_voltage_v}],k,{label:'Measured and one-step predicted voltage'});
+  const p=d.covariance[k];
+  $('ekf-readouts').innerHTML=[
+    ['Predicted SOC',pct(d.predicted_state[k][0])],['Corrected SOC',pct(d.corrected_state[k][0])],
+    ['Predicted polarisation',fmt(1000*d.predicted_state[k][1])+' mV'],['Corrected polarisation',fmt(1000*d.corrected_state[k][1])+' mV'],
+    ['Innovation',fmt(1000*d.innovation_v[k])+' mV'],['Gain for SOC',fmt(d.kalman_gain[k][0],4)+' /V'],
+    ['Gain for polarisation',fmt(d.kalman_gain[k][1],4)],['SOC correction',fmt(100*(d.corrected_state[k][0]-d.predicted_state[k][0]),3)+' pp'],
+    ['SOC σ',fmt(100*Math.sqrt(p[0][0]),3)+' pp'],['Polarisation σ',fmt(1000*Math.sqrt(p[1][1]),2)+' mV'],
+    ['Cross-covariance',p[0][1].toExponential(2)+' frac·V'],
+  ].map(([l,v])=>labelValue(l,v)).join('');
+  const corrected=d.corrected_state.map(x=>100*x[0]);
+  const band=[-2,2].map(scale=>corrected.map((x,i)=>x+100*scale*Math.sqrt(d.covariance[i][0][0])));
+  chart('ekf-soc',c.time,[{name:'Reference (%)',values:c.truth.map(x=>100*x),dashed:true},
+    {name:'Predicted (%)',values:d.predicted_state.map(x=>100*x[0])},
+    {name:'Corrected (%)',values:corrected}],k,{label:'Predicted and corrected state of charge with a two sigma band',decimals:1,band});
+}
+function renderDataset(){
+  const nasa=isNasa();
+  $('synthetic-data').hidden=nasa;$('nasa-data').hidden=!nasa;
+  if(!nasa){
+    const c=active();
+    [['voltage','Voltage (V)'],['current','Current (A)'],['temperature','Temperature (K)']].forEach(([key,name],i)=>{
+      if(i===0)$('synthetic-chart').innerHTML='<h2>'+c.name+'</h2><p>Simulated reference SOC '+pct(c.truth[state.k])+' · reference SOH '+pct(c.truth_soh)+'</p><div id="sy-voltage"></div><div id="sy-current"></div><div id="sy-temperature"></div>';
+      chart('sy-'+key,c.time,[{name,values:c[key],color:colors[i+1]}],state.k,{label:name});
+    });
+    return;
+  }
+  const c=nasaCycle();
+  if(!c){$('nasa-chart').textContent='No local recording for this cycle. Obtain the NASA data with pipeline.py and rebuild the workbench.';return;}
+  $('nasa-chart').innerHTML='<h2>'+state.cell+' · discharge '+(state.cycle+1)+'</h2><p>Measured capacity '+fmt(c.capacity_ah,3)+' Ah · derived SOH '+pct(c.capacity_ah/2)+'</p><div id="nv"></div><div id="ni"></div><div id="nt"></div><p class="note">Replay uses 40 display samples per cycle. Current polarity follows NASA’s recorded channel.</p>';
+  const t=c.trace.map(r=>r[0]);
+  [['nv','Measured voltage (V)'],['ni','Recorded current (A)'],['nt','Measured temperature (°C)']].forEach(([id,name],i)=>
+    chart(id,t,[{name,values:c.trace.map(r=>r[i+1]),color:colors[i+1]}],state.nk,{label:name}));
+}
+const circuitModels=['rint','thevenin','dual'], circuitNames=['Rint','Thevenin','Dual Polarisation'];
+const lab=[1,1,1,1];
+function renderPhysics(){
+  const model=circuitModels[lab[0]], amps=[0.8,1.6,2.4][lab[1]], r=[0.7,1,1.5][lab[2]];
+  const capacityControl=$('physics-controls').querySelector('[aria-label="Capacitance scale"]');
+  capacityControl.disabled=model==='rint';
+  const c=model==='rint'?1:[0.5,1,2][lab[3]];
+  const run=data.physics[[model,amps,r,c].join(':')], time=run.ohmic.map((_,i)=>i);
+  chart('physics-chart',time,[{name:'Ohmic I·R₀ (V)',values:run.ohmic},
+    ...run.polarisation.map((values,i)=>({name:'Polarisation '+(i+1)+' (V)',values}))],
+    time.length-1,{label:'Circuit voltage drops'});
+  chart('terminal-chart',time,[{name:'Terminal voltage (V)',values:run.terminal}],time.length-1,
+    {label:'Terminal voltage under a pulse'});
+  let svg='<svg class="illustration" viewBox="0 0 360 130" role="img" aria-label="'+circuitNames[lab[0]]+' circuit"><path d="M30 68H54M78 68H100M100 68h9l7 -9 10 18 10 -18 10 18 9 -9h18" fill="none" stroke="#187955" stroke-width="2"/><path d="M54 55v26M65 50v36M65 68h13" stroke="#182e30" stroke-width="2"/><text x="35" y="107">OCV</text><text x="118" y="43">R₀</text>';
+  let x=173;
+  run.tau.forEach((_,i)=>{
+    svg+='<g transform="translate('+x+' 0)" stroke="#187955" fill="none" stroke-width="2"><path d="M0 46V90M66 46V90M0 46h11l7 -7 8 14 8 -14 8 14 7 -7h17M0 90h30m6 0h30M30 81v18M36 81v18"/></g><text x="'+(x+18)+'" y="24">R'+(i+1)+'</text><text x="'+(x+20)+'" y="119">C'+(i+1)+'</text>';
+    x+=66;
+  });
+  $('circuit').innerHTML=svg+'<path d="M'+x+' 68H344" stroke="#187955" stroke-width="2"/><circle cx="344" cy="68" r="4" fill="#187955"/></svg>';
+  $('physics-readouts').innerHTML=labelValue('Ohmic step',fmt(run.ohmic[10]*1000,1)+' mV')+
+    run.tau.map((tau,i)=>labelValue('τ'+(i+1)+' = R × C',fmt(tau,1)+' s')).join('');
+}
+const mlNames=['Ridge','Random Forest','HistGradientBoosting'];
+const lessons=[
+  'Ridge sums feature contributions and shrinks coefficients toward zero. Residuals are observations minus predictions.',
+  'Each tree walks a decision path to a leaf. The forest averages the leaves’ predictions.',
+  'Binned features route observations through a sequence of trees. Each tree estimates a correction to the previous prediction under squared loss.',
+];
+let mlIndex=0, surfaceAngle=35;
+function workedExample(){
+  const raw=Number($('lesson-input').value);
+  let text;
+  if(mlIndex===0){
+    const x=raw/10-2, prediction=.82+.04*x;
+    text='Scaled voltage feature '+fmt(x,1)+' × coefficient 0.04 + intercept 0.82 = '+fmt(prediction,3)+
+         '. With observed SOH 0.70, the residual is '+fmt(.70-prediction,3)+'.';
+  }else if(mlIndex===1){
+    const v=(-18+raw*.3)/100, a=v<=-.12?.73:.86, b=v<=-.09?.78:.85;
+    text='Voltage change '+fmt(v,3)+' V. Tree 1 splits at −0.12 V and returns '+fmt(a)+
+         '. Tree 2 splits at −0.09 V and returns '+fmt(b)+'. Mean = '+fmt((a+b)/2,3)+'.';
+  }else{
+    const stages=Math.min(3,Math.floor(raw/10)), corrections=[-.06,.02,-.01];
+    const prediction=.80+.1*corrections.slice(0,stages).reduce((sum,x)=>sum+x,0);
+    text='Stage '+stages+' of 3. Start at 0.80 and add 0.1 × each residual correction (−0.06, +0.02, −0.01). SOH = '+fmt(prediction,3)+'.';
+  }
+  $('worked-result').textContent=text;
+}
+function renderMl(){
+  const name=mlNames[mlIndex], surface=data.surfaces, z=surface.models[name];
+  const angle=surfaceAngle*Math.PI/180;
+  const project=(i,j,k)=>{
+    const x=(i/9-.5)*205,y=(j/9-.5)*125;
+    return [300+x*Math.cos(angle)-y*Math.sin(angle),164+(x*Math.sin(angle)+y*Math.cos(angle))*.43-(k-.75)*230];
+  };
+  const line=points=>'<polyline points="'+points.map(p=>project(...p).join(',')).join(' ')+'" fill="none" stroke="#187955" stroke-width="1.4"/>';
+  let svg='<svg class="plot" viewBox="0 0 600 252" role="img" aria-label="'+name+' conditional SOH surface">';
+  for(let i=0;i<10;i++){
+    svg+=line(z[i].map((v,j)=>[j,i,v]))+line(z.map((r,j)=>[i,j,r[i]]));
+  }
+  $('surface').innerHTML=svg+'<text x="12" y="224">X · '+surface.features[0]+' ('+fmt(surface.x[0])+' to '+fmt(surface.x.at(-1))+')</text><text x="12" y="244">Y · '+surface.features[1]+' ('+fmt(surface.y[0],1)+' to '+fmt(surface.y.at(-1),1)+')</text><text x="12" y="20">Height · predicted SOH</text></svg>';
+  $('ml-explanation').textContent=lessons[mlIndex];
+  if(!$('lesson-input')){
+    $('ml-example').innerHTML='<label id="lesson-label" for="lesson-input"></label> <input id="lesson-input" type="range" min="0" max="30" value="10"><p class="equation" id="worked-result"></p>';
+    $('lesson-input').oninput=workedExample;
+  }
+  $('lesson-label').textContent=['Scaled voltage input','Voltage input','Boosting stage'][mlIndex];
+  workedExample();
+  $('ml-metrics').innerHTML='<table><thead><tr><th>Model</th><th>Validation (pp)</th><th>Thevenin test (pp)</th><th>Diffusion test (pp)</th></tr></thead><tbody>'+
+    mlNames.map(n=>'<tr><th>'+n+(n===data.selected_model?' · selected':'')+'</th><td>'+fmt(100*data.validation[n])+'</td><td>'+fmt(100*data.test.thevenin[n])+'</td><td>'+fmt(100*data.test.diffusion[n])+'</td></tr>').join('')+'</tbody></table>';
+  const confound=data.identifiability;
+  $('identifiability').textContent='In a paired simulation, '+confound.delta_soh_pp+' pp of capacity SOH difference produced only '+fmt(confound.first_30_s_rms_mv,1)+' mV RMS voltage separation in the first 30 s, versus '+confound.nominal_voltage_noise_mv+' mV nominal sensor noise. Changes in resistance and initial SOC can mask capacity.';
+}
+const layers=[
+  ['Anode','#65564c','During discharge the graphite anode releases lithium ions into the electrolyte and electrons into the external circuit.'],
+  ['Separator','#bd9b41','A porous insulating membrane keeps the electrodes from touching while allowing ions to move through its electrolyte-filled pores.'],
+  ['Cathode','#307964','The cathode accepts lithium ions and electrons on discharge. Its composition depends on the cell chemistry.'],
+  ['Electrolyte','#347a96','A lithium salt in solvent carries ions between electrodes. It wets the electrode pores and the separator.'],
+  ['Current collectors','#a75436','Conductive foils connect the electrodes to terminals. Copper is typical at the anode and aluminium at the cathode.'],
+];
+function renderCutaway(){
+  let svg='<svg class="illustration" viewBox="0 0 520 280" role="img" aria-label="Exploded cylindrical battery layers">';
+  layers.forEach(([name,color],i)=>{
+    const x=122+i*(31+state.spread*16), y=117+i*7, ry=73-i*6, rx=42-i*3;
+    svg+='<path d="M'+x+' '+(y-ry)+'h39a'+rx+' '+ry+' 0 0 1 0 '+(2*ry)+'h-39z" fill="'+color+'" opacity=".55"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+color+'" stroke="'+(state.layer===i?'#182e30':'#fff')+'" stroke-width="'+(state.layer===i?4:1.5)+'"><title>'+name+'</title></ellipse>';
+  });
+  $('cutaway-drawing').innerHTML=svg+'</svg>';
+  $('layer-title').textContent=layers[state.layer][0];$('layer-detail').textContent=layers[state.layer][2];
+  $('cutaway').querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===state.layer)));
+}
+function setupCutaway(){
+  if($('cutaway-drawing'))return;
+  $('cutaway').innerHTML='<div id="cutaway-drawing"></div><div class="controls" id="layer-buttons"></div><label>Layer spacing <input id="spread" type="range" min="0" max="2" step=".1" value="1"></label>';
+  layers.forEach(([name],i)=>{
+    const button=document.createElement('button');button.textContent=name;
+    button.onclick=()=>{state.layer=i;renderCutaway();};$('layer-buttons').append(button);
+  });
+  $('spread').oninput=event=>{state.spread=Number(event.target.value);renderCutaway();};
+}
+function updateScenarioControls(){
+  document.querySelectorAll('.scenario-controls').forEach(el=>{
+    const old=el.contains(document.activeElement)?[...el.querySelectorAll('select')].indexOf(document.activeElement):-1;
+    el.replaceChildren(
+      select('Scenario',data.scenarios.map(s=>s.name),state.scenario,index=>{stop();state.scenario=index;state.trial=0;state.k=0;updateScenarioControls();render();}),
+      select('Initial SOC',Object.keys(active().trials),state.trial,index=>{stop();state.trial=index;render();})
+    );
+    if(old>=0)el.querySelectorAll('select')[old].focus();
+  });
+}
+function updateNasaControls(){
+  const cells=Object.keys(data.nasa);
+  $('nasa-controls').replaceChildren();
+  if(!cells.length)return;
+  $('nasa-controls').append(
+    select('Cell',cells,cells.indexOf(state.cell),i=>{stop();state.cell=cells[i];state.cycle=0;state.nk=0;updateNasaControls();render();}),
+    select('Discharge cycle',data.nasa[state.cell].map((_,i)=>String(i+1)),state.cycle,i=>{stop();state.cycle=i;state.nk=0;render();})
+  );
+}
+function render(){
+  $('context').textContent=isNasa()?'NASA experimental recording':({physics:'Synthetic circuit examples',ml:'Synthetic capacity learning',fundamentals:'Illustrative cell'}[state.view]??'Synthetic experiment');
+  if(state.view==='hybrid')renderHybrid();
+  if(state.view==='ekf')renderEkf();
+  if(state.view==='data')renderDataset();
+  if(state.view==='physics')renderPhysics();
+  if(state.view==='ml')renderMl();
+  if(state.view==='fundamentals'){setupCutaway();renderCutaway();}
+  syncPlayback();
+}
+function navigate(view){
+  stop();state.view=view;
+  document.querySelectorAll('.view').forEach(section=>section.hidden=section.id!==view);
+  document.querySelectorAll('nav button').forEach(button=>{
+    if(button.dataset.view===view)button.setAttribute('aria-current','page');
+    else button.removeAttribute('aria-current');
+  });
+  render();
+}
+$('mode').textContent=(data.mode==='full'?'Research population':'Quick demonstration')+' · Precomputed offline';
+document.querySelectorAll('nav button').forEach(button=>button.onclick=()=>navigate(button.dataset.view));
+document.querySelectorAll('.playback-controls').forEach(el=>setupPlayback(el));
+setupPlayback($('nasa-playback'),true);
+updateScenarioControls();updateNasaControls();
+$('dataset-controls').append(select('Dataset',['Synthetic','NASA'],0,index=>{stop();state.dataset=index?'NASA':'Synthetic';render();}));
+[['Model',circuitNames],['Pulse current',['0.8 A','1.6 A','2.4 A']],['Resistance scale',['0.7×','1×','1.5×']],['Capacitance scale',['0.5×','1×','2×']]].forEach(([name,options],i)=>
+  $('physics-controls').append(select(name,options,lab[i],index=>{lab[i]=index;renderPhysics();})));
+$('ml-controls').append(select('Estimator',mlNames,0,index=>{mlIndex=index;renderMl();}));
+$('ml-controls').insertAdjacentHTML('beforeend','<label>Rotate surface <input id="angle" type="range" min="10" max="80" value="35"></label>');
+$('angle').oninput=event=>{surfaceAngle=Number(event.target.value);renderMl();};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+render();
+}
+startWorkbench().catch(error=>{
+  console.error(error);
+  document.getElementById('context').textContent='Unable to read experiment data. Use a current browser with gzip stream support.';
+});
+</script>
+</body>
+</html>
