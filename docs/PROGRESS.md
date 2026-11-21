@@ -25,3 +25,13 @@ Known blockers and limitations are CALCE provider HTTP 403, unavailable experime
 - No estimator equations, model outputs, training or dependencies were changed.
 - Quick and full export checks passed (21 paired trace sets and 63 circuit examples each); full export rebuilt successfully. The offline Chromium test passed all eight destinations, local report serving, theme, scenario/estimator controls, NASA replay and 390 px responsive layout. The original dashboard smoke passed, and `robust_validation.py --full` reproduced the published v2.0 results.
 - Full Python suite: 60 passed, 1 optional CALCE audit skipped, 0 failed. Browser startup median 0.307 s; playback chart-update median/p95 1.5/2.5 ms. Aggregate browser PSS delta was 284.7 MiB, above the preliminary 200 MiB target. See [v2.1 report](battery-engineering-studio-v2.1.md) for the platform, methods, artifact sizes and limitations.
+
+# v2.2 Interactive Simulation Lab checkpoint
+
+**Branch** `feature/interactive-battery-studio-v2.2`, based on v2.1 `0b35dc8`.
+
+- Recovered in-progress edits without resetting the branch. v2.2 adds `simulation_api.py` over the shared `battery_sim.simulate` engine and extends the standard-library launcher with a sequential `127.0.0.1`-bound simulation endpoint.
+- Battery Physics contains configurable Rint, Thevenin and Dual Polarisation simulations; five deterministic profiles; 1-second samples capped at 1,800 seconds; dynamic ECM temperature, RC outputs when applicable, energy summaries, synchronized visualization and charts, two-result session baseline comparison and JSON/CSV export.
+- Custom simulations are separated from the precomputed research results. The standalone research UI remains usable without the endpoint. Navigation clears inactive chart/cutaway SVG DOM without altering numerical data.
+- Verification complete: full Python suite 68 passed / 1 optional CALCE skip; API suite 7/7; quick/full workbench exports preserved 21 paired trace sets and 63 circuit examples; dashboard smoke passed. Managed Chromium exercised all eight views, all ECM choices, export/comparison/playback, static fallback, no external requests, and 390 px responsive layout.
+- Full-export browser page startup median 388 ms. Maximum 1,800-s dual-model simulation ran in 0.0116 s. Aggregate browser PSS delta measured 269.6 MiB, down from v2.1's 284.7 MiB but still above the preliminary 200 MiB target. See [v2.2 engineering report](battery-engineering-studio-v2.2.md) for platform, measurement limits, sizes, assumptions, and reproduction commands.

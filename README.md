@@ -20,6 +20,8 @@ A reproducible Python study of capacity-based state of health (SOH), cross-cell 
 
 The existing dashboard supports historical replay, model/window selection, measured versus predicted SOH and forecast history. It replays NASA records; it is not connected to live sensors.
 
+The [Battery Engineering Studio](docs/workbench-roadmap.md) retains the offline research views and adds a local Python-backed synthetic ECM Simulation Lab. Its [v2.2 report](docs/battery-engineering-studio-v2.2.md) documents models, units, assumptions, reproducibility and measured Cloud verification. Synthetic simulations remain distinct from NASA measurements and validated research outputs.
+
 ## At a glance
 
 - **Data:** 636 discharge cycles from NASA cells B0005, B0006, B0007 and B0018.
@@ -273,13 +275,17 @@ Original project code is licensed under the [MIT licence](LICENSE). The grant do
 
 ## Workbench development roadmap
 
+v2.2 adds an Interactive Simulation Lab inside Battery Physics. It runs the existing Python `battery_sim.py` engine for Rint, Thevenin and Dual Polarisation. Users can configure initial SOC, nominal capacity, R₀ and supported RC parameters; select five deterministic one-second current profiles; review voltage, SOC, current, dynamic ECM temperature and available RC polarisation; and compare two session-only configurations. JSON and CSV downloads include configuration, units, model assumptions and exact samples. Custom runs are separate from trained ML/EKF validation. The loopback-only service accepts one bounded request at a time (up to 1,800 seconds); the precomputed research workbench remains usable without it.
+
+Launch custom simulations with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Opening `reports/workbench.html` directly keeps the offline research views available and explains that custom simulations require the Python launcher. Use `--full` for the full validated research population; neither mode retrains models during UI interaction.
+
 v2.1 redesigns the offline workbench as the **Battery Engineering Studio**, with eight destinations: Overview, Battery Design, Battery Physics, Dataset Explorer, Machine Learning, SOC Estimation, Investigation Lab and Reports. Overview connects selected scenario measurements to existing Python exports. Reports expose v2.0 cohort results and local methodology documents. The interface remains plain HTML, CSS, JavaScript and SVG; it adds no frontend dependencies and does not alter estimator equations or validated results.
 
 Launch the offline studio with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Use `--full` for the full research population; the default build is the quick demonstration. The NASA dashboard remains separately available at `reports/dashboard.html` and through the studio's original dashboard link.
 
 v1.1 adds a separate synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for structural-mismatch evaluation. Generate the seeded pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. Simulated results stay separate from NASA experimental data.
 
-See the [Battery Engineering Studio v2.1 report](docs/battery-engineering-studio-v2.1.md), [synthetic modelling report](docs/synthetic-battery.md), and [workbench roadmap](docs/workbench-roadmap.md) for architecture, conventions, reproduction commands and validation boundaries.
+See the [Battery Engineering Studio v2.2 report](docs/battery-engineering-studio-v2.2.md), [v2.1 report](docs/battery-engineering-studio-v2.1.md), [synthetic modelling report](docs/synthetic-battery.md), and [workbench roadmap](docs/workbench-roadmap.md) for architecture, conventions, reproduction commands and validation boundaries.
 
 ### SOC workbench v1.2–v1.3
 

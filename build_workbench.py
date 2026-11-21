@@ -5,7 +5,7 @@ import base64
 import gzip
 from dataclasses import replace
 import hashlib
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -168,13 +168,27 @@ def build(full=False, refresh=False):
 
 
 
-def serve(output, port):
+def create_server(output, port=0):
+    """Create the single-request-at-a-time loopback server for tests and launch."""
+    from simulation_api import simulate_configuration
+
     files = {"/": output, "/" + output.name: output,
              "/dashboard.html": output.parent / "dashboard.html",
              "/docs/robust-hybrid-v2.md": ROOT / "docs" / "robust-hybrid-v2.md",
              "/docs/capacity-generalisation.md": ROOT / "docs" / "capacity-generalisation.md"}
 
     class Handler(BaseHTTPRequestHandler):
+        server_version = "BatteryEngineeringStudio/2.2"
+
+        def _json(self, status, payload):
+            content = json.dumps(payload, separators=(",", ":"), allow_nan=False).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(content)
+
         def do_GET(self):
             target = files.get(self.path)
             if target is None or not target.is_file():
@@ -188,10 +202,42 @@ def serve(output, port):
             self.end_headers()
             self.wfile.write(content)
 
+        def do_POST(self):
+            if self.path != "/api/simulate":
+                self.send_error(404, "Simulation route unavailable")
+                return
+            expected_host = f"127.0.0.1:{self.server.server_port}"
+            if self.headers.get("Host") != expected_host or self.headers.get("Origin") != "http://" + expected_host:
+                self._json(403, {"error": "Simulation requests must originate from this local studio."})
+                return
+            if self.headers.get_content_type() != "application/json":
+                self._json(415, {"error": "Send an application/json configuration."})
+                return
+            try:
+                length = int(self.headers.get("Content-Length", ""))
+            except ValueError:
+                self._json(411, {"error": "A valid Content-Length is required."})
+                return
+            if length < 1 or length > 16_384:
+                self._json(413, {"error": "Configuration body must be between 1 and 16384 bytes."})
+                return
+            try:
+                configuration = json.loads(self.rfile.read(length))
+                result = simulate_configuration(configuration)
+            except (ValueError, UnicodeDecodeError) as exc:
+                self._json(400, {"error": str(exc)})
+                return
+            self._json(200, result)
+
         def log_message(self, *args):
             pass
 
-    with ThreadingHTTPServer(("127.0.0.1", port), Handler) as server:
+    # HTTPServer processes one request at a time, bounding active simulation jobs to one.
+    return HTTPServer(("127.0.0.1", port), Handler)
+
+
+def serve(output, port):
+    with create_server(output, port) as server:
         url = f"http://127.0.0.1:{server.server_port}/"
         print(f"Offline workbench: {url} (Ctrl+C stops the server)", flush=True)
         webbrowser.open(url)

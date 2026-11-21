@@ -5,53 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Battery Engineering Studio</title>
 <style>
-:root{color-scheme:light;--ink:#142633;--muted:#5b6d7b;--paper:#f2f6f9;--card:#fff;--line:#d9e3eb;--green:#137fa3;--lime:#d9f3ff;--orange:#a94922}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
-.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
-aside{background:#142533;color:#d9e5ed;padding:29px 19px;position:sticky;top:0;height:100vh;overflow:auto}
-.brand{display:flex;gap:11px;align-items:center;font-size:16px;font-weight:720;line-height:1.22;margin-bottom:38px;color:white}
-.brand svg{flex:none;color:var(--lime)}nav{display:grid;gap:7px}nav button{text-align:left;background:none;border:0;color:inherit;width:100%;padding:10px 13px}nav button:hover{background:#274545}nav [aria-current=page]{background:var(--lime);color:#123244;font-weight:700}aside footer{margin:30px 13px 0;font-size:13px;color:#b6ccc1}aside a{color:inherit}
-main{min-width:0;width:100%;max-width:1420px;padding:36px clamp(20px,4vw,58px) 50px;margin:auto;align-self:start}
-header{border-bottom:1px solid var(--line);margin-bottom:23px;padding-bottom:17px;display:flex;justify-content:space-between;gap:15px;align-items:center}
-h1,h2,h3,p{margin:0}h1{font-size:clamp(28px,3.5vw,46px);line-height:1.1;letter-spacing:-.044em;margin:8px 0 12px}h2{font-size:20px;letter-spacing:-.02em;margin-bottom:8px}h3{font-size:16px;margin-bottom:6px}
-p+ p{margin-top:10px}.intro{color:var(--muted);max-width:75ch;margin-bottom:22px}.context{font-weight:680;font-size:13px;letter-spacing:.015em;color:var(--green)}
-.controls,.playback,.switch,.legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.controls{margin-bottom:13px}.controls label,.switch label{display:flex;align-items:center;gap:7px}.playback{margin:12px 0 18px}.playback input{flex:1;min-width:120px}.playback output{min-width:75px;text-align:right}
-button,select{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:7px 11px}button{cursor:pointer}button:hover,select:hover{border-color:var(--green)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}
-.primary{background:#143e37;color:#f7fff7;border-color:#143e37}.primary:hover{background:var(--green)}input{accent-color:var(--green)}
-.card{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:17px 20px;margin-bottom:14px;min-width:0}.columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px}.pair{grid-template-columns:repeat(2,minmax(0,1fr))}
-.plot{width:100%;display:block;min-height:125px}.plot text{font:12px system-ui;fill:var(--muted)}.legend{font-size:13px;margin-top:7px}.legend span{white-space:nowrap}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:6px}
-.note,small{color:var(--muted)}output,.number,td{font-variant-numeric:tabular-nums}.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:12px}.readouts div{padding:10px 12px;background:#f9fbf7}.readouts dt{font-size:13px;color:var(--muted)}.readouts dd{margin:0;font-weight:700;font-size:17px}
-.flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:4px 0 10px}.flow span{padding:5px 9px;background:#eaf3ea;border-radius:5px;font-size:13px;font-weight:650}
-table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;border-bottom:1px solid var(--line)}thead th{color:var(--muted);font-size:13px}.table-wrap{overflow:auto}.bad{color:var(--orange)}.good{color:var(--green)}[hidden]{display:none!important}
-#cutaway button[aria-pressed=true]{background:#e0f3be}.illustration{width:100%;max-height:330px;display:block}.equation{font:15px ui-monospace,monospace;background:#ecf1e9;padding:8px;border-radius:6px;overflow-wrap:anywhere}
+:root{
+ color-scheme:light;
+ --canvas:#f5f5f2;--surface:#fff;--surface-soft:#f8f9f8;--text:#252c36;--muted:#737b86;--line:#e1e4e8;
+ --accent:#4867ad;--accent-soft:#eff2f9;--success:#47775c;--success-soft:#eff5f0;--warning:#9c7642;--warning-soft:#f7f2e9;--danger:#a25552;
+ --plot-grid:#e5e8ec;--plot-band:#dce4f2;--readout:#f8f9f8;--sidebar:#fff;--sidebar-text:#38414c;
+ --steel:#71818e;--steel-light:#e1e7eb;--anode:#a85d47;--separator:#d2bc7b;--cathode:#3788a1;
+ --chart-1:#4867ad;--chart-2:#47775c;--chart-3:#a25552;--chart-4:#80679f;--chart-5:#9c7642;--chart-6:#418495;
+ --ink:var(--text);--paper:var(--canvas);--card:var(--surface);--green:var(--accent);--lime:var(--accent-soft);--orange:var(--danger)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.shell{display:grid;grid-template-columns:218px minmax(0,1fr);min-height:100vh}
+aside{background:var(--sidebar);color:var(--sidebar-text);padding:24px 15px;position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line)}
+.brand{display:flex;gap:10px;align-items:center;font-size:15px;font-weight:680;line-height:1.25;margin:0 8px 28px;color:var(--text)}
+.brand svg{flex:none;color:var(--accent)}nav{display:grid;gap:3px}
+nav button{text-align:left;background:transparent;border:0;color:inherit;width:100%;padding:9px 11px;border-radius:7px}
+nav button:hover{background:var(--surface-soft)}nav [aria-current=page]{background:var(--accent-soft);color:var(--accent);font-weight:650}
+aside footer{margin:25px 11px 0;font-size:12px;color:var(--muted)}aside a{color:inherit}
+main{min-width:0;width:100%;max-width:1500px;padding:30px clamp(20px,3vw,48px) 48px;margin:auto;align-self:start}
+header{border-bottom:1px solid var(--line);margin-bottom:21px;padding-bottom:15px;display:flex;justify-content:space-between;gap:15px;align-items:center}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(27px,3vw,40px);line-height:1.12;letter-spacing:-.035em;margin:8px 0 12px}h2{font-size:19px;letter-spacing:-.018em;margin-bottom:8px}h3{font-size:15px;margin-bottom:6px}
+p+p{margin-top:10px}.intro{color:var(--muted);max-width:75ch;margin-bottom:20px}.context{font-weight:650;font-size:12px;letter-spacing:.02em;color:var(--accent)}
+.controls,.playback,.switch,.legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.controls{margin-bottom:13px}.controls label,.switch label{display:flex;align-items:center;gap:7px}.playback{margin:12px 0 18px}.playback input{flex:1;min-width:120px}.playback output{min-width:75px;text-align:right}
+button,select,input{font:inherit;color:var(--text)}button,select,input:not([type=range]){border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:7px 10px}button{cursor:pointer;transition:background-color .14s,border-color .14s,color .14s}button:hover,select:hover{border-color:var(--accent)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{cursor:not-allowed;opacity:.55}.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.primary:hover{background:var(--text);border-color:var(--text)}input{accent-color:var(--accent)}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:17px 19px;margin-bottom:13px;min-width:0}.columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:13px}.pair{grid-template-columns:repeat(2,minmax(0,1fr))}
+.plot{width:100%;display:block;min-height:125px}.plot text{font:12px system-ui;fill:var(--muted)}.legend{font-size:12px;margin-top:7px}.legend span{white-space:nowrap}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:6px}
+.note,small{color:var(--muted)}output,.number,td,.sim-number{font-variant-numeric:tabular-nums lining-nums}.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:12px}.readouts div{padding:9px 11px;background:var(--readout)}.readouts dt{font-size:12px;color:var(--muted)}.readouts dd{margin:0;font-weight:660;font-size:16px}
+.flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:4px 0 10px}.flow span{padding:5px 9px;background:var(--success-soft);border-radius:5px;font-size:13px;font-weight:620}
+table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;border-bottom:1px solid var(--line)}thead th{color:var(--muted);font-size:12px}.table-wrap{overflow:auto}.bad{color:var(--danger)}.good{color:var(--success)}[hidden]{display:none!important}
+#cutaway button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent)}.illustration{width:100%;max-height:330px;display:block}.equation{font:14px ui-monospace,monospace;background:var(--surface-soft);padding:8px;border-radius:6px;overflow-wrap:anywhere}
+.header-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}#active-context{font-size:12px;color:var(--muted)}
+.quick-links .card{color:var(--text);text-align:left;text-decoration:none;display:grid;gap:7px}.quick-links span{font-size:12px;color:var(--muted)}
+.overview-cell{display:grid;grid-template-columns:minmax(0,1fr) 105px;align-items:center;gap:8px}.overview-illustration{width:100%;max-height:245px}.overview-state{display:grid;gap:9px}.overview-state div{display:grid;padding:8px;background:var(--accent-soft);border-radius:7px}.overview-state span{font-size:12px;color:var(--muted)}.overview-state strong{font-size:20px;font-variant-numeric:tabular-nums}
+.studio-flow button{color:var(--accent);background:var(--accent-soft);border-color:var(--line)}.model-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.model-tabs p{flex-basis:100%;color:var(--muted);padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.overview-ion{stroke:var(--accent);stroke-width:4;animation:ion 1.6s linear infinite}@keyframes ion{to{stroke-dashoffset:-24}}
+html[data-theme=dark]{color-scheme:dark;--canvas:#171a1e;--surface:#20252b;--surface-soft:#252b32;--text:#e5e8ec;--muted:#a3abb5;--line:#353c45;--accent:#8ba3df;--accent-soft:#293347;--success:#8bb69a;--success-soft:#26332b;--warning:#c5a16d;--warning-soft:#332d23;--danger:#d08b87;--plot-grid:#343b44;--plot-band:#343f56;--readout:#252b32;--sidebar:#1d2228;--sidebar-text:#dce1e7;--steel:#91a1ad;--steel-light:#313940;--anode:#c07b66;--separator:#d3bb79;--cathode:#68a9bc;--chart-1:#8ba3df;--chart-2:#8bb69a;--chart-3:#d08b87;--chart-4:#bd9bd9;--chart-5:#c5a16d;--chart-6:#76bdcb}
+html[data-theme=dark] .overview-state div,html[data-theme=dark] .model-tabs p{background:var(--surface-soft)}
+#robust-status{border-left:3px solid var(--muted);padding:6px 10px;background:var(--surface-soft)}#robust-status[data-decision=accepted]{border-color:var(--success);background:var(--success-soft)}#robust-status[data-decision=rejected]{border-color:var(--danger);background:var(--warning-soft)}
+#robust-cohorts details{padding:7px 0;border-bottom:1px solid var(--line)}#robust-cohorts summary{cursor:pointer;font-weight:600}
+.ion-flow{stroke:var(--accent);stroke-width:3;stroke-dasharray:7 5}.learning-controls label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.learning-controls input{max-width:100%}.trained-detail li{margin:4px 0}.trained-detail table{font-size:13px}.formula-stack{display:grid;gap:6px;margin-top:10px}.formula-stack p{margin:0}
+.sim-layout{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:14px;align-items:start}.sim-form{display:grid;gap:11px}.sim-field{display:grid;gap:4px}.sim-field label,.sim-field .sim-label{font-size:12px;font-weight:620;color:var(--muted)}.sim-field input,.sim-field select{width:100%;min-width:0}.sim-form fieldset{border:0;border-top:1px solid var(--line);padding:11px 0 0;margin:0}.sim-form legend{font-size:12px;font-weight:650;padding:0 5px 0 0}.sim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sim-actions{display:flex;flex-wrap:wrap;gap:7px}.sim-inspector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:10px}.sim-inspector div{background:var(--readout);padding:8px 10px}.sim-inspector span{display:block;font-size:11px;color:var(--muted)}.sim-inspector strong{display:block;font-size:14px;font-variant-numeric:tabular-nums}.sim-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sim-chart-grid h3{font-size:13px;color:var(--muted)}.sim-viz{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}.sim-viz svg{width:100%;height:auto}.sim-ion{stroke-dasharray:3 6}.sim-battery-art[data-motion=up] .sim-ion{animation:ion 1s linear infinite}.sim-battery-art[data-motion=down] .sim-ion{animation:ion-reverse 1s linear infinite}@keyframes ion-reverse{to{stroke-dashoffset:24}}.sim-playback{display:flex;gap:7px;align-items:center;margin:10px 0}.sim-playback input{flex:1;min-width:100px}.sim-playback output{min-width:70px;text-align:right}.sim-status{min-height:1.5em;font-size:12px;color:var(--muted)}.sim-status[data-state=error]{color:var(--danger)}.sim-status[data-state=success]{color:var(--success)}.sim-comparison{margin-top:12px}.sim-comparison[hidden]{display:none!important}.sim-tabs{display:flex;gap:6px;flex-wrap:wrap}.sim-model-params[hidden]{display:none!important}.sim-loading{opacity:.65;pointer-events:none}.sim-empty{padding:34px 10px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+@media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:22px 12px}.columns{grid-template-columns:1fr}.sim-layout{grid-template-columns:1fr}}
+@media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:12px 14px}.brand{margin:0 8px 8px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:17px 13px 32px}header{margin-bottom:16px;align-items:flex-start}.header-tools{gap:6px}.header-tools #mode{display:none}.pair,.sim-chart-grid,.sim-grid{grid-template-columns:1fr}.overview-cell{grid-template-columns:minmax(0,1fr) 78px}.sim-viz{grid-template-columns:95px minmax(0,1fr)}}
 
-.header-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
-#active-context{font-size:13px;color:var(--muted)}
-.quick-links .card{color:var(--ink);text-align:left;text-decoration:none;display:grid;gap:7px}
-.quick-links span{font-size:13px;color:var(--muted)}
-.overview-cell{display:grid;grid-template-columns:minmax(0,1fr) 105px;align-items:center;gap:8px}
-.overview-illustration{width:100%;max-height:245px}
-.overview-state{display:grid;gap:9px}.overview-state div{display:grid;padding:8px;background:#edf6fa;border-radius:8px}
-.overview-state span{font-size:12px;color:var(--muted)}.overview-state strong{font-size:21px}
-.studio-flow button{color:#135d77;background:#eef7fa;border-color:#d5e9ef}
-.model-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
-.model-tabs p{flex-basis:100%;color:var(--muted);padding:10px;background:#fff;border:1px solid var(--line);border-radius:8px}
-.overview-ion{stroke:#137fa3;stroke-width:4;animation:ion 1.6s linear infinite}
-@keyframes ion{to{stroke-dashoffset:-24}}
-html[data-theme=dark]{color-scheme:dark;--ink:#e3edf3;--muted:#a4b4c0;--paper:#101a21;--card:#182630;--line:#31434f;--green:#56b8dc;--lime:#254553}
-html[data-theme=dark] aside{background:#0b151b}
-html[data-theme=dark] .overview-state div,html[data-theme=dark] .model-tabs p{background:#21333e}
-html[data-theme=dark] .studio-flow button{background:#203744;color:#cbeefa}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
-@media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:23px 13px}.columns{grid-template-columns:1fr}}
-@media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:14px 16px}.brand{margin:0 0 10px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:19px 14px}header{margin-bottom:16px}}
-#robust-status{border-left:3px solid #587079;padding:6px 10px;background:#f3f6f3}
-#robust-status[data-decision=accepted]{border-color:#187955;background:#edf7ec}
-#robust-status[data-decision=rejected]{border-color:#ac5537;background:#fbf0ea}
-#robust-cohorts details{padding:7px 0;border-bottom:1px solid #e3e9e2}
-#robust-cohorts summary{cursor:pointer;font-weight:600}
-.ion-flow{stroke:#286b7d;stroke-width:3;stroke-dasharray:7 5}.learning-controls label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.learning-controls input{max-width:100%}.trained-detail li{margin:4px 0}.trained-detail table{font-size:13px}.formula-stack{display:grid;gap:6px;margin-top:10px}.formula-stack p{margin:0}
 </style>
 </head>
 <body>
@@ -79,8 +77,8 @@ html[data-theme=dark] .studio-flow button{background:#203744;color:#cbeefa}
 <h2>Battery at a glance</h2>
 <div class="overview-cell">
 <svg class="overview-illustration" viewBox="0 0 520 260" role="img" aria-label="Illustrative cylindrical cell and electrode layers">
-<ellipse cx="220" cy="52" rx="92" ry="24" fill="#728b99"/><path d="M128 52v143c0 18 41 34 92 34s92-16 92-34V52" fill="#e1eaf0" stroke="#899eaa" stroke-width="3"/><ellipse cx="220" cy="195" rx="92" ry="34" fill="#d9e5eb" stroke="#899eaa" stroke-width="3"/><path d="M200 28V16h40v12" fill="#718895"/><ellipse cx="220" cy="52" rx="70" ry="18" fill="#a85d47"/><ellipse cx="220" cy="52" rx="52" ry="13" fill="#d9bd73"/><ellipse cx="220" cy="52" rx="32" ry="9" fill="#3788a1"/><path class="overview-ion" d="M204 52h34" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0l6 3-6 3" fill="#137fa3"/></marker></defs>
-<text x="336" y="59">Cathode</text><path d="M273 52h54" stroke="#79909c"/><text x="331" y="97">Separator</text><path d="M264 57l61 34" stroke="#79909c"/><text x="310" y="135">Anode</text><path d="M244 59l62 66" stroke="#79909c"/>
+<ellipse cx="220" cy="52" rx="92" ry="24" fill="var(--steel)"/><path d="M128 52v143c0 18 41 34 92 34s92-16 92-34V52" fill="var(--steel-light)" stroke="var(--steel)" stroke-width="3"/><ellipse cx="220" cy="195" rx="92" ry="34" fill="var(--steel-light)" stroke="var(--steel)" stroke-width="3"/><path d="M200 28V16h40v12" fill="var(--steel)"/><ellipse cx="220" cy="52" rx="70" ry="18" fill="var(--anode)"/><ellipse cx="220" cy="52" rx="52" ry="13" fill="var(--separator)"/><ellipse cx="220" cy="52" rx="32" ry="9" fill="var(--cathode)"/><path class="overview-ion" d="M204 52h34" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0l6 3-6 3" fill="var(--accent)"/></marker></defs>
+<text x="336" y="59">Cathode</text><path d="M273 52h54" stroke="var(--muted)"/><text x="331" y="97">Separator</text><path d="M264 57l61 34" stroke="var(--muted)"/><text x="310" y="135">Anode</text><path d="M244 59l62 66" stroke="var(--muted)"/>
 </svg>
 <div class="overview-state"><div><span>SOC</span><strong id="overview-soc">—</strong></div><div><span>SOH</span><strong id="overview-soh">—</strong></div></div>
 </div><p class="note">Conceptual cell illustration. It does not depict a NASA specimen or electrochemical concentration fields.</p>
@@ -127,10 +125,49 @@ html[data-theme=dark] .studio-flow button{background:#203744;color:#cbeefa}
 <div class="card"><h2>State correction and uncertainty</h2><div id="ekf-soc"></div><p class="note">The shaded band is ±2 filter standard deviations around corrected SOC.</p><p class="equation">x⁺ = x⁻ + K (Vₘ − V̂)&nbsp; · &nbsp;σ(SOC) = √P₀₀</p></div>
 </section>
 <section id="physics" class="view" hidden>
-<h1>Battery physics laboratory</h1><div class="model-tabs" id="physics-model-explanation"></div><p class="intro">Change a pulsed load and circuit parameters. Watch the instantaneous drop at load onset and the slower relaxation after the pulse ends.</p>
+<h1>Battery Physics</h1>
+<p class="intro">Configure a supported equivalent-circuit battery, run it through the shared Python model and compare one modified configuration with a baseline.</p>
+<div class="sim-layout">
+<section class="card"><h2>Simulation configuration</h2><p class="note">1 second samples · positive current discharges · capacity and resistance use SI-derived engineering units.</p>
+<form class="sim-form" id="sim-form">
+<div class="sim-field"><label for="sim-model">Battery model</label><select id="sim-model"><option value="rint">Rint</option><option value="thevenin" selected>Thevenin</option><option value="dual">Dual Polarisation</option></select></div>
+<div class="sim-field"><label for="sim-profile">Current profile</label><select id="sim-profile"><option value="constant_discharge">Constant discharge</option><option value="current_pulse">Current pulse</option><option value="pulse_relaxation" selected>Pulse and relaxation</option><option value="charging">Charging</option><option value="drive_style">Synthetic drive-style</option></select></div>
+<div class="sim-grid">
+<div class="sim-field"><label for="sim-duration">Duration (s)</label><input id="sim-duration" type="number" min="30" max="1800" step="10" value="600" required></div>
+<div class="sim-field"><label for="sim-current">Current magnitude (A)</label><input id="sim-current" type="number" min="0.05" max="3" step="0.05" value="1.4" required></div>
+<div class="sim-field"><label for="sim-soc">Initial SOC (%)</label><input id="sim-soc" type="number" min="5" max="95" step="1" value="80" required></div>
+<div class="sim-field"><label for="sim-capacity">Nominal capacity (Ah)</label><input id="sim-capacity" type="number" min="0.5" max="10" step="0.1" value="2" required></div>
+<div class="sim-field"><label for="sim-ambient">Ambient temperature (°C)</label><input id="sim-ambient" type="number" min="-10" max="50" step="1" value="25" required></div>
+<div class="sim-field"><label for="sim-r0">R₀ (mΩ)</label><input id="sim-r0" type="number" min="5" max="150" step="1" value="35" required></div>
+</div>
+<fieldset id="sim-rc-parameters"><legend>Polarisation parameters</legend><div class="sim-grid">
+<div class="sim-field sim-model-params" id="sim-r1-field"><label for="sim-r1">R₁ (mΩ)</label><input id="sim-r1" type="number" min="1" max="100" step="1" value="18"></div>
+<div class="sim-field sim-model-params" id="sim-c1-field"><label for="sim-c1">C₁ (F)</label><input id="sim-c1" type="number" min="25" max="20000" step="25" value="650"></div>
+<div class="sim-field sim-model-params" id="sim-r2-field"><label for="sim-r2">R₂ (mΩ)</label><input id="sim-r2" type="number" min="1" max="100" step="1" value="12"></div>
+<div class="sim-field sim-model-params" id="sim-c2-field"><label for="sim-c2">C₂ (F)</label><input id="sim-c2" type="number" min="100" max="100000" step="100" value="5000"></div>
+</div></fieldset>
+<div class="sim-actions"><button class="primary" id="sim-run" type="submit">Run simulation</button><button id="sim-save-baseline" type="button" disabled>Save baseline</button><button id="sim-compare-button" type="button" disabled>Compare</button><button id="sim-reset" type="button">Reset</button></div>
+<p id="sim-status" class="sim-status" role="status" aria-live="polite">Waiting for a local Python simulation service. The precomputed research views remain available when this page is opened without the service.</p>
+</form></section>
+<section class="card" id="sim-results" aria-live="polite"><h2>Simulation results</h2>
+<div id="sim-empty" class="sim-empty">Choose a configuration and run the Python model to inspect its response.</div>
+<div id="sim-result-content" hidden>
+<div class="sim-viz"><svg id="sim-battery-art" class="sim-battery-art" viewBox="0 0 110 170" role="img" aria-label="Conceptual battery fill synchronized with the simulation clock"><rect x="28" y="14" width="54" height="139" rx="11" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="3"/><path d="M44 10h22v6H44z" fill="var(--steel)"/><rect id="sim-cell-fill" x="34" y="147" width="42" height="0" rx="5" fill="var(--accent)"/><path d="M55 120v-18m0-12v-8" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" class="sim-ion"/><text x="55" y="166" text-anchor="middle" fill="var(--muted)" font-size="10">illustrative SOC</text></svg><div><h3 id="sim-viz-state">Ready</h3><p class="note" id="sim-viz-readout"></p><p class="note">Illustrative charge movement only; not a computed electrochemical concentration field.</p></div></div>
+<div class="sim-inspector" id="sim-inspector"></div>
+<p class="note" id="sim-assumptions"></p>
+<div class="sim-playback"><button type="button" id="sim-play">Play</button><button type="button" id="sim-pause">Pause</button><button type="button" id="sim-restart">Restart</button><input type="range" id="sim-seek" min="0" max="0" value="0" aria-label="Simulation time"><select id="sim-speed" aria-label="Playback speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select><output id="sim-clock">0 s</output></div>
+<div class="sim-chart-grid"><div><h3>Terminal voltage (V)</h3><div id="sim-voltage-chart"></div></div><div><h3>State of charge (%)</h3><div id="sim-soc-chart"></div></div></div>
+<details><summary>Current, temperature and polarisation</summary><div class="sim-chart-grid"><div><h3>Current (A)</h3><div id="sim-current-chart"></div></div><div><h3>Temperature (°C)</h3><div id="sim-temperature-chart"></div></div><div><h3>RC polarisation (V)</h3><div id="sim-polarisation-chart"></div></div></div></details>
+<div class="sim-actions"><button type="button" id="sim-export-json">Export JSON</button><button type="button" id="sim-export-csv">Export CSV</button></div>
+</div></section>
+</div>
+<section class="card sim-comparison" id="sim-comparison" hidden><h2>Configuration comparison</h2><p id="sim-comparison-note" class="note"></p><div class="sim-chart-grid"><div><h3>Terminal voltage (V)</h3><div id="sim-compare-voltage"></div></div><div><h3>State of charge (%)</h3><div id="sim-compare-soc"></div></div></div><dl class="readouts" id="sim-difference-metrics"></dl></section>
+<details class="card" id="circuit-explorer"><summary>Equivalent-circuit response explorer</summary>
+<div class="model-tabs" id="physics-model-explanation"></div><p class="intro">Explore the existing reproducible pulse response and its circuit assumptions.</p>
 <div class="controls" id="physics-controls"></div>
-<div class="columns"><div class="card"><h2>Voltage drops</h2><div id="physics-chart"></div><div id="terminal-chart"></div><p class="note">Discharge starts at 10 s. The cell rests again from 55 s. Each RC branch reaches about 63% of its steady drop in one time constant under a constant load.</p></div>
+<div class="columns"><div class="card"><h2>Voltage drops</h2><div id="physics-chart"></div><div id="terminal-chart"></div><p class="note">Each RC branch reaches about 63% of its steady drop in one time constant under a constant load.</p></div>
 <div class="card"><h2>Equivalent circuit</h2><div id="circuit"></div><p class="equation">V = OCV(SOC) − I·R₀ − Σvᵣ꜀</p><dl class="readouts" id="physics-readouts"></dl></div></div>
+</details>
 </section>
 <section id="ml" class="view" hidden>
 <h1>Machine learning explorer</h1><p class="intro">Compare how three algorithms turn early voltage, current and temperature into a capacity estimate.</p>
@@ -175,7 +212,9 @@ for(const scenario of data.scenarios){
   }
 }
 const $ = id => document.getElementById(id);
-const colors = ['#172e30','#348897','#a9502b','#187955','#7164a6','#805a13'];
+const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const colors = Array.from({length:6},(_,i)=>token('--chart-'+(i+1)));
+const refreshPalette = () => colors.splice(0,colors.length,...Array.from({length:6},(_,i)=>token('--chart-'+(i+1))));
 const state = {view:'overview', scenario:0, trial:0, k:0, ekfMode:0, timer:null, dataset:'Synthetic',
   cell:Object.keys(data.nasa)[0], cycle:0, nk:0, layer:0, spread:1, ionMode:0};
 const active = () => data.scenarios[state.scenario];
@@ -198,34 +237,36 @@ function select(label, values, current, update) {
 }
 function chart(id, time, series, k, opts={}) {
   const w=660,h=258,l=55,r=18,t=13,b=38;
-  const valid = series.flatMap(track => track.values);
-  if(opts.band) valid.push(...opts.band[0],...opts.band[1]);
-  const minimum = opts.min ?? Math.min(...valid), maximum = opts.max ?? Math.max(...valid);
+  const valueOf = (track,value) => value*(track.scale??1)+(track.offset??0);
+  let dataMin=Infinity,dataMax=-Infinity;
+  for(const track of series)for(const raw of track.values){const value=valueOf(track,raw);dataMin=Math.min(dataMin,value);dataMax=Math.max(dataMax,value);}
+  if(opts.band)for(const band of opts.band)for(const value of band){dataMin=Math.min(dataMin,value);dataMax=Math.max(dataMax,value);}
+  const minimum = opts.min ?? dataMin, maximum = opts.max ?? dataMax;
   const range = Math.max(maximum-minimum, 1e-5);
   const x = v => l+(w-l-r)*(v-time[0])/Math.max(time.at(-1)-time[0],1);
   const y = v => h-b-(h-b-t)*(v-minimum)/range;
   let markup = '<svg class="plot" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+opts.label+'">';
   for(let n=0;n<5;n++){
     const value=minimum+range*n/4, yy=y(value), tt=time[0]+(time.at(-1)-time[0])*n/4;
-    markup+='<path d="M'+l+' '+yy+'H'+(w-r)+'" stroke="#dce5df"/><text text-anchor="end" x="'+(l-7)+'" y="'+(yy+4)+'">'+fmt(value,opts.decimals??2)+'</text><text text-anchor="middle" x="'+x(tt)+'" y="'+(h-16)+'">'+Math.round(tt)+'</text>';
+    markup+='<path d="M'+l+' '+yy+'H'+(w-r)+'" stroke="'+token('--plot-grid')+'"/><text text-anchor="end" x="'+(l-7)+'" y="'+(yy+4)+'">'+fmt(value,opts.decimals??2)+'</text><text text-anchor="middle" x="'+x(tt)+'" y="'+(h-16)+'">'+Math.round(tt)+'</text>';
   }
   markup+='<text text-anchor="end" x="'+(w-r)+'" y="'+h+'">Time (s)</text>';
   for(const marker of opts.markers??(opts.update===undefined?[]:[{time:opts.update}])){
-    markup+='<path d="M'+x(marker.time)+' '+t+'V'+(h-b)+'" stroke="#6c8076" stroke-dasharray="4 5"/>';
+    markup+='<path d="M'+x(marker.time)+' '+t+'V'+(h-b)+'" stroke="'+token('--muted')+'" stroke-dasharray="4 5"/>';
     if(marker.label)markup+='<text x="'+(x(marker.time)+4)+'" y="11">'+marker.label+'</text>';
   }
   const stride=Math.max(1,Math.ceil(k/360));
   const indices=Array.from({length:Math.ceil(k/stride)},(_,i)=>i*stride);
   indices.push(k);
-  const points=(values,indexes)=>indexes.map(i=>fmt(x(time[i]),1)+','+fmt(y(values[i]),1)).join(' ');
+  const points=(values,indexes,scale=1,offset=0)=>indexes.map(i=>fmt(x(time[i]),1)+','+fmt(y(values[i]*scale+offset),1)).join(' ');
   if(opts.band){
     const [lower,upper]=opts.band;
-    markup+='<polygon points="'+points(upper,indices)+' '+points(lower,[...indices].reverse())+'" fill="#c8dcd2" opacity=".65"/>';
+    markup+='<polygon points="'+points(upper,indices)+' '+points(lower,[...indices].reverse())+'" fill="'+token('--plot-band')+'" opacity=".65"/>';
   }
   series.forEach((track,j)=>{
     const color=track.color??colors[j];
-    const vertices=points(track.values,indices);
-    markup+='<polyline points="'+vertices+'" fill="none" stroke="'+color+'" stroke-width="2" '+(track.dashed?'stroke-dasharray="5 4"':'')+'/><circle cx="'+x(time[k])+'" cy="'+y(track.values[k])+'" r="3" fill="'+color+'"/>';
+    const vertices=points(track.values,indices,track.scale??1,track.offset??0);
+    markup+='<polyline points="'+vertices+'" fill="none" stroke="'+color+'" stroke-width="2" '+(track.dashed?'stroke-dasharray="5 4"':'')+'/><circle cx="'+x(time[k])+'" cy="'+y(valueOf(track,track.values[k]))+'" r="3" fill="'+color+'"><title>'+safeText(track.name)+' · '+fmt(valueOf(track,track.values[k]),opts.decimals??2)+' at '+fmt(time[k],1)+' s</title></circle>';
   });
   $(id).innerHTML=markup+'</svg><div class="legend">'+series.map((s,i)=>'<span><i style="background:'+(s.color??colors[i])+'"></i>'+s.name+'</span>').join('')+'</div>';
 }
@@ -279,7 +320,7 @@ function renderHybrid(){
   estimates.forEach((name,i)=>{
     const values = name==='Safeguarded Hybrid B'&&run.robust?
       run.robust.soc??run.soc['Fixed EKF']:run.soc[name];
-    if(values)series.push({name,values:values.map(x=>100*x),color:colors[i+1]??'#b24563'});
+    if(values)series.push({name,values:values.map(x=>100*x),color:colors[i+1]??token('--warning')});
   });
   const bWindow=run.adaptive?.window_s??data.hybrid_b?.window_s;
   const markers=[{time:data.window_s,label:bWindow===data.window_s?'A/B':'A'}];
@@ -314,7 +355,7 @@ function renderAdaptive(c,run,k){
     {name:'Fixed EKF (V)',values:adaptive.fixed_voltage_v},
     {name:'Hybrid B (V)',values:adaptive.diagnostics.predicted_voltage_v},
     ...(run.robust?[{
-      name:'Safeguarded Hybrid B (V)',values:run.robust.predicted_voltage_v??adaptive.fixed_voltage_v,color:'#b24563'
+      name:'Safeguarded Hybrid B (V)',values:run.robust.predicted_voltage_v??adaptive.fixed_voltage_v,color:token('--danger')
     }]:[]),
   ],k,{label:'Measured and predicted terminal voltage',update:window});
   const before=c.time[k]<window;
@@ -444,8 +485,146 @@ function renderDataset(){
 }
 const circuitModels=['rint','thevenin','dual'], circuitNames=['Rint','Thevenin','Dual Polarisation'];
 const lab=[1,1,1,1];
+const simState={latest:null,baseline:null,index:0,timer:null};
+function updateSimulationControls(){
+  const model=$('sim-model').value;
+  $('sim-r1-field').hidden=model==='rint';$('sim-c1-field').hidden=model==='rint';
+  $('sim-r2-field').hidden=model!=='dual';$('sim-c2-field').hidden=model!=='dual';
+  ['sim-r1','sim-c1'].forEach(id=>$(id).disabled=model==='rint');
+  ['sim-r2','sim-c2'].forEach(id=>$(id).disabled=model!=='dual');
+}
+function simulationConfig(){
+  const model=$('sim-model').value;
+  const config={model,profile:$('sim-profile').value,duration_s:Number($('sim-duration').value),
+    current_a:Number($('sim-current').value),initial_soc:Number($('sim-soc').value)/100,
+    nominal_capacity_ah:Number($('sim-capacity').value),ambient_temperature_c:Number($('sim-ambient').value),
+    r0_ohm:Number($('sim-r0').value)/1000};
+  if(model!=='rint')Object.assign(config,{r1_ohm:Number($('sim-r1').value)/1000,c1_f:Number($('sim-c1').value)});
+  if(model==='dual')Object.assign(config,{r2_ohm:Number($('sim-r2').value)/1000,c2_f:Number($('sim-c2').value)});
+  return config;
+}
+function simulationStatus(message,state=''){$('sim-status').textContent=message;$('sim-status').dataset.state=state;}
+function renderSimulationClock(index){
+  const run=simState.latest;if(!run)return;
+  const c=run.channels,k=Math.max(0,Math.min(c.time_s.length-1,Math.floor(index)));
+  simState.index=k;$('sim-seek').max=c.time_s.length-1;$('sim-seek').value=k;
+  $('sim-clock').textContent=fmt(c.time_s[k],0)+' s';
+  const soc=Math.max(0,Math.min(1,c.soc[k]));
+  $('sim-cell-fill').setAttribute('y',String(147-128*soc));$('sim-cell-fill').setAttribute('height',String(128*soc));
+  const current=c.current_a[k];
+  $('sim-battery-art').dataset.motion=simState.timer===null?'paused':current>1e-9?'up':current< -1e-9?'down':'paused';
+  $('sim-viz-state').textContent=current>1e-9?'Discharging':current< -1e-9?'Charging':'Resting';
+  $('sim-viz-readout').textContent=pct(soc)+' SOC · '+fmt(current,2)+' A · '+fmt(c.terminal_voltage_v[k],3)+' V · '+fmt(c.temperature_k[k]-273.15,1)+' °C';
+}
+function renderSimulationCharts(){
+  const run=simState.latest;if(!run)return;
+  const c=run.channels,k=simState.index,t=c.time_s;
+  $('sim-result-content').hidden=false;$('sim-empty').hidden=true;
+  $('sim-inspector').innerHTML=[
+    ['Model',run.configuration.model==='dual'?'Dual Polarisation':run.configuration.model==='rint'?'Rint':'Thevenin'],
+    ['Current profile',run.configuration.profile==='drive_style'?'Synthetic drive-style':run.configuration.profile.replaceAll('_',' ')],
+    ['Terminal energy out',fmt(run.energy.terminal_energy_out_wh,4)+' Wh'],
+    ['Terminal energy in',fmt(run.energy.terminal_energy_in_wh,4)+' Wh'],
+    ['Ohmic heat',fmt(run.energy.ohmic_heat_wh,4)+' Wh'],
+    ['Time step',run.assumptions.time_step_s+' s'],
+  ].map(([label,value])=>'<div><span>'+label+'</span><strong>'+safeText(value)+'</strong></div>').join('');
+  $('sim-assumptions').textContent='Assumptions: fixed 100% SOH, no sensor noise, shared lumped OCV curve and temperature-aware ECM resistances. '+run.assumptions.model_scope+'. '+run.assumptions.energy_integration+'.';
+  chart('sim-voltage-chart',t,[{name:'Terminal voltage (V)',values:c.terminal_voltage_v}],k,{label:'User simulation terminal voltage'});
+  chart('sim-soc-chart',t,[{name:'SOC (%)',values:c.soc,scale:100}],k,{label:'User simulation state of charge',min:0,max:100,decimals:0});
+  const secondary=$('sim-results').querySelector('details');
+  if(secondary.open){
+    chart('sim-current-chart',t,[{name:'Current (A)',values:c.current_a}],k,{label:'User simulation current'});
+    chart('sim-temperature-chart',t,[{name:'Temperature (°C)',values:c.temperature_k,offset:-273.15}],k,{label:'User simulation temperature'});
+    const branches=[];
+    if(c.polarisation_1_v)branches.push({name:'RC branch 1 (V)',values:c.polarisation_1_v});
+    if(c.polarisation_2_v)branches.push({name:'RC branch 2 (V)',values:c.polarisation_2_v});
+    if(branches.length)chart('sim-polarisation-chart',t,branches,k,{label:'User simulation RC polarisation voltage'});
+    else $('sim-polarisation-chart').innerHTML='<p class="note">Rint has no RC polarisation state.</p>';
+  }
+  renderSimulationClock(k);renderSimulationComparison();
+}
+function renderSimulationComparison(){
+  const base=simState.baseline,current=simState.latest,box=$('sim-comparison');
+  if(!base||!current||base===current){box.hidden=true;return;}
+  if(base.channels.time_s.length!==current.channels.time_s.length){
+    box.hidden=false;$('sim-comparison-note').textContent='Use the same simulation duration in both runs to compare them on a shared 1 second time axis.';
+    $('sim-compare-voltage').replaceChildren();$('sim-compare-soc').replaceChildren();$('sim-difference-metrics').replaceChildren();return;
+  }
+  const t=current.channels.time_s,b=base.channels,n=current.channels;
+  $('sim-comparison-note').textContent='Baseline '+base.configuration.model+' · '+base.configuration.profile+' compared with modified '+current.configuration.model+' · '+current.configuration.profile+'. Both use the same 1 second time axis. Resistance changes affect ECM voltage and ohmic heat; SOC changes through capacity, initial SOC and current input.';
+  chart('sim-compare-voltage',t,[{name:'Baseline',values:b.terminal_voltage_v,color:colors[0]},{name:'Modified',values:n.terminal_voltage_v,color:colors[2]}],t.length-1,{label:'Baseline and modified terminal voltage'});
+  chart('sim-compare-soc',t,[{name:'Baseline (%)',values:b.soc,scale:100,color:colors[0]},{name:'Modified (%)',values:n.soc,scale:100,color:colors[2]}],t.length-1,{label:'Baseline and modified SOC',min:0,max:100});
+  const dv=n.terminal_voltage_v.map((v,i)=>v-b.terminal_voltage_v[i]);
+  const meanAbs= dv.reduce((sum,v)=>sum+Math.abs(v),0)/dv.length;
+  $('sim-difference-metrics').innerHTML=[
+    ['Mean absolute voltage difference',fmt(meanAbs*1000,2)+' mV'],
+    ['Final voltage difference',fmt(dv.at(-1)*1000,2)+' mV'],
+    ['Final SOC difference',fmt((n.soc.at(-1)-b.soc.at(-1))*100,3)+' percentage points'],
+    ['Terminal energy out difference',fmt(current.energy.terminal_energy_out_wh-base.energy.terminal_energy_out_wh,4)+' Wh'],
+    ['Ohmic heat difference',fmt(current.energy.ohmic_heat_wh-base.energy.ohmic_heat_wh,4)+' Wh'],
+  ].map(([label,value])=>labelValue(label,safeText(value))).join('');
+  box.hidden=false;
+}
+async function runConfiguredSimulation(event){
+  event.preventDefault();pauseSimulation();
+  if(!$('sim-form').reportValidity())return;
+  const button=$('sim-run');button.disabled=true;$('sim-form').classList.add('sim-loading');
+  simulationStatus('Running the shared Python battery simulation…');
+  try{
+    const response=await fetch('/api/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(simulationConfig())});
+    const payload=await response.json();
+    if(!response.ok)throw new Error(payload.error||'The local simulation request failed.');
+    simState.latest=payload;simState.index=0;renderSimulationCharts();
+    $('sim-save-baseline').disabled=false;$('sim-save-baseline').textContent=simState.baseline?'Replace baseline':'Save as baseline';
+    $('sim-compare-button').disabled=!simState.baseline||simState.baseline===simState.latest;
+    simulationStatus('Simulation complete · '+payload.channels.time_s.length+' exact 1 second samples · Python engine v'+payload.software_version,'success');
+  }catch(error){
+    const launch='Start the studio with python build_workbench.py to enable user-configured simulations.';
+    simulationStatus(error instanceof TypeError?launch:error.message,'error');
+  }finally{button.disabled=false;$('sim-form').classList.remove('sim-loading');}
+}
+function pauseSimulation(){if(simState.timer!==null)clearInterval(simState.timer);simState.timer=null;$('sim-battery-art').dataset.motion='paused';}
+function playSimulation(){
+  const run=simState.latest;if(!run)return;pauseSimulation();
+  if(simState.index>=run.channels.time_s.length-1)renderSimulationClock(0);
+  const speed=Number($('sim-speed').value);
+  simState.timer=setInterval(()=>{
+    const next=simState.index+speed;
+    if(next>=run.channels.time_s.length-1){renderSimulationClock(run.channels.time_s.length-1);pauseSimulation();}
+    else renderSimulationClock(next);
+  },120);
+  renderSimulationClock(simState.index);
+}
+function resetSimulation(){
+  pauseSimulation();simState.latest=null;simState.baseline=null;simState.index=0;$('sim-form').reset();updateSimulationControls();
+  $('sim-result-content').hidden=true;$('sim-empty').hidden=false;$('sim-comparison').hidden=true;
+  ['sim-voltage-chart','sim-soc-chart','sim-current-chart','sim-temperature-chart','sim-polarisation-chart','sim-compare-voltage','sim-compare-soc'].forEach(id=>$(id).replaceChildren());
+  $('sim-save-baseline').disabled=true;$('sim-save-baseline').textContent='Save as baseline';$('sim-compare-button').disabled=true;
+  simulationStatus('Configuration reset. Run the Python model to create a new simulation.');
+}
+function downloadSimulation(format){
+  if(!simState.latest)return;
+  const result=simState.latest,channels=result.channels;
+  let content,type,extension;
+  if(format==='json'){
+    content=JSON.stringify(result,null,2);type='application/json';extension='json';
+  }else{
+    const metadata=['software_version','schema_version','model','profile','duration_s','configuration_json','units_json','assumptions_json'];
+    const metadataValues=[result.software_version,result.schema_version,result.configuration.model,result.configuration.profile,
+      result.configuration.duration_s,JSON.stringify(result.configuration),JSON.stringify(result.units),JSON.stringify(result.assumptions)];
+    const channelUnits=result.units.channels,names=Object.keys(channels);
+    const quote=value=>'"'+String(value).replaceAll('"','""')+'"';
+    content=metadata.join(',')+','+names.map(name=>name+'['+channelUnits[name]+']').join(',')+'\r\n';
+    for(let i=0;i<channels.time_s.length;i++)content+=(i===0?metadataValues.map(quote):metadata.map(()=>'' )).join(',')+','+names.map(name=>channels[name][i]).join(',')+'\r\n';
+    type='text/csv';extension='csv';
+  }
+  const url=URL.createObjectURL(new Blob([content],{type}));const link=document.createElement('a');
+  link.href=url;link.download='battery-simulation-'+result.configuration.model+'.'+extension;link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function renderPhysics(){
   $('page-title').textContent='Battery Physics';
+  renderSimulationCharts();
   const explanations=[
     ['Rint','Open-circuit voltage with an instantaneous series-resistance drop. No polarization state.','V = OCV − I·R₀','Useful baseline. It cannot represent voltage relaxation.'],
     ['Thevenin','One resistor-capacitor branch represents a single polarization time scale.','τ₁ = R₁·C₁','A compact approximation to transient response.'],
@@ -455,6 +634,7 @@ function renderPhysics(){
   $('physics-model-explanation').innerHTML=explanations.map(([name,description,equation,limit],i)=>'<button data-model="'+i+'" aria-pressed="'+(i===lab[0])+'">'+name+'</button>').join('')+
     '<p id="physics-model-description">'+explanations[lab[0]][1]+' '+explanations[lab[0]][2]+' · '+explanations[lab[0]][3]+'</p>';
   $('physics-model-explanation').querySelectorAll('button').forEach(button=>button.onclick=()=>{lab[0]=Number(button.dataset.model);renderPhysics();});
+  if(!$('circuit-explorer').open)return;
   if(lab[0]===3){
     $('physics-controls').hidden=true;
     const caseData=data.scenarios.find(item=>item.plant==='diffusion');
@@ -478,13 +658,13 @@ function renderPhysics(){
     time.length-1,{label:'Circuit voltage drops'});
   chart('terminal-chart',time,[{name:'Terminal voltage (V)',values:run.terminal}],time.length-1,
     {label:'Terminal voltage under a pulse'});
-  let svg='<svg class="illustration" viewBox="0 0 360 130" role="img" aria-label="'+circuitNames[lab[0]]+' circuit"><path d="M30 68H54M78 68H100M100 68h9l7 -9 10 18 10 -18 10 18 9 -9h18" fill="none" stroke="#187955" stroke-width="2"/><path d="M54 55v26M65 50v36M65 68h13" stroke="#182e30" stroke-width="2"/><text x="35" y="107">OCV</text><text x="118" y="43">R₀</text>';
+  let svg='<svg class="illustration" viewBox="0 0 360 130" role="img" aria-label="'+circuitNames[lab[0]]+' circuit"><path d="M30 68H54M78 68H100M100 68h9l7 -9 10 18 10 -18 10 18 9 -9h18" fill="none" stroke="'+token('--accent')+'" stroke-width="2"/><path d="M54 55v26M65 50v36M65 68h13" stroke="'+token('--text')+'" stroke-width="2"/><text x="35" y="107">OCV</text><text x="118" y="43">R₀</text>';
   let x=173;
   run.tau.forEach((_,i)=>{
-    svg+='<g transform="translate('+x+' 0)" stroke="#187955" fill="none" stroke-width="2"><path d="M0 46V90M66 46V90M0 46h11l7 -7 8 14 8 -14 8 14 7 -7h17M0 90h30m6 0h30M30 81v18M36 81v18"/></g><text x="'+(x+18)+'" y="24">R'+(i+1)+'</text><text x="'+(x+20)+'" y="119">C'+(i+1)+'</text>';
+    svg+='<g transform="translate('+x+' 0)" stroke="'+token('--accent')+'" fill="none" stroke-width="2"><path d="M0 46V90M66 46V90M0 46h11l7 -7 8 14 8 -14 8 14 7 -7h17M0 90h30m6 0h30M30 81v18M36 81v18"/></g><text x="'+(x+18)+'" y="24">R'+(i+1)+'</text><text x="'+(x+20)+'" y="119">C'+(i+1)+'</text>';
     x+=66;
   });
-  $('circuit').innerHTML=svg+'<path d="M'+x+' 68H344" stroke="#187955" stroke-width="2"/><circle cx="344" cy="68" r="4" fill="#187955"/></svg>';
+  $('circuit').innerHTML=svg+'<path d="M'+x+' 68H344" stroke="'+token('--accent')+'" stroke-width="2"/><circle cx="344" cy="68" r="4" fill="'+token('--accent')+'"/></svg>';
   $('physics-readouts').innerHTML=labelValue('Ohmic step',fmt(run.ohmic[10]*1000,1)+' mV')+
     run.tau.map((tau,i)=>labelValue('τ'+(i+1)+' = R × C',fmt(tau,1)+' s')).join('');
 }
@@ -521,7 +701,7 @@ function renderMl(){
     const x=(i/9-.5)*205,y=(j/9-.5)*125;
     return [300+x*Math.cos(angle)-y*Math.sin(angle),164+(x*Math.sin(angle)+y*Math.cos(angle))*.43-(k-.75)*230];
   };
-  const line=points=>'<polyline points="'+points.map(p=>project(...p).join(',')).join(' ')+'" fill="none" stroke="#187955" stroke-width="1.4"/>';
+  const line=points=>'<polyline points="'+points.map(p=>project(...p).join(',')).join(' ')+'" fill="none" stroke="'+token('--accent')+'" stroke-width="1.4"/>';
   let svg='<svg class="plot" viewBox="0 0 600 252" role="img" aria-label="'+name+' conditional SOH surface">';
   for(let i=0;i<10;i++){
     svg+=line(z[i].map((v,j)=>[j,i,v]))+line(z.map((r,j)=>[i,j,r[i]]));
@@ -569,25 +749,25 @@ function renderTrainedModel(){
   }
 }
 const layers=[
-  ['Anode','#65564c','During discharge the graphite anode releases lithium ions into the electrolyte and electrons into the external circuit.'],
-  ['Separator','#bd9b41','A porous insulating membrane keeps the electrodes from touching while allowing ions to move through its electrolyte-filled pores.'],
-  ['Cathode','#307964','The cathode accepts lithium ions and electrons on discharge. Its composition depends on the cell chemistry.'],
-  ['Electrolyte','#347a96','A lithium salt in solvent carries ions between electrodes. It wets the electrode pores and the separator.'],
-  ['Current collectors','#a75436','Conductive foils connect the electrodes to terminals. Copper is typical at the anode and aluminium at the cathode.'],
+  ['Anode','var(--anode)','During discharge the graphite anode releases lithium ions into the electrolyte and electrons into the external circuit.'],
+  ['Separator','var(--separator)','A porous insulating membrane keeps the electrodes from touching while allowing ions to move through its electrolyte-filled pores.'],
+  ['Cathode','var(--cathode)','The cathode accepts lithium ions and electrons on discharge. Its composition depends on the cell chemistry.'],
+  ['Electrolyte','var(--accent)','A lithium salt in solvent carries ions between electrodes. It wets the electrode pores and the separator.'],
+  ['Current collectors','var(--warning)','Conductive foils connect the electrodes to terminals. Copper is typical at the anode and aluminium at the cathode.'],
 ];
 function renderCutaway(){
   $('page-title').textContent='Battery Design';
   let svg='<svg class="illustration" viewBox="0 0 520 280" role="img" aria-label="Exploded cylindrical battery layers">';
   layers.forEach(([name,color],i)=>{
     const x=122+i*(31+state.spread*16), y=117+i*7, ry=73-i*6, rx=42-i*3;
-    svg+='<path d="M'+x+' '+(y-ry)+'h39a'+rx+' '+ry+' 0 0 1 0 '+(2*ry)+'h-39z" fill="'+color+'" opacity=".55"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+color+'" stroke="'+(state.layer===i?'#182e30':'#fff')+'" stroke-width="'+(state.layer===i?4:1.5)+'"><title>'+name+'</title></ellipse>';
+    svg+='<path d="M'+x+' '+(y-ry)+'h39a'+rx+' '+ry+' 0 0 1 0 '+(2*ry)+'h-39z" fill="'+color+'" opacity=".55"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+color+'" stroke="'+(state.layer===i?token('--text'):token('--surface'))+'" stroke-width="'+(state.layer===i?4:1.5)+'"><title>'+name+'</title></ellipse>';
   });
   if(state.ionMode){
     const charge=state.ionMode===2, anode=122, cathode=122+2*(31+state.spread*16);
     const start=charge?cathode:anode, end=charge?anode:cathode;
-    svg+='<defs><marker id="ion-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path fill="#286b7d" d="M0 0L6 3 0 6Z"/></marker></defs>'+
+    svg+='<defs><marker id="ion-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path fill="'+token('--accent')+'" d="M0 0L6 3 0 6Z"/></marker></defs>'+
       '<path class="ion-flow" d="M'+start+' 216 H'+end+'" marker-end="url(#ion-arrow)"/>'+
-      '<text x="105" y="246" fill="#286b7d">Li⁺ · '+(charge?'cathode to anode':'anode to cathode')+'</text>';
+      '<text x="105" y="246" fill="'+token('--accent')+'">Li⁺ · '+(charge?'cathode to anode':'anode to cathode')+'</text>';
   }
   $('cutaway-drawing').innerHTML=svg+'</svg>';
   $('ion-note').textContent=[
@@ -662,16 +842,25 @@ function render(){
   syncPlayback();
 }
 function navigate(view){
-  stop();state.view=view;
+  stop();pauseSimulation();state.view=view;
   document.querySelectorAll('.view').forEach(section=>section.hidden=section.id!==view);
   document.querySelectorAll('nav button').forEach(button=>{
     if(button.dataset.view===view)button.setAttribute('aria-current','page');
     else button.removeAttribute('aria-current');
   });
+  clearInactiveVisuals(view);
   if(view==='overview')renderOverview();
   if(view==='reports')renderReports();
   if(view==='overview')$('page-title').textContent='Battery Engineering Studio';
   render();
+}
+function clearInactiveVisuals(activeView){
+  const graphics={
+    fundamentals:['cutaway-drawing'],physics:['sim-voltage-chart','sim-soc-chart','sim-current-chart','sim-temperature-chart','sim-polarisation-chart','sim-compare-voltage','sim-compare-soc','physics-chart','terminal-chart','circuit'],
+    data:['synthetic-chart','nasa-chart'],ml:['surface'],ekf:['ekf-chart','ekf-soc'],hybrid:['hybrid-chart','adaptive-voltage'],reports:['report-results','report-capacity'],
+  };
+  for(const [view,ids] of Object.entries(graphics))if(view!==activeView)
+    for(const id of ids)$(id)?.replaceChildren();
 }
 function renderOverview(){
   const c=active(), k=state.k, d=trial();
@@ -707,8 +896,34 @@ document.querySelectorAll('nav button').forEach(button=>button.onclick=()=>navig
 $('theme-toggle').onclick=()=>{
   const dark=document.documentElement.dataset.theme!=='dark';
   document.documentElement.dataset.theme=dark?'dark':'light';
+  refreshPalette();
   $('theme-toggle').textContent=dark?'Light mode':'Dark mode';
+  render();
 };
+document.querySelector('#circuit-explorer').addEventListener('toggle',()=>{if($('circuit-explorer').open)renderPhysics();});
+$('sim-model').addEventListener('change',updateSimulationControls);
+$('sim-form').addEventListener('submit',runConfiguredSimulation);
+$('sim-save-baseline').addEventListener('click',()=>{
+  if(!simState.latest)return;
+  simState.baseline=simState.latest;$('sim-compare-button').disabled=true;
+  $('sim-save-baseline').textContent='Replace baseline';
+  $('sim-comparison').hidden=true;
+  simulationStatus('Baseline saved for this browser session. Run a modified configuration, then compare.','success');
+});
+$('sim-compare-button').addEventListener('click',()=>{
+  if(!simState.baseline||!simState.latest||simState.baseline===simState.latest)return;
+  renderSimulationComparison();
+  if(!$('sim-comparison').hidden)$('sim-comparison').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+});
+$('sim-reset').addEventListener('click',resetSimulation);
+$('sim-play').addEventListener('click',playSimulation);$('sim-pause').addEventListener('click',pauseSimulation);
+$('sim-restart').addEventListener('click',()=>{pauseSimulation();renderSimulationClock(0);});
+$('sim-seek').addEventListener('input',()=>{pauseSimulation();renderSimulationClock(Number($('sim-seek').value));});
+$('sim-speed').addEventListener('change',()=>{if(simState.timer!==null)playSimulation();});
+$('sim-results').querySelector('details').addEventListener('toggle',()=>{if($('sim-results').querySelector('details').open)renderSimulationCharts();});
+$('sim-export-json').addEventListener('click',()=>downloadSimulation('json'));
+$('sim-export-csv').addEventListener('click',()=>downloadSimulation('csv'));
+updateSimulationControls();
 document.querySelectorAll('[data-go]').forEach(button=>button.onclick=()=>navigate(button.dataset.go));
 $('overview-controls').append(select('Simulation scenario',data.scenarios.map(x=>x.name),0,index=>{
   stop();state.scenario=index;state.trial=0;state.k=0;updateScenarioControls();render();
@@ -731,7 +946,7 @@ $('dataset-controls').append(select('Dataset',['Synthetic','NASA'],0,index=>{sto
 $('ml-controls').append(select('Estimator',mlNames,0,index=>{mlIndex=index;renderMl();}));
 $('ml-controls').insertAdjacentHTML('beforeend','<label>Rotate surface <input id="angle" type="range" min="10" max="80" value="35"></label>');
 $('angle').oninput=event=>{surfaceAngle=Number(event.target.value);renderMl();};
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();pauseSimulation();}});
 renderRobustValidation();
 document.querySelectorAll('.view').forEach(section=>section.hidden=section.id!==state.view);
 render();
