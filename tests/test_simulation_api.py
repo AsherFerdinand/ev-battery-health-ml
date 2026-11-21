@@ -45,6 +45,7 @@ class ProfileTests(unittest.TestCase):
         for bad in (
             {"model": "diffusion"}, {"profile": "external_cycle"},
             {"duration_s": MAX_DURATION_S + 1}, {"duration_s": True},
+            {"soh": 0.49}, {"soh": 1.01},
             {"initial_soc": float("nan")}, {"current_a": 0},
             {"ambient_temperature_c": 51}, {"unknown": 1},
         ):
@@ -64,6 +65,8 @@ class SimulationTests(unittest.TestCase):
                 self.assertEqual(result["configuration"]["model"], model)
                 self.assertEqual(result["units"]["channels"]["time_s"], "s")
                 self.assertEqual(result["units"]["configuration"]["nominal_capacity_ah"], "Ah")
+                self.assertEqual(result["units"]["configuration"]["soh"], "fraction")
+                self.assertEqual(result["units"]["channels"]["available_capacity_ah"], "Ah")
                 self.assertEqual("polarisation_1_v" in channels, branches >= 1)
                 self.assertEqual("polarisation_2_v" in channels, branches == 2)
                 self.assertTrue(all(len(values) == 61 for values in channels.values()))
@@ -75,6 +78,13 @@ class SimulationTests(unittest.TestCase):
                 self.assertAlmostEqual(result["energy"]["terminal_energy_out_wh"], expected_out)
                 self.assertEqual(result["assumptions"]["current_sign"],
                                  "positive discharges; negative charges")
+
+    def test_configured_soh_controls_available_capacity_and_soc_not_nominal_label(self):
+        fresh = simulate_configuration(config_for("rint", duration_s=30, soh=1.0))
+        aged = simulate_configuration(config_for("rint", duration_s=30, soh=0.8))
+        self.assertEqual(aged["channels"]["soh"], [0.8] * 31)
+        self.assertEqual(aged["channels"]["available_capacity_ah"], [1.6] * 31)
+        self.assertLess(aged["channels"]["soc"][-1], fresh["channels"]["soc"][-1])
 
     def test_charging_sign_energy_and_increasing_soc(self):
         result = simulate_configuration(config_for("rint", profile="charging", duration_s=60))
@@ -119,7 +129,8 @@ class LocalEndpointTests(unittest.TestCase):
         response = self.request(body)
         self.assertEqual(response.status, 200)
         output = json.loads(response.read())
-        self.assertEqual(output["software_version"], "2.2")
+        self.assertEqual(output["software_version"], "2.3")
+        self.assertEqual(output["schema_version"], 2)
         self.assertEqual(len(output["channels"]["time_s"]), 31)
         self.assertIn("polarisation_2_v", output["channels"])
         self.assertEqual(self.request(body, origin=False).status, 403)

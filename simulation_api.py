@@ -8,15 +8,15 @@ import numpy as np
 
 from battery_sim import Cell, simulate
 
-SCHEMA_VERSION = 1
-SOFTWARE_VERSION = "2.2"
+SCHEMA_VERSION = 2
+SOFTWARE_VERSION = "2.3"
 MAX_DURATION_S = 1800
 PROFILES = (
     "constant_discharge", "current_pulse", "pulse_relaxation", "charging", "drive_style",
 )
 MODELS = ("rint", "thevenin", "dual")
 BASE_FIELDS = {
-    "model", "profile", "duration_s", "current_a", "initial_soc",
+    "model", "profile", "duration_s", "current_a", "initial_soc", "soh",
     "nominal_capacity_ah", "ambient_temperature_c", "r0_ohm",
 }
 BRANCH_FIELDS = {
@@ -26,7 +26,7 @@ BRANCH_FIELDS = {
 }
 DEFAULTS = {
     "model": "thevenin", "profile": "pulse_relaxation", "duration_s": 600,
-    "current_a": 1.4, "initial_soc": 0.8, "nominal_capacity_ah": 2.0,
+    "current_a": 1.4, "initial_soc": 0.8, "soh": 1.0, "nominal_capacity_ah": 2.0,
     "ambient_temperature_c": 25.0, "r0_ohm": 0.035,
     "r1_ohm": 0.018, "c1_f": 650.0, "r2_ohm": 0.012, "c2_f": 5000.0,
 }
@@ -65,6 +65,7 @@ def normalize_config(values: dict) -> dict:
         "model": model, "profile": profile, "duration_s": duration,
         "current_a": number("current_a", 0.05, 3.0),
         "initial_soc": number("initial_soc", 0.05, 0.95),
+        "soh": number("soh", 0.5, 1.0),
         "nominal_capacity_ah": number("nominal_capacity_ah", 0.5, 10.0),
         "ambient_temperature_c": number("ambient_temperature_c", -10.0, 50.0),
         "r0_ohm": number("r0_ohm", 0.005, 0.15),
@@ -105,7 +106,7 @@ def simulate_configuration(values: dict) -> dict:
     config = normalize_config(values)
     time_s, current_a = current_profile(config["profile"], config["duration_s"], config["current_a"])
     cell_values = {
-        "nominal_ah": config["nominal_capacity_ah"], "soh": 1.0,
+        "nominal_ah": config["nominal_capacity_ah"], "soh": config["soh"],
         "initial_soc": config["initial_soc"],
         "ambient_k": config["ambient_temperature_c"] + 273.15,
         "r0_ohm": config["r0_ohm"],
@@ -128,6 +129,8 @@ def simulate_configuration(values: dict) -> dict:
         "current_a": current_a,
         "terminal_voltage_v": voltage,
         "soc": result["truth_soc"],
+        "soh": result["truth_soh"],
+        "available_capacity_ah": result["ref_available_capacity_c"] / 3600.0,
         "temperature_k": result["truth_temperature_k"],
         "r0_ohm": result["ref_r0_ohm"],
     }
@@ -137,12 +140,13 @@ def simulate_configuration(values: dict) -> dict:
         channels["polarisation_2_v"] = result["truth_polarisation_2_v"]
     config_units = {
         "model": "name", "profile": "name",
-        "duration_s": "s", "current_a": "A", "initial_soc": "fraction",
+        "duration_s": "s", "current_a": "A", "initial_soc": "fraction", "soh": "fraction",
         "nominal_capacity_ah": "Ah", "ambient_temperature_c": "°C", "r0_ohm": "Ω",
         "r1_ohm": "Ω", "c1_f": "F", "r2_ohm": "Ω", "c2_f": "F",
     }
     channel_units = {
         "time_s": "s", "current_a": "A", "terminal_voltage_v": "V", "soc": "fraction",
+        "soh": "fraction", "available_capacity_ah": "Ah",
         "temperature_k": "K", "r0_ohm": "Ω", "polarisation_1_v": "V", "polarisation_2_v": "V",
     }
     return {
@@ -163,7 +167,7 @@ def simulate_configuration(values: dict) -> dict:
             "model_scope": "lumped ECM voltage response; not an electrochemical chemistry model",
             "drive_style": "deterministic illustrative profile, not recorded vehicle data",
             "energy_integration": "left rectangle for the 1 s zero-order-held current profile",
-            "state_of_health": "fixed at 1.0 for this run; no ageing update",
+            "state_of_health": "fixed at the configured value for this run; no ageing update",
             "measurement_noise": "none; returned channels are modelled values",
             "ocv": "shared lumped SOC curve; not fitted to a specific cell chemistry",
         },

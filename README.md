@@ -275,6 +275,8 @@ Original project code is licensed under the [MIT licence](LICENSE). The grant do
 
 ## Workbench development roadmap
 
+v2.3 makes the Battery Explorer the landing page by joining the former Overview and Battery Design sections. It offers four deterministic Python-backed teaching scenarios, a generic selectable cylindrical cutaway, separate SOC/SOH capacity visualization and a model-bound thermometer. Battery Physics retains its v2.2 Simulation Lab and adds interactive circuit-to-parameter focus. Dataset Explorer opens on NASA, explains the measurements and test workflow, and preserves all cell/cycle plots and playback. Synthetic presets are educational outputs, distinct from NASA observations and validated research. See the [v2.3 engineering report and browser screenshots](docs/battery-explorer-educational-v2.3.md).
+
 v2.2 adds an Interactive Simulation Lab inside Battery Physics. It runs the existing Python `battery_sim.py` engine for Rint, Thevenin and Dual Polarisation. Users can configure initial SOC, nominal capacity, R₀ and supported RC parameters; select five deterministic one-second current profiles; review voltage, SOC, current, dynamic ECM temperature and available RC polarisation; and compare two session-only configurations. JSON and CSV downloads include configuration, units, model assumptions and exact samples. Custom runs are separate from trained ML/EKF validation. The loopback-only service accepts one bounded request at a time (up to 1,800 seconds); the precomputed research workbench remains usable without it.
 
 Launch custom simulations with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Opening `reports/workbench.html` directly keeps the offline research views available and explains that custom simulations require the Python launcher. Use `--full` for the full validated research population; neither mode retrains models during UI interaction.
@@ -285,7 +287,7 @@ Launch the offline studio with `.venv/bin/python build_workbench.py` on Linux or
 
 v1.1 adds a separate synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for structural-mismatch evaluation. Generate the seeded pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. Simulated results stay separate from NASA experimental data.
 
-See the [Battery Engineering Studio v2.2 report](docs/battery-engineering-studio-v2.2.md), [v2.1 report](docs/battery-engineering-studio-v2.1.md), [synthetic modelling report](docs/synthetic-battery.md), and [workbench roadmap](docs/workbench-roadmap.md) for architecture, conventions, reproduction commands and validation boundaries.
+See the [Battery Explorer v2.3 report](docs/battery-explorer-educational-v2.3.md), [v2.2 report](docs/battery-engineering-studio-v2.2.md), [v2.1 report](docs/battery-engineering-studio-v2.1.md), [synthetic modelling report](docs/synthetic-battery.md), and [workbench roadmap](docs/workbench-roadmap.md) for architecture, conventions, reproduction commands and validation boundaries.
 
 ### SOC workbench v1.2–v1.3
 

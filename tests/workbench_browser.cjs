@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const {readFileSync} = require('node:fs');
+const {readFileSync,mkdirSync} = require('node:fs');
+const {join} = require('node:path');
 const {performance} = require('node:perf_hooks');
 const {gunzipSync} = require('node:zlib');
 
@@ -13,8 +14,11 @@ const {gunzipSync} = require('node:zlib');
  });
  try {
   const context = await browser.newContext({viewport:{width:1440,height:930}});
-  await context.route('**/*', route => new URL(route.request().url()).origin === url.origin
-   ? route.continue() : route.abort());
+  const externalRequests=[];
+  await context.route('**/*', route=>{
+   if(new URL(route.request().url()).origin===url.origin)return route.continue();
+   externalRequests.push(route.request().url());return route.abort();
+  });
   const page = await context.newPage();
   const cdp = await browser.newBrowserCDPSession();
   async function resources() {
@@ -33,9 +37,10 @@ const {gunzipSync} = require('node:zlib');
   for(let i=0;i<5;i++){
    const start=performance.now();
    await page.goto(url.href);
-   await page.locator('#overview .overview-illustration').waitFor();
+   await page.locator('#explorer-scenario-title').waitFor();
    startup.push(Math.round(performance.now()-start));
   }
+  await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
   const first=await resources();
   await page.waitForTimeout(2500);
   const idle=await resources();
@@ -44,12 +49,15 @@ const {gunzipSync} = require('node:zlib');
   if(process.env.WORKBENCH_SCREENSHOT) await page.screenshot({path:process.env.WORKBENCH_SCREENSHOT});
   const check = (id,text) => page.locator(id).textContent().then(x=>assert.match(x,text));
   const checkPage = (target,id,text) => target.locator(id).textContent().then(x=>assert.match(x,text));
-  for (const [name,id] of [['Battery Design','#fundamentals'],['Battery Physics','#physics'],['Dataset Explorer','#data'],['Machine Learning','#ml'],['SOC Estimation','#ekf'],['Investigation Lab','#hybrid'],['Reports','#reports'],['Overview','#overview']]) {
+  for (const [name,id] of [['Battery Explorer','#fundamentals'],['Battery Physics','#physics'],['Dataset Explorer','#data'],['Machine Learning','#ml'],['SOC Estimation','#ekf'],['Investigation Lab','#hybrid'],['Reports','#reports']]) {
    await page.locator('[data-view=\"'+id.slice(1)+'\"]').click();
    assert.equal(await page.locator(id).isVisible(),true,name+' destination should open');
-   // The Overview cutaway and Battery Physics conceptual cell are static SVGs;
-   // dynamic charts and rendered circuit/cutaway graphics should be released.
-   assert.ok(await page.locator('.view[hidden] svg').count()<=2,'Inactive views should release rendered SVGs');
+   assert.equal(await page.locator('.view[hidden] .plot').count(),0,'Inactive views should release rendered plots');
+   if(process.env.WORKBENCH_SCREENSHOT_DIR&&['fundamentals','physics','data'].includes(id.slice(1))){
+    mkdirSync(process.env.WORKBENCH_SCREENSHOT_DIR,{recursive:true});
+    const name={fundamentals:'battery-explorer',physics:'physics-lab',data:'nasa-dataset'}[id.slice(1)];
+    await page.screenshot({path:join(process.env.WORKBENCH_SCREENSHOT_DIR,name+'.png'),fullPage:true});
+   }
   }
   await page.locator('[data-view="reports"]').click();
   await check('#report-results',/Final · thevenin/i);
@@ -59,7 +67,7 @@ const {gunzipSync} = require('node:zlib');
   assert.match(reportResponse.headers()['content-type'],/text\/markdown/);
   await check('#report-capacity',/Final thevenin/);
   assert.equal(await page.locator('[data-view="hybrid"]').textContent(),'Investigation Lab');
-  await page.locator('[data-view="overview"]').click();
+  await page.locator('[data-view="fundamentals"]').click();
   await page.getByRole('button',{name:'Switch color theme'}).click();
   assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
   await page.getByRole('button',{name:'Switch color theme'}).click();
@@ -150,6 +158,23 @@ const {gunzipSync} = require('node:zlib');
   await page.locator('#ekf').getByRole('button',{name:'Play',exact:true}).click();
   await page.getByRole('button',{name:'Battery Physics',exact:true}).click();
   await check('#ekf .primary',/^Play$/);
+  await check('#sim-circuit-description',/one parallel R₁\/C₁ polarisation branch/);
+  const r0point=await page.locator('#sim-circuit [data-focus="sim-r0"] .part').evaluate(path=>{
+   const svg=path.ownerSVGElement,p=svg.createSVGPoint(),local=path.getPointAtLength(path.getTotalLength()*.1);
+   p.x=local.x;p.y=local.y;const screen=p.matrixTransform(svg.getScreenCTM());return{x:screen.x,y:screen.y};
+  });
+  await page.mouse.click(r0point.x,r0point.y);
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'sim-r0');
+  const c1=page.locator('#sim-circuit [data-focus="sim-c1"]');
+  await c1.focus();await c1.press('Enter');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'sim-c1');
+  await page.locator('#sim-model').selectOption('rint');
+  await check('#sim-circuit-description',/Rint has an OCV source/);
+  assert.equal(await page.locator('#sim-circuit [data-focus="sim-r1"]').count(),0);
+  await page.locator('#sim-model').selectOption('dual');
+  await check('#sim-circuit-description',/fast and slow RC branches/);
+  assert.ok(await page.locator('#sim-circuit [data-focus="sim-r2"]').count());
+  await page.locator('#sim-model').selectOption('thevenin');
   await page.locator('#circuit-explorer > summary').click();
   await page.locator('#sim-duration').fill('60');
   await page.locator('#sim-profile').selectOption('constant_discharge');
@@ -213,6 +238,8 @@ const {gunzipSync} = require('node:zlib');
   await page.locator('#lesson-input').fill('30');
   await check('#worked-result',/Stage 3 of 3/);
   await page.getByRole('button',{name:'Dataset Explorer',exact:true}).click();
+  await check('#nasa-intro',/NASA battery ageing/);
+  await page.getByLabel('Dataset',{exact:true}).selectOption('0');
   await check('#synthetic-chart',/Simulated reference SOC/);
   await page.getByLabel('Dataset',{exact:true}).selectOption('1');
   if(await page.getByLabel('Cell',{exact:true}).count() > 0){
@@ -220,22 +247,55 @@ const {gunzipSync} = require('node:zlib');
    await page.getByLabel('Cell',{exact:true}).selectOption('1');
    await page.getByLabel('Discharge cycle').selectOption({index:7});
    await check('#nasa-chart',/B0006.*discharge 8/);
+   await page.locator('#nasa-playback input[aria-label="Playback position"]').fill('25');
+   if(process.env.WORKBENCH_SCREENSHOT_DIR) await page.screenshot({path:join(process.env.WORKBENCH_SCREENSHOT_DIR,'nasa-dataset.png'),fullPage:true});
    await page.locator('#nasa-playback').getByRole('button',{name:'Step',exact:true}).click();
    assert.ok(parseInt(await page.locator('#nasa-playback output').textContent())>0);
   } else {
    await check('#nasa-chart',/No local recording/);
   }
-  await page.getByRole('button',{name:'Battery Design',exact:true}).click();
+  await page.getByRole('button',{name:'Battery Explorer',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
+  await check('#explorer-readouts',/Modelled SOC.*Modelled terminal voltage/);
+  const initialFill=Number(await page.locator('#explorer-soc-fill').getAttribute('height'));
+  await page.locator('#explorer-scenario-controls').getByRole('button',{name:'Heavy device usage'}).click();
+  await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
+  await check('#explorer-readouts',/2\.80 A/);
+  await page.locator('#explorer-seek').fill('20');
+  assert.ok(Number(await page.locator('#explorer-soc-fill').getAttribute('height'))<initialFill,'Discharge animation follows decreasing SOC');
+  await check('#explorer-temperature-note',/warming/);
+  await page.locator('#explorer-scenario-controls').getByRole('button',{name:'Cold outdoor use'}).click();
+  await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
+  await check('#explorer-temperature-note',/ambient -5\.0 °C/);
+  await page.locator('#explorer-scenario-controls').getByRole('button',{name:'Aged battery example'}).click();
+  await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
+  await check('#explorer-readouts',/Modelled usable capacity.*1\.60 Ah.*Configured SOH.*80\.00%/);
   await page.getByRole('button',{name:'Separator',exact:true}).click();
   await check('#layer-title',/^Separator$/);
-  await page.getByLabel('Ion movement',{exact:true}).selectOption('1');
-  await check('#ion-note',/anode toward cathode/);
-  await page.getByLabel('Ion movement',{exact:true}).selectOption('2');
+  await check('#layer-materials',/polyolefin/);
+  const collector=page.locator('.cell-part[data-layer="4"]');
+  await collector.focus();await collector.press('Enter');
+  await check('#layer-title',/^Current collectors$/);
+  await page.getByLabel('Charge direction',{exact:true}).selectOption('2');
+  await check('#ion-note',/Charge:.*cathode toward anode/);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const ionDuration=await page.locator('.ion-flow').evaluate(el=>getComputedStyle(el).animationDuration);
+  const ionSeconds=parseFloat(ionDuration)/(ionDuration.endsWith('ms')?1000:1);
+  assert.ok(ionSeconds<=0.0001,'Reduced motion disables ion animation');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.getByLabel('Charge direction',{exact:true}).selectOption('1');
+  await check('#ion-note',/anode to cathode/);
+  await page.getByLabel('Charge direction',{exact:true}).selectOption('2');
   await check('#ion-note',/cathode toward anode/);
   await page.locator('#age-soh').fill('60');
   await page.locator('#age-soc').fill('50');
   await page.locator('#age-resistance').fill('75');
   await check('#age-readouts',/1.20 Ah.*0.60 Ah.*150 mV.*300 mW/);
+  const casing=page.locator('#age-cell rect[stroke]').nth(0),casingBefore=await casing.getAttribute('height');
+  await page.locator('#age-soh').fill('80');await page.locator('#age-soc').fill('50');
+  assert.equal(await page.locator('#age-usable-fill').getAttribute('height'),'120');
+  assert.equal(await page.locator('#age-charge-fill').getAttribute('height'),'60');
+  assert.equal(await casing.getAttribute('height'),casingBefore,'Illustrative casing dimensions remain fixed');
   await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),'No mobile overflow');
   await page.setViewportSize({width:1440,height:930});
@@ -253,6 +313,7 @@ const {gunzipSync} = require('node:zlib');
   });
   console.log('50 synchronous playback renders median/p95/max ms',renders[25],renders[47],renders[49]);
   assert.deepEqual(errors,[]);
+  assert.deepEqual(externalRequests,[],'Studio operation should make no external network requests');
   const fallback=await browser.newContext();
   await fallback.route('**/*',route=>{
    const requestUrl=new URL(route.request().url());
@@ -261,16 +322,18 @@ const {gunzipSync} = require('node:zlib');
   const filePage=await fallback.newPage();
   const fileErrors=[];filePage.on('pageerror',error=>fileErrors.push(error.message));
   await filePage.goto(url.href);
-  await filePage.locator('#overview .overview-illustration').waitFor();
+  await filePage.locator('#explorer-scenario-title').waitFor();
+  await filePage.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('No scenario measurements shown'));
   await filePage.locator('[data-view="physics"]').click();
   await filePage.locator('#sim-duration').fill('60');
   await filePage.getByRole('button',{name:'Run simulation'}).click();
   await filePage.waitForFunction(()=>document.querySelector('#sim-status').textContent.startsWith('Start the studio'));
   await checkPage(filePage,'#sim-status',/Start the studio with python build_workbench\.py/);
   await filePage.locator('[data-view="data"]').click();
+  await filePage.getByLabel('Dataset',{exact:true}).selectOption('0');
   await checkPage(filePage,'#synthetic-chart',/Simulated reference SOC/);
   assert.deepEqual(fileErrors,[]);
   await fallback.close();
-  console.log('Browser smoke passed offline through all eight studio destinations.');
+  console.log('Browser smoke passed offline through all seven studio destinations.');
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
