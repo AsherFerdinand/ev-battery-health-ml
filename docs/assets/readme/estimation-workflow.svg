@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+<title id="title">Two separate battery evidence workflows</title>
+<desc id="desc">NASA experimental measurements support capacity-derived state of health analysis. Separate synthetic simulations provide hidden SOC truth to score Coulomb counting, fixed EKF and hybrid estimates.</desc>
+<defs>
+ <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4269b2"/></marker>
+ <style>text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#202b3b}.title{font-size:25px;font-weight:700}.lane{font-size:16px;font-weight:700}.head{font-size:14px;font-weight:700}.body{font-size:12px;fill:#536273}.note{font-size:13px;font-weight:600}.box{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.nasa{stroke:#7995c6}.synthetic{stroke:#bf8a42}.arrow{stroke:#4269b2;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.truth{stroke:#bf8a42;stroke-width:2;stroke-dasharray:6 5;fill:none;marker-end:url(#arrow)}</style>
+</defs>
+<rect width="1200" height="660" rx="18" fill="#fff"/>
+<text class="title" x="36" y="44">Two distinct evidence paths</text>
+<text class="body" x="36" y="68">Experimental NASA SOH research and synthetic SOC estimator validation answer different questions.</text>
+<rect x="28" y="92" width="1144" height="220" rx="14" fill="#f4f7fc" stroke="#d8e1ef"/>
+<text class="lane" x="48" y="122" fill="#315a9d">NASA experimental measurements · SOH analysis</text>
+<g transform="translate(48 146)">
+ <rect class="box nasa" width="190" height="104" rx="10"/><text class="head" x="14" y="28">Recorded discharges</text><text class="body" x="14" y="51">Time · voltage · current</text><text class="body" x="14" y="70">Temperature · capacity</text><text class="body" x="14" y="89">Original measurement signs</text>
+ <path class="arrow" d="M192 52H222"/>
+ <rect class="box nasa" x="226" width="190" height="104" rx="10"/><text class="head" x="240" y="28">Cutoff features</text><text class="body" x="240" y="51">Fixed observation windows</text><text class="body" x="240" y="70">Training-only preprocessing</text><text class="body" x="240" y="89">Cell / time holdouts</text>
+ <path class="arrow" d="M418 52H448"/>
+ <rect class="box nasa" x="452" width="190" height="104" rx="10"/><text class="head" x="466" y="28">ML predicts SOH</text><text class="body" x="466" y="51">Ridge · Random Forest</text><text class="body" x="466" y="70">HistGradientBoosting</text><text class="body" x="466" y="89">Capacity-derived label</text>
+ <path class="arrow" d="M644 52H674"/>
+ <rect class="box nasa" x="678" width="190" height="104" rx="10"/><text class="head" x="692" y="28">Evaluate held-out data</text><text class="body" x="692" y="51">Unseen cells / later cycles</text><text class="body" x="692" y="70">MAE in SOH percentage points</text><text class="body" x="692" y="89">No SOC accuracy claim</text>
+ <path class="arrow" d="M870 52H900"/>
+ <rect class="box nasa" x="904" width="174" height="104" rx="10"/><text class="head" x="918" y="28">Research result</text><text class="body" x="918" y="51">Measured capacity is</text><text class="body" x="918" y="70">the SOH reference</text><text class="body" x="918" y="89">NASA reference: 2 Ah</text>
+</g>
+<text class="note" x="48" y="286">NASA discharge records do not provide independent measured SOC ground truth.</text>
+<rect x="28" y="334" width="1144" height="286" rx="14" fill="#fffaf1" stroke="#ead9b7"/>
+<text class="lane" x="48" y="366" fill="#8b5b1d">Synthetic simulations · SOC estimator validation</text>
+<g transform="translate(48 388)">
+ <rect class="box synthetic" width="190" height="108" rx="10"/><text class="head" x="14" y="28">Simulated battery</text><text class="body" x="14" y="52">ECM or diffusion plant</text><text class="body" x="14" y="72">Known SOC / parameters</text><text class="body" x="14" y="92">Truth held for scoring</text>
+ <path class="arrow" d="M192 54H222"/>
+ <rect class="box synthetic" x="226" width="190" height="108" rx="10"/><text class="head" x="240" y="28">Sensor inputs</text><text class="body" x="240" y="52">Current · voltage</text><text class="body" x="240" y="72">Configured noise / profile</text><text class="body" x="240" y="92">Truth withheld from filters</text>
+ <path class="arrow" d="M418 54H448"/>
+ <rect class="box synthetic" x="452" width="190" height="108" rx="10"/><text class="head" x="466" y="28">SOC estimators</text><text class="body" x="466" y="52">Coulomb Counting · EKF</text><text class="body" x="466" y="72">Hybrid A: ML capacity</text><text class="body" x="466" y="92">Hybrid B: capacity + R₀</text>
+ <path class="arrow" d="M644 54H674"/>
+ <rect class="box synthetic" x="678" width="190" height="108" rx="10"/><text class="head" x="692" y="28">Estimated SOC</text><text class="body" x="692" y="52">Paired on identical inputs</text><text class="body" x="692" y="72">Fixed and adaptive methods</text><text class="body" x="692" y="92">No assumption of benefit</text>
+ <path class="arrow" d="M870 54H900"/>
+ <rect class="box synthetic" x="904" width="174" height="108" rx="10"/><text class="head" x="918" y="28">Score vs truth</text><text class="body" x="918" y="52">Matched ECM and</text><text class="body" x="918" y="72">mismatched diffusion</text><text class="body" x="918" y="92">Report failure modes</text>
+</g>
+<path class="truth" d="M143 500V555H993V500"/>
+<text class="note" x="328" y="580">Synthetic truth is used for evaluation, never presented as experimental validation.</text>
+</svg>
