@@ -170,7 +170,9 @@ def build(full=False, refresh=False):
 
 def serve(output, port):
     files = {"/": output, "/" + output.name: output,
-             "/dashboard.html": output.parent / "dashboard.html"}
+             "/dashboard.html": output.parent / "dashboard.html",
+             "/docs/robust-hybrid-v2.md": ROOT / "docs" / "robust-hybrid-v2.md",
+             "/docs/capacity-generalisation.md": ROOT / "docs" / "capacity-generalisation.md"}
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -180,7 +182,8 @@ def serve(output, port):
                 return
             content = target.read_bytes()
             self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            mime = "text/markdown; charset=utf-8" if target.suffix == ".md" else "text/html; charset=utf-8"
+            self.send_header("Content-Type", mime)
             self.send_header("Content-Length", str(len(content)))
             self.end_headers()
             self.wfile.write(content)

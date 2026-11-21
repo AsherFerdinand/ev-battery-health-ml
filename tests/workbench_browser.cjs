@@ -33,7 +33,7 @@ const {gunzipSync} = require('node:zlib');
   for(let i=0;i<5;i++){
    const start=performance.now();
    await page.goto(url.href);
-   await page.locator('#hybrid-chart svg').waitFor();
+   await page.locator('#overview .overview-illustration').waitFor();
    startup.push(Math.round(performance.now()-start));
   }
   const first=await resources();
@@ -43,6 +43,23 @@ const {gunzipSync} = require('node:zlib');
 
   if(process.env.WORKBENCH_SCREENSHOT) await page.screenshot({path:process.env.WORKBENCH_SCREENSHOT});
   const check = (id,text) => page.locator(id).textContent().then(x=>assert.match(x,text));
+  for (const [name,id] of [['Battery Design','#fundamentals'],['Battery Physics','#physics'],['Dataset Explorer','#data'],['Machine Learning','#ml'],['SOC Estimation','#ekf'],['Investigation Lab','#hybrid'],['Reports','#reports'],['Overview','#overview']]) {
+   await page.locator('[data-view=\"'+id.slice(1)+'\"]').click();
+   assert.equal(await page.locator(id).isVisible(),true,name+' destination should open');
+  }
+  await page.locator('[data-view="reports"]').click();
+  await check('#report-results',/Final · thevenin/i);
+  assert.equal(await page.locator('#reports a[href^="../docs/"]').count(),2);
+  const reportResponse=await context.request.get(new URL('../docs/robust-hybrid-v2.md',url).href);
+  assert.equal(reportResponse.status(),200);
+  assert.match(reportResponse.headers()['content-type'],/text\/markdown/);
+  await check('#report-capacity',/Final thevenin/);
+  assert.equal(await page.locator('[data-view="hybrid"]').textContent(),'Investigation Lab');
+  await page.locator('[data-view="overview"]').click();
+  await page.getByRole('button',{name:'Switch color theme'}).click();
+  assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+  await page.getByRole('button',{name:'Switch color theme'}).click();
+  await page.locator('[data-view="hybrid"]').click();
   const hasAdaptive = await page.locator('#adaptive-panel').isVisible();
   if (process.env.REQUIRE_HYBRID_B) assert.ok(hasAdaptive, 'Hybrid B payload required');
   const seek = (view, sample) => page.locator('#'+view+' input[aria-label="Playback position"]').fill(String(sample));
@@ -116,7 +133,7 @@ const {gunzipSync} = require('node:zlib');
   await check('#update-note',/Assuming nominal/);
   await page.locator('#hybrid').getByLabel('Scenario',{exact:true}).selectOption('4');
   await check('#oracle-note',/unavailable/);
-  await page.getByRole('button',{name:'Kalman filter',exact:true}).click();
+  await page.getByRole('button',{name:'SOC Estimation',exact:true}).click();
   await page.locator('#ekf').getByLabel('Initial SOC',{exact:true}).selectOption('2');
   await check('#ekf-readouts',/90.00%/);
   if(hasAdaptive){
@@ -127,12 +144,12 @@ const {gunzipSync} = require('node:zlib');
   await page.locator('#ekf').getByRole('button',{name:'Step',exact:true}).click();
   assert.notEqual(await page.locator('#ekf-equations').textContent(),equation);
   await page.locator('#ekf').getByRole('button',{name:'Play',exact:true}).click();
-  await page.getByRole('button',{name:'Battery physics',exact:true}).click();
+  await page.getByRole('button',{name:'Battery Physics',exact:true}).click();
   await check('#ekf .primary',/^Play$/);
   await page.getByLabel('Model',{exact:true}).selectOption('2');
   await page.getByLabel('Capacitance scale').selectOption('2');
   await check('#physics-readouts',/τ2/);
-  await page.getByRole('button',{name:'Machine learning',exact:true}).click();
+  await page.getByRole('button',{name:'Machine Learning',exact:true}).click();
   if(await page.locator('#trained-detail').isVisible()){
    await check('#trained-material',/standardised features/);
    await page.getByLabel('Estimator',{exact:true}).selectOption('1');
@@ -143,7 +160,7 @@ const {gunzipSync} = require('node:zlib');
   assert.equal(await page.locator('#surface svg polyline').count(),20);
   await page.locator('#lesson-input').fill('30');
   await check('#worked-result',/Stage 3 of 3/);
-  await page.getByRole('button',{name:'Dataset explorer',exact:true}).click();
+  await page.getByRole('button',{name:'Dataset Explorer',exact:true}).click();
   await check('#synthetic-chart',/Simulated reference SOC/);
   await page.getByLabel('Dataset',{exact:true}).selectOption('1');
   if(await page.getByLabel('Cell',{exact:true}).count() > 0){
@@ -156,7 +173,7 @@ const {gunzipSync} = require('node:zlib');
   } else {
    await check('#nasa-chart',/No local recording/);
   }
-  await page.getByRole('button',{name:'Battery fundamentals',exact:true}).click();
+  await page.getByRole('button',{name:'Battery Design',exact:true}).click();
   await page.getByRole('button',{name:'Separator',exact:true}).click();
   await check('#layer-title',/^Separator$/);
   await page.getByLabel('Ion movement',{exact:true}).selectOption('1');
@@ -184,6 +201,6 @@ const {gunzipSync} = require('node:zlib');
   });
   console.log('50 synchronous playback renders median/p95/max ms',renders[25],renders[47],renders[49]);
   assert.deepEqual(errors,[]);
-  console.log('Browser smoke passed offline through all six sections.');
+  console.log('Browser smoke passed offline through all eight studio destinations.');
  } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});

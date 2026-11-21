@@ -273,9 +273,13 @@ Original project code is licensed under the [MIT licence](LICENSE). The grant do
 
 ## Workbench development roadmap
 
-v1.1 adds a separate offline synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for testing under structural mismatch. Generate the default pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. The generator writes compressed, seeded datasets to `data/synthetic/`, separate from NASA experimental data.
+v2.1 redesigns the offline workbench as the **Battery Engineering Studio**, with eight destinations: Overview, Battery Design, Battery Physics, Dataset Explorer, Machine Learning, SOC Estimation, Investigation Lab and Reports. Overview connects selected scenario measurements to existing Python exports. Reports expose v2.0 cohort results and local methodology documents. The interface remains plain HTML, CSS, JavaScript and SVG; it adds no frontend dependencies and does not alter estimator equations or validated results.
 
-See the [synthetic modelling report](docs/synthetic-battery.md) for conventions, reproduction commands and verification. The [workbench roadmap](docs/workbench-roadmap.md) covers future SOC EKF and hybrid estimator comparisons, independent validation, and the educational interface.
+Launch the offline studio with `.venv/bin/python build_workbench.py` on Linux or `.\.venv\Scripts\python.exe build_workbench.py` in PowerShell. Use `--full` for the full research population; the default build is the quick demonstration. The NASA dashboard remains separately available at `reports/dashboard.html` and through the studio's original dashboard link.
+
+v1.1 adds a separate synthetic battery workbench with Rint, Thevenin and Dual Polarisation circuits, plus a finite-volume diffusion model for structural-mismatch evaluation. Generate the seeded pulse datasets with `.venv/bin/python synthetic_battery.py` on Linux or `.\.venv\Scripts\python.exe synthetic_battery.py` in PowerShell. Simulated results stay separate from NASA experimental data.
+
+See the [Battery Engineering Studio v2.1 report](docs/battery-engineering-studio-v2.1.md), [synthetic modelling report](docs/synthetic-battery.md), and [workbench roadmap](docs/workbench-roadmap.md) for architecture, conventions, reproduction commands and validation boundaries.
 
 ### SOC workbench v1.2–v1.3
 

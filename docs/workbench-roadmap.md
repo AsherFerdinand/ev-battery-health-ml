@@ -39,3 +39,9 @@ Use event-driven rendering. Suspend animations on hidden tabs, release old datas
 ## v2.0 release checkpoint
 
 The final milestone investigates capacity generalisation, evaluates a causal adaptation safeguard on independent profile families, and extends the offline Hybrid lab with reproducible decision and failure audits. The report distinguishes synthetic results, NASA compatibility and the remaining CALCE audit prerequisite. [v2.0 engineering release](robust-hybrid-v2.md)
+
+## v2.1 Battery Engineering Studio
+
+The existing six-view offline page is reorganised into eight destinations: Overview, Battery Design, Battery Physics, Dataset Explorer, Machine Learning, SOC Estimation, Investigation Lab and Reports. The Overview synchronises its measurement cards with a selected precomputed synthetic trajectory. Battery Physics teaches the three equivalent-circuit views and presents the independent diffusion plant's exported trajectory separately. Reports show v2.0 paired cohort summaries and link to local methodology and capacity reports. The studio continues to use the existing Python numerical engines and compressed experiment export. It adds no package dependency and does not change model training, estimator equations or published research results. [v2.1 implementation report](battery-engineering-studio-v2.1.md)
+
+The four future investigations above remain future work: this redesign does not implement or claim a new estimator, experimental SOC validation or chemistry-calibrated electrochemical model.
