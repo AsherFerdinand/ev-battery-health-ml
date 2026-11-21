@@ -74,6 +74,7 @@ def physics_lab():
                         "terminal": data["truth_voltage_v"].tolist(),
                         "ohmic": (data["ref_r0_ohm"] * current).tolist(),
                         "polarisation": [branch.tolist() for branch in branches],
+                        "current_a": current.tolist(),
                         "tau": [r*c*resistance*capacitance for r, c in
                                 ((Cell.r1_ohm, Cell.c1_f), (Cell.r2_ohm, Cell.c2_f))
                                 ][:len(branches)],

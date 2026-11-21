@@ -30,8 +30,8 @@ p+p{margin-top:10px}.intro{color:var(--muted);max-width:75ch;margin-bottom:20px}
 .controls,.playback,.switch,.legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.controls{margin-bottom:13px}.controls label,.switch label{display:flex;align-items:center;gap:7px}.playback{margin:12px 0 18px}.playback input{flex:1;min-width:120px}.playback output{min-width:75px;text-align:right}
 button,select,input{font:inherit;color:var(--text)}button,select,input:not([type=range]){border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:7px 10px}button{cursor:pointer;transition:background-color .14s,border-color .14s,color .14s}button:hover,select:hover{border-color:var(--accent)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{cursor:not-allowed;opacity:.55}.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.primary:hover{background:var(--text);border-color:var(--text)}input{accent-color:var(--accent)}
 .card{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:17px 19px;margin-bottom:13px;min-width:0}.columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:13px}.pair{grid-template-columns:repeat(2,minmax(0,1fr))}
-.plot{width:100%;display:block;min-height:125px}.plot text{font:12px system-ui;fill:var(--muted)}.legend{font-size:12px;margin-top:7px}.legend span{white-space:nowrap}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:6px}
-.explorer-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.explorer-heading .sim-status{max-width:360px;text-align:right}.explorer-layout{grid-template-columns:minmax(0,1.45fr) minmax(230px,.8fr);align-items:center}.explorer-visual-row{display:grid;grid-template-columns:minmax(125px,1fr) 100px;align-items:center;gap:8px}.explorer-cell-wrap{display:flex;justify-content:center;min-height:185px}.explorer-cell-wrap svg{width:150px;max-height:220px}.explorer-thermo{text-align:center}.explorer-thermo svg{width:78px;height:180px}.explorer-trace{height:fit-content}.explorer-lower{grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);align-items:start}.explorer-socsoh{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);align-items:center;gap:12px}.explorer-socsoh svg{width:100%;max-height:230px}.explorer-scenario-controls button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:650}.cell-part[data-hover=true]{opacity:.78}.ion-flow{fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:6 5;animation:ion 1.6s linear infinite}
+.method-overview,.investigation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}.method-overview section,.investigation-grid section{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:11px 13px}.method-overview p,.investigation-grid p{font-size:13px;color:var(--muted)}.investigation-guide>summary{font-weight:650;cursor:pointer}.ekf-steps{padding-left:21px}.ekf-steps li{padding:2px 0}.surface-labels{display:grid;gap:3px;font-size:12px;color:var(--muted)}.plot{width:100%;display:block;min-height:125px}.plot text{font:12px system-ui;fill:var(--muted)}.legend{font-size:12px;margin-top:7px}.legend span{white-space:nowrap}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:6px}.chart-toggle{font-size:11px;padding:4px 7px;margin-top:4px}.chart-expanded{position:fixed;z-index:30;inset:4vh 4vw;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;overflow:auto;box-shadow:0 14px 50px #0004}.chart-expanded .plot{height:68vh;min-height:340px}.chart-expanded .chart-toggle{position:sticky;top:0;float:right}
+.explorer-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.explorer-heading .sim-status{max-width:360px;text-align:right}.explorer-layout{grid-template-columns:minmax(0,1.45fr) minmax(230px,.8fr);align-items:center}.explorer-visual-row{display:grid;grid-template-columns:minmax(125px,1fr) 100px;align-items:center;gap:8px}.explorer-cell-wrap{display:flex;justify-content:center;min-height:185px}.explorer-cell-wrap svg{width:150px;max-height:220px}.explorer-thermo{text-align:center}.explorer-thermo svg{width:78px;height:180px}.explorer-trace{height:fit-content}.explorer-circuit{width:100%;display:block;max-height:120px}.explorer-circuit text{font:12px system-ui;fill:var(--text)}.explorer-circuit .circuit-wire{fill:none;stroke:var(--steel);stroke-width:2}.explorer-flow{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:5 6;opacity:.8}.explorer-flow[data-moving=true]{animation:ion 1.6s linear infinite}.explorer-flow[data-direction=reverse]{animation-direction:reverse}@media(prefers-reduced-motion:reduce){.explorer-flow[data-moving=true]{animation:none}}.explorer-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.explorer-chart-grid h4{font-size:12px;margin:0 0 3px;color:var(--muted)}.explorer-chart-grid .plot{min-height:105px}.nasa-plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nasa-plots h3{font-size:13px}.chart-sample{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;margin:3px 0 0;overflow-wrap:anywhere}.explorer-lower{grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);align-items:start}.explorer-socsoh{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);align-items:center;gap:12px}.explorer-socsoh svg{width:100%;max-height:230px}.explorer-scenario-controls button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:650}.cell-part[data-hover=true]{opacity:.78}.ion-flow{fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:6 5;animation:ion 1.6s linear infinite}
 .physics-circuit .wire{fill:none;stroke:var(--muted);stroke-width:2}.physics-circuit [data-focus] .part{fill:none;stroke:var(--text);stroke-width:2}.physics-circuit [data-focus] text{fill:var(--text);stroke:none}@keyframes ion{to{stroke-dashoffset:-24}}
 .note,small{color:var(--muted)}output,.number,td,.sim-number{font-variant-numeric:tabular-nums lining-nums}.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:12px}.readouts div{padding:9px 11px;background:var(--readout)}.readouts dt{font-size:12px;color:var(--muted)}.readouts dd{margin:0;font-weight:660;font-size:16px}
 .flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:4px 0 10px}.flow span{padding:5px 9px;background:var(--success-soft);border-radius:5px;font-size:13px;font-weight:620}
@@ -50,7 +50,7 @@ html[data-theme=dark] .model-tabs p{background:var(--surface-soft)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 @media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:22px 12px}.columns{grid-template-columns:1fr}.sim-layout{grid-template-columns:1fr}}
 @media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:12px 14px}.brand{margin:0 8px 8px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:17px 13px 32px}header{margin-bottom:16px;align-items:flex-start}.header-tools{gap:6px}.header-tools #mode{display:none}.pair,.sim-chart-grid,.sim-grid{grid-template-columns:1fr}.sim-viz{grid-template-columns:95px minmax(0,1fr)}}
-@media(max-width:620px){.physics-teaching{grid-template-columns:1fr}.dataset-intro{grid-template-columns:88px minmax(0,1fr)}.dataset-workflow{grid-template-columns:repeat(2,minmax(0,1fr))}.dataset-history-grid{grid-template-columns:1fr}.explorer-heading{display:block}.explorer-heading .sim-status{text-align:left}.explorer-visual-row{grid-template-columns:minmax(0,1fr) 82px}.explorer-lower,.explorer-socsoh{grid-template-columns:1fr}.explorer-socsoh svg{max-height:205px}}
+@media(max-width:620px){.method-overview,.investigation-grid{grid-template-columns:1fr}.physics-teaching{grid-template-columns:1fr}.dataset-intro{grid-template-columns:88px minmax(0,1fr)}.dataset-workflow{grid-template-columns:repeat(2,minmax(0,1fr))}.dataset-history-grid{grid-template-columns:1fr}.explorer-heading{display:block}.explorer-heading .sim-status{text-align:left}.explorer-visual-row{grid-template-columns:minmax(0,1fr) 82px}.explorer-lower,.explorer-socsoh,.nasa-plots{grid-template-columns:1fr}.explorer-socsoh svg{max-height:205px}}
 
 </style>
 </head>
@@ -77,8 +77,9 @@ html[data-theme=dark] .model-tabs p{background:var(--surface-soft)}
 <div class="columns pair"><a class="card" href="../docs/robust-hybrid-v2.md">Scientific methodology and results ↗</a><a class="card" href="../docs/capacity-generalisation.md">Capacity generalisation ↗</a><a class="card" href="dashboard.html">Original NASA research dashboard ↗</a><div class="card"><h2>Reproduction</h2><code>python build_workbench.py --full</code><p class="note">Build the full offline studio from pinned dependencies and local NASA measurements.</p></div></div>
 </section>
 <section id="hybrid" class="view">
-<h1 id="hybrid-title">Hybrid A laboratory</h1><p class="intro" id="hybrid-intro">Compare four ways to track charge on the same measurements. At 180 s, Hybrid A uses a learned capacity for subsequent EKF predictions.</p>
+<h1 id="hybrid-title">Investigation Lab</h1><p class="intro" id="hybrid-intro">Evaluate when estimators generalise, fail or disagree across operating conditions and synthetic physical models. Use SOC Estimation to learn how each method works on one selected trajectory.</p>
 <div class="controls scenario-controls"></div><div class="playback playback-controls"></div>
+<details class="card investigation-guide"><summary>Questions this investigation answers</summary><div class="investigation-grid"><section><h3>When can Hybrid B help or hurt?</h3><p>In the independent v2.0 Thevenin cohort, original Hybrid B reduced mean SOC MAE to 0.663 pp from 0.708 pp for fixed EKF. On the diffusion cohort it increased MAE to 7.639 pp from 7.527 pp.</p></section><section><h3>Can voltage fit improve while SOC worsens?</h3><p>Yes. On the diffusion cohort Hybrid B voltage RMSE was 17.07 mV versus 17.72 mV for fixed EKF, while SOC MAE was higher. A voltage residual is not a direct measurement of SOC error.</p></section><section><h3>What did the safeguard accept?</h3><p>It rejected every adaptation on both independent final cohorts and exactly tied fixed EKF. It rejected beneficial as well as harmful updates, so it is not a validated selective reliability detector.</p></section><section><h3>What remains unverified experimentally?</h3><p>NASA discharge capacity supports capacity-derived SOH, but the records provide no independent SOC truth. Experimental SOC accuracy, calibrated voltage residuals and adaptive-parameter identifiability remain unverified.</p></section></div><p class="note">The capacity study also found endpoint-phase differences can push predictions against clipping bounds. Read the exported diagnostics and linked v2.0 report for cohort-specific evidence.</p></details>
 <div class="columns">
 <div class="card"><h2>State of charge</h2><div id="hybrid-chart"></div><p class="note" id="oracle-note"></p></div>
 <div class="card"><h2>Measurements to SOC</h2><div class="flow" id="hybrid-flow"><span>Sensors</span>› <span>Features</span>› <span>ML SOH</span>› <span>Capacity</span>› <span>EKF SOC</span></div><p class="note" id="update-note"></p><dl class="readouts" id="hybrid-readouts"></dl></div>
@@ -101,9 +102,10 @@ html[data-theme=dark] .model-tabs p{background:var(--surface-soft)}
 <section id="ekf" class="view" hidden>
 <h1>Extended Kalman filter</h1><p class="intro">Follow one filter correction at a time. Pick a different initial SOC to inspect convergence with the same sensor readings.</p>
 <div class="controls scenario-controls"></div><div class="playback playback-controls"></div><div class="controls" id="ekf-estimator"></div>
+<div class="method-overview"><section><h3>Coulomb Counting</h3><p>Integrates measured current over time using an assumed capacity. Sensor offset and capacity error accumulate.</p></section><section><h3>Fixed EKF</h3><p>Uses a fixed equivalent-circuit model, current and measured voltage to correct SOC and polarisation.</p></section><section><h3>Hybrid A / B</h3><p>Hybrid A supplies an ML capacity estimate; Hybrid B adapts supported capacity and R₀ parameters for the EKF.</p></section><section><h3>Safeguarded Hybrid B</h3><p>Checks parameter updates and can retain the fixed prior. It tied fixed EKF on the v2.0 independent final cohorts.</p></section></div>
 <div class="columns">
-<div class="card"><h2>Voltage prediction and measurement</h2><div id="ekf-chart"></div><div class="formula-stack" id="ekf-equations"></div></div>
-<div class="card"><h2>Predict, compare, correct</h2><p>Current predicts charge and polarisation. The voltage residual is weighted by the Kalman gain and corrects both states. The covariance describes the filter’s internal uncertainty.</p><dl class="readouts" id="ekf-readouts"></dl></div>
+<div class="card"><h2>Voltage prediction and measurement</h2><p class="note" id="ekf-scenario-note"></p><div id="ekf-chart"></div><div class="formula-stack" id="ekf-equations"></div></div>
+<div class="card"><h2>Predict, compare, correct</h2><ol class="ekf-steps"><li>Measured current predicts SOC and polarisation.</li><li>The battery model predicts terminal voltage.</li><li>Compare predicted voltage with the measured value.</li><li>The difference is the innovation.</li><li>The Kalman gain weights that innovation to correct the state.</li></ol><dl class="readouts" id="ekf-readouts"></dl></div>
 </div>
 <div class="card"><h2>State correction and uncertainty</h2><div id="ekf-soc"></div><p class="note">The shaded band is ±2 filter standard deviations around corrected SOC.</p><p class="equation">x⁺ = x⁻ + K (Vₘ − V̂)&nbsp; · &nbsp;σ(SOC) = √P₀₀</p></div>
 </section>
@@ -147,29 +149,28 @@ html[data-theme=dark] .model-tabs p{background:var(--surface-soft)}
 </div>
 <section class="card sim-comparison" id="sim-comparison" hidden><h2>Configuration comparison</h2><p id="sim-comparison-note" class="note"></p><div class="sim-chart-grid"><div><h3>Terminal voltage (V)</h3><div id="sim-compare-voltage"></div></div><div><h3>State of charge (%)</h3><div id="sim-compare-soc"></div></div></div><dl class="readouts" id="sim-difference-metrics"></dl></section>
 <details class="card" id="circuit-explorer"><summary>Equivalent-circuit response explorer</summary>
-<div class="model-tabs" id="physics-model-explanation"></div><p class="intro">Explore the existing reproducible pulse response and its circuit assumptions.</p>
-<div class="controls" id="physics-controls"></div>
-<div class="columns"><div class="card"><h2>Voltage drops</h2><div id="physics-chart"></div><div id="terminal-chart"></div><p class="note">Each RC branch reaches about 63% of its steady drop in one time constant under a constant load.</p></div>
+<p class="intro"><strong>Why use a battery model?</strong> Terminal voltage changes with charge, current and internal dynamics. A model lets engineers predict that response across controlled operating conditions.</p><details class="note"><summary>Engineering detail</summary><p>These precomputed synthetic pulse examples isolate model response; they do not identify parameters from NASA records. Thevenin ECMs approximate electrical dynamics, while the diffusion trajectory is a separate synthetic plant.</p></details><div class="model-tabs" id="physics-model-explanation"></div><div class="controls" id="physics-controls"></div><div class="controls"><label>Response view <select id="physics-response-mode" aria-label="Physics response quantity"><option value="0">Terminal voltage (V)</option><option value="1">Voltage deviation from OCV (V)</option></select></label></div><div class="playback" id="physics-playback"></div>
+<div class="columns"><div class="card"><h2 id="physics-response-title">Terminal voltage response</h2><div id="physics-chart"></div><details><summary>Applied current profile</summary><div id="terminal-chart"></div></details><p class="note" id="physics-response-note">All three equivalent circuits use the same current profile and time axis. RC branches add transient relaxation after load changes.</p></div>
 <div class="card"><h2>Equivalent circuit</h2><div id="circuit"></div><p class="equation">V = OCV(SOC) − I·R₀ − Σvᵣ꜀</p><dl class="readouts" id="physics-readouts"></dl></div></div>
 </details>
 </section>
 <section id="ml" class="view" hidden>
-<h1>Machine learning explorer</h1><p class="intro">Compare how three algorithms turn early voltage, current and temperature into a capacity estimate.</p>
+<h1>Machine learning explorer</h1><p class="intro">Compare how three algorithms use early voltage, current and temperature measurements to predict capacity-derived SOH. These models are not independently validated direct SOC estimators.</p>
 <div class="controls" id="ml-controls"></div>
-<div class="columns"><div class="card"><h2>Trained prediction surface</h2><div id="surface"></div><p class="note">Six other features are fixed at their training medians. Axes cover marginal training ranges, so some plotted combinations may be rare.</p></div>
+<div class="columns"><div class="card"><h2>Trained prediction surface</h2><div id="surface"></div><p class="note">The surface shows actual trained-model predictions. Six other features stay fixed at their training medians. Each feature spans its 5th–95th training percentile; combinations can still be sparse or outside the joint training cloud, so the plot does not certify interpolation support.</p></div>
 <div class="card"><h2>How the algorithm learns</h2><p id="ml-explanation"></p><div id="ml-example"></div><p class="note">The small worked example illustrates the algorithm. The surface uses the trained capacity model.</p></div></div>
 <div class="card trained-detail" id="trained-detail" hidden><h2>Inside the trained model</h2><div id="trained-material" class="table-wrap"></div></div>
-<div class="card"><h2>Measured inputs and held-out errors</h2><p>Use samples through 180 s, inclusive. Features summarize start voltage, voltage change and spread, current level and spread, integrated charge, mean temperature and temperature change. Available capacity is nominal capacity × predicted SOH.</p><div class="table-wrap" id="ml-metrics"></div><p class="note" id="identifiability"></p></div>
+<div class="card"><h2>Measured inputs and held-out errors</h2><p>Use samples through 180 s, inclusive. Features summarize start voltage, voltage change and spread, current level and spread, integrated charge, mean temperature and temperature change. Available capacity is nominal capacity × predicted SOH.</p><div class="table-wrap" id="ml-metrics"></div><p class="note"><strong>Reading the errors:</strong> MAE is the average absolute prediction error; RMSE penalises larger misses more strongly. Both here are SOH percentage points (pp). Lower values are generally better. Error standard deviation describes consistency, not accuracy; bias shows overprediction or underprediction.</p><p class="note" id="identifiability"></p></div>
 </section>
 <section id="data" class="view" hidden>
 <h1>Dataset explorer</h1><div class="controls" id="dataset-controls"></div>
 <section class="card dataset-intro" id="nasa-intro" hidden><svg class="dataset-cell" viewBox="0 0 150 170" role="img" aria-label="Illustration of a generic cylindrical lithium-ion test cell, not an exact NASA specimen"><title>Generic cylindrical cell illustration; NASA specimen identity and dimensions are not asserted.</title><ellipse cx="75" cy="30" rx="35" ry="13" fill="var(--steel-light)" stroke="var(--steel)" stroke-width="2"/><path d="M40 30v104c0 8 16 15 35 15s35-7 35-15V30" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><path d="M40 130c0 8 16 15 35 15s35-7 35-15" fill="none" stroke="var(--steel)" stroke-width="2"/><path d="M54 41h42v78H54z" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="75" y="82" text-anchor="middle" fill="var(--text)" font-size="11">cell</text><text x="75" y="164" text-anchor="middle" fill="var(--muted)" font-size="9">illustration</text></svg><div><h2>NASA battery ageing measurements</h2><p>These experiments record cells over repeated charge, discharge and impedance tests. The explorer shows measured discharge voltage, current and temperature, plus discharge capacity.</p><div class="dataset-workflow" aria-label="How battery health research uses these records"><span>Cycle cells</span><span>Record V, I, temperature and time</span><span>Measure discharge capacity</span><span>Calculate capacity-derived SOH</span><span>Extract early-discharge features</span><span>Predict SOH with ML</span><span>Compare with measured reference SOH</span></div><details><summary>Technical details and limits</summary><p>NASA cells shown here are B0005, B0006, B0007 and B0018. The project defines its capacity-derived reference as measured discharge capacity divided by a 2 Ah nominal reference. That convention is not a claim about manufacturer-rated capacity. The ML view evaluates predicted SOH against this capacity-derived reference. NASA does not provide an independent SOC ground-truth trajectory in these records. This drawing is generic and does not assert the test cell chemistry, manufacturer or dimensions.</p></details></div></section>
 <div id="synthetic-data"><p class="intro">The simulator supplies reference SOC and SOH. The three noisy sensor traces are the estimator inputs.</p><div class="controls scenario-controls"></div><div class="playback playback-controls"></div><div class="card" id="synthetic-chart"></div></div>
-<div id="nasa-data" hidden><p class="intro">Measured reference values are experimental observations; ML estimates appear in the Machine Learning destination. This dataset has no independent measured SOC truth.</p><div class="controls" id="nasa-controls"></div><details class="card dataset-history"><summary>Measured capacity and derived SOH history</summary><div class="dataset-history-grid"><div><h3>Discharge capacity (Ah)</h3><div id="nasa-capacity-history"></div></div><div><h3>Capacity-derived SOH (%)</h3><div id="nasa-soh-history"></div></div></div></details><div class="playback" id="nasa-playback"></div><div class="card" id="nasa-chart"></div><a href="dashboard.html">Open the existing NASA research dashboard</a></div>
+<div id="nasa-data" hidden><p class="intro">The recorded channels are terminal voltage (V), current (A), cell temperature (°C) and elapsed time (s). Discharge capacity (Ah) is measured at test completion; this project derives SOH by dividing it by its stated 2 Ah reference.</p><p class="note">Voltage changes with SOC, load and internal dynamics; it may recover after current falls during rest, which is not evidence of charging. Temperature reflects the recorded cell sensor. NASA current polarity remains as recorded, so discharge is typically negative. Discharge, charge and rest labels are inferred from sampled current using −0.05 A and +0.05 A thresholds. These records do not provide independent SOC truth.</p><div class="controls" id="nasa-controls"></div><details class="card dataset-history"><summary>Measured capacity and derived SOH history</summary><div class="dataset-history-grid"><div><h3>Discharge capacity (Ah)</h3><div id="nasa-capacity-history"></div></div><div><h3>Capacity-derived SOH (%)</h3><div id="nasa-soh-history"></div></div></div></details><div class="playback" id="nasa-playback"></div><div class="card" id="nasa-chart"></div><a href="dashboard.html">Open the existing NASA research dashboard</a></div>
 </section>
 <section id="fundamentals" class="view" hidden>
 <h1>Battery Explorer</h1><p class="intro">Explore a generic cylindrical lithium-ion cell and see how a few operating conditions change its modelled response. This illustration is not a NASA specimen; no manufacturer, exact chemistry, dimensions or rated capacity are specified.</p>
-<section class="card" aria-labelledby="explorer-scenario-heading"><div class="explorer-heading"><div><h2 id="explorer-scenario-heading">A battery in use</h2><p class="note">Choose an example. Each trace is generated by the existing Python equivalent-circuit engine.</p></div><p id="explorer-status" class="sim-status" role="status" aria-live="polite"></p></div><div id="explorer-scenario-controls" class="controls" role="group" aria-label="Battery operating scenario"></div><div class="columns explorer-layout"><div><h3 id="explorer-scenario-title"></h3><p id="explorer-scenario-description" class="note"></p><div class="explorer-visual-row"><div class="explorer-cell-wrap"><svg id="explorer-cell" viewBox="0 0 150 230" role="img" aria-label="Illustrative cylindrical cell showing simulated state of charge"><rect x="48" y="18" width="54" height="9" rx="2" fill="var(--steel)"/><rect x="35" y="27" width="80" height="177" rx="22" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="3"/><rect id="explorer-soc-fill" x="43" y="196" width="64" height="0" rx="12" fill="var(--accent)"/><text x="75" y="219" text-anchor="middle" fill="var(--muted)" font-size="11">illustrative cell</text></svg></div><div class="explorer-thermo"><h3>Temperature</h3><svg id="explorer-thermometer" viewBox="0 0 90 210" role="img" aria-label="Thermometer showing modelled cell and ambient temperature"><rect x="35" y="18" width="20" height="130" rx="10" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><circle cx="45" cy="160" r="21" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><rect id="explorer-mercury" x="41" y="98" width="8" height="52" rx="4" fill="var(--warning)"/><circle cx="45" cy="160" r="13" fill="var(--warning)"/><path id="explorer-ambient-marker" d="M28 115h34" stroke="var(--accent)" stroke-width="2"/><text x="45" y="198" text-anchor="middle" fill="var(--muted)" font-size="10">−20°   60°C</text></svg><p id="explorer-temperature-note" class="note"></p></div></div><dl class="readouts" id="explorer-readouts"></dl></div><div class="card explorer-trace"><h3>Simulation timeline</h3><label for="explorer-seek">Time <output id="explorer-time">—</output></label><input id="explorer-seek" type="range" min="0" max="0" value="0" disabled aria-label="Explorer simulation time"><div class="controls"><button id="explorer-play" type="button" disabled>Play</button><button id="explorer-pause" type="button" disabled>Pause</button></div><p class="note">A battery-powered device draws current from its cell. For the high-load example, the thermal trace is the modelled cell state; device electronics can generate additional heat outside the battery.</p></div></div></section>
+<section class="card" aria-labelledby="explorer-scenario-heading"><div class="explorer-heading"><div><h2 id="explorer-scenario-heading">A battery in use</h2><p class="note">Choose an example. Each trace is generated by the existing Python equivalent-circuit engine.</p></div><p id="explorer-status" class="sim-status" role="status" aria-live="polite"></p></div><div id="explorer-scenario-controls" class="controls" role="group" aria-label="Battery operating scenario"></div><div class="columns explorer-layout"><div><h3 id="explorer-scenario-title"></h3><p id="explorer-scenario-description" class="note"></p><div class="explorer-visual-row"><div class="explorer-cell-wrap"><svg id="explorer-cell" viewBox="0 0 150 230" role="img" aria-label="Illustrative cylindrical cell showing simulated state of charge"><rect x="48" y="18" width="54" height="9" rx="2" fill="var(--steel)"/><rect x="35" y="27" width="80" height="177" rx="22" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="3"/><rect id="explorer-soc-fill" x="43" y="196" width="64" height="0" rx="12" fill="var(--accent)"/><line id="explorer-ghost-level" x1="40" x2="110" y1="196" y2="196" stroke="var(--warning)" stroke-width="2" stroke-dasharray="4 3"/><text x="75" y="219" text-anchor="middle" fill="var(--muted)" font-size="11">illustrative cell</text></svg></div><div class="explorer-thermo"><h3>Temperature</h3><svg id="explorer-thermometer" viewBox="0 0 90 210" role="img" aria-label="Thermometer showing modelled cell and ambient temperature"><rect x="35" y="18" width="20" height="130" rx="10" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><circle cx="45" cy="160" r="21" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><rect id="explorer-mercury" x="41" y="98" width="8" height="52" rx="4" fill="var(--warning)"/><circle cx="45" cy="160" r="13" fill="var(--warning)"/><path id="explorer-ambient-marker" d="M28 115h34" stroke="var(--accent)" stroke-width="2"/><text x="45" y="198" text-anchor="middle" fill="var(--muted)" font-size="10">−20°   60°C</text></svg><p id="explorer-temperature-note" class="note"></p></div></div><dl class="readouts" id="explorer-readouts"></dl></div><div class="card explorer-trace"><h3>Simulation timeline</h3><label for="explorer-seek">Time <output id="explorer-time">—</output></label><input id="explorer-seek" type="range" min="0" max="0" value="0" disabled aria-label="Explorer simulation time"><div class="controls"><button id="explorer-play" type="button" disabled>Play</button><button id="explorer-pause" type="button" disabled>Pause</button><button id="explorer-restart" type="button" disabled>Restart</button><label>Speed <select id="explorer-speed" aria-label="Explorer playback speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div><h4>External circuit · conceptual</h4><svg id="explorer-circuit" class="explorer-circuit" viewBox="0 0 420 115" role="img" aria-label="Illustrative battery, switch and electrical load"><path class="circuit-wire" d="M70 32H152M188 32H287M333 32H365V88H70V72M70 32V46M70 58V72"/><path id="explorer-switch-arm" d="M152 32L184 32" stroke="var(--accent)" stroke-width="3"/><path id="explorer-current-flow" class="explorer-flow" d="M85 32H142M203 32H276M344 32H355V78H85"/><path d="M64 46h12M58 58h24" stroke="var(--text)" stroke-width="2"/><text x="70" y="20" text-anchor="middle">Battery</text><circle cx="152" cy="32" r="3" fill="var(--text)"/><circle cx="188" cy="32" r="3" fill="var(--text)"/><text x="170" y="62" text-anchor="middle" id="explorer-switch-label">Closed</text><rect x="287" y="20" width="46" height="25" rx="4" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="2"/><text x="310" y="37" text-anchor="middle" id="explorer-load-label">Load</text><text x="210" y="105" text-anchor="middle" id="explorer-circuit-status" fill="var(--muted)"></text></svg><p class="note">Conventional current direction follows the recorded simulation sign. Pausing playback holds the selected sample; it does not open a nonzero-current circuit.</p><div class="explorer-chart-grid"><section><h4>Terminal voltage · V</h4><div id="explorer-voltage-chart"></div></section><section><h4>Current · A</h4><div id="explorer-current-chart"></div></section><section><h4>State of charge · %</h4><div id="explorer-soc-chart"></div></section></div><p class="note">A battery-powered device draws current from its cell. For the high-load example, the thermal trace is the modelled cell state; device electronics can generate additional heat outside the battery.</p></div></div></section>
 <div class="columns explorer-lower"><div class="card"><h2>Inside a cylindrical cell</h2><p class="note">Schematic cutaway, not to scale. Representative material examples are not claims about NASA test cells.</p><div id="cutaway"></div></div><div class="card"><h2 id="layer-title"></h2><p id="layer-detail"></p><p><strong>Typical material examples</strong></p><p id="layer-materials" class="note"></p><p><strong>During operation</strong></p><p id="layer-operation" class="note"></p><p><strong>Engineering consideration</strong></p><p id="layer-consideration" class="note"></p></div></div>
 <div class="columns explorer-lower"><div class="card"><h2>Charge and ageing example</h2><p class="note">A separate educational illustration; it does not change the simulation above or predict ageing.</p><div class="explorer-socsoh"><svg id="age-cell" viewBox="0 0 170 225" role="img" aria-label="Fixed-size cell: usable capacity region and charge remaining are shown separately"><rect x="55" y="17" width="60" height="9" rx="2" fill="var(--steel)"/><rect x="40" y="26" width="90" height="177" rx="20" fill="var(--surface-soft)" stroke="var(--steel)" stroke-width="3"/><rect id="age-usable-fill" x="49" y="45" width="72" height="150" rx="10" fill="var(--steel-light)"/><rect id="age-charge-fill" x="57" y="120" width="56" height="75" rx="7" fill="var(--accent)"/><path id="age-usable-line" d="M45 45h80" stroke="var(--steel)" stroke-width="2" stroke-dasharray="4 3"/><text x="85" y="220" text-anchor="middle" fill="var(--muted)" font-size="11">casing size stays fixed</text></svg><div><p><strong>SOH sets the usable-capacity ceiling.</strong></p><p class="note">SOC is the fraction of that currently usable capacity which remains charged. Lower SOH does not make the case smaller.</p><dl id="age-readouts" class="readouts"></dl></div></div><div class="learning-controls" id="age-demo"></div><p class="note">At 80% capacity SOH and 50% SOC, the simplified remaining charge is 0.8 × 0.5 = 40% of nominal capacity.</p></div><div class="card"><h2>Why batteries warm under load</h2><p>Current through internal resistance produces heat: <span class="equation">P<sub>loss</sub> = I²R</span>. Heat transfer, thermal mass, cooling and operating conditions also affect temperature. The thermometer above is the existing lumped ECM thermal state, not a precise cell-temperature prediction.</p><p class="note">Capacity can fade as active material or cyclable lithium is lost. Resistance may also rise, but these changes depend on chemistry, use and ageing mechanism and need not follow one fixed ratio.</p></div></div>
 </section>
@@ -203,8 +204,13 @@ const colors = Array.from({length:6},(_,i)=>token('--chart-'+(i+1)));
 const refreshPalette = () => colors.splice(0,colors.length,...Array.from({length:6},(_,i)=>token('--chart-'+(i+1))));
 const state = {view:'fundamentals', scenario:0, trial:0, k:0, ekfMode:0, timer:null, dataset:'NASA',
   cell:Object.keys(data.nasa)[0], cycle:0, nk:0, layer:0, spread:1, ionMode:0};
+const playbackState={time:0,status:'paused',speed:1,sampleIndex:0,scenario:'fundamentals:0'};
+let chartEpoch=0,physicsIndex=120,physicsResponseMode=0;
 const active = () => data.scenarios[state.scenario];
 const trial = () => Object.values(active().trials)[state.trial];
+const physicsCase = () => data.scenarios.find(item=>item.plant==='diffusion');
+const physicsRun = () => {const model=circuitModels[lab[0]],amps=[0.8,1.6,2.4][lab[1]],r=[0.7,1,1.5][lab[2]],c=model==='rint'?1:[0.5,1,2][lab[3]];return data.physics[[model,amps,r,c].join(':')];};
+const physicsTime = () => lab[0]===3?(physicsCase()?.time??[]):physicsRun()?.terminal.map((_,i)=>i)??[];
 const fmt = (x, decimals=2) => Number(x).toFixed(decimals);
 const pct = x => fmt(x*100)+'%';
 const safeText = value => String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -222,6 +228,25 @@ function select(label, values, current, update) {
   return container;
 }
 function chart(id, time, series, k, opts={}) {
+  if(!time?.length||!series?.length)return;
+  const key=id+':'+chartEpoch+':'+time.length+':'+series.map(track=>track.name).join('|');
+  const host=$(id), prior=host.querySelector('svg');
+  const sampleFor=(track,ix)=>track.values.length===time.length?ix:Math.round(ix*(track.values.length-1)/Math.max(1,time.length-1));
+  const updateCursor=svg=>{
+    const ix=Math.max(0,Math.min(time.length-1,Math.floor(k)));
+    const x0=Number(svg.dataset.left),x1=Number(svg.dataset.right),t0=time[0],t1=time.at(-1);
+    const x=x0+(x1-x0)*(time[ix]-t0)/Math.max(t1-t0,1);
+    const cursor=svg.querySelector('[data-time-cursor]');cursor.setAttribute('x1',x);cursor.setAttribute('x2',x);
+    svg.querySelectorAll('[data-sample]').forEach((dot,j)=>{
+      const track=series[j],sample=sampleFor(track,ix),value=track.values[sample]*(track.scale??1)+(track.offset??0);
+      dot.setAttribute('cx',x);dot.setAttribute('cy',svg.dataset.ymin+(svg.dataset.ymax-svg.dataset.ymin)*(1-(value-Number(svg.dataset.min))/Number(svg.dataset.range)));
+      dot.setAttribute('aria-label',track.name+': '+fmt(value,opts.decimals??2)+' at '+fmt(time[ix],1)+' seconds');
+    });
+    let readout=host.querySelector('.chart-sample');
+    if(!readout){readout=document.createElement('p');readout.className='chart-sample';readout.setAttribute('aria-live','off');host.append(readout);}
+    readout.textContent=fmt(time[ix],1)+' s · '+series.map(track=>track.name+' '+fmt(track.values[sampleFor(track,ix)]*(track.scale??1)+(track.offset??0),opts.decimals??2)).join(' · ');
+  };
+  if(prior?.dataset.key===key){updateCursor(prior);return;}
   const w=660,h=258,l=55,r=18,t=13,b=38;
   const valueOf = (track,value) => value*(track.scale??1)+(track.offset??0);
   let dataMin=Infinity,dataMax=-Infinity;
@@ -231,7 +256,7 @@ function chart(id, time, series, k, opts={}) {
   const range = Math.max(maximum-minimum, 1e-5);
   const x = v => l+(w-l-r)*(v-time[0])/Math.max(time.at(-1)-time[0],1);
   const y = v => h-b-(h-b-t)*(v-minimum)/range;
-  let markup = '<svg class="plot" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+opts.label+'">';
+  let markup = '<svg class="plot" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+opts.label+'" data-key="'+key+'" data-left="'+l+'" data-right="'+(w-r)+'" data-ymin="'+t+'" data-ymax="'+(h-b)+'" data-min="'+minimum+'" data-range="'+range+'">';
   for(let n=0;n<5;n++){
     const value=minimum+range*n/4, yy=y(value), tt=time[0]+(time.at(-1)-time[0])*n/4;
     markup+='<path d="M'+l+' '+yy+'H'+(w-r)+'" stroke="'+token('--plot-grid')+'"/><text text-anchor="end" x="'+(l-7)+'" y="'+(yy+4)+'">'+fmt(value,opts.decimals??2)+'</text><text text-anchor="middle" x="'+x(tt)+'" y="'+(h-16)+'">'+Math.round(tt)+'</text>';
@@ -241,9 +266,9 @@ function chart(id, time, series, k, opts={}) {
     markup+='<path d="M'+x(marker.time)+' '+t+'V'+(h-b)+'" stroke="'+token('--muted')+'" stroke-dasharray="4 5"/>';
     if(marker.label)markup+='<text x="'+(x(marker.time)+4)+'" y="11">'+marker.label+'</text>';
   }
-  const stride=Math.max(1,Math.ceil(k/360));
-  const indices=Array.from({length:Math.ceil(k/stride)},(_,i)=>i*stride);
-  indices.push(k);
+  const stride=Math.max(1,Math.ceil(time.length/600));
+  const indices=Array.from({length:Math.ceil((time.length-1)/stride)},(_,i)=>i*stride);
+  if(indices.at(-1)!==time.length-1)indices.push(time.length-1);
   const points=(values,indexes,scale=1,offset=0)=>indexes.map(i=>fmt(x(time[i]),1)+','+fmt(y(values[i]*scale+offset),1)).join(' ');
   if(opts.band){
     const [lower,upper]=opts.band;
@@ -251,50 +276,85 @@ function chart(id, time, series, k, opts={}) {
   }
   series.forEach((track,j)=>{
     const color=track.color??colors[j];
-    const vertices=points(track.values,indices,track.scale??1,track.offset??0);
-    markup+='<polyline points="'+vertices+'" fill="none" stroke="'+color+'" stroke-width="2" '+(track.dashed?'stroke-dasharray="5 4"':'')+'/><circle cx="'+x(time[k])+'" cy="'+y(valueOf(track,track.values[k]))+'" r="3" fill="'+color+'"><title>'+safeText(track.name)+' · '+fmt(valueOf(track,track.values[k]),opts.decimals??2)+' at '+fmt(time[k],1)+' s</title></circle>';
+    const vertices=indices.map(i=>fmt(x(time[i]),1)+','+fmt(y(valueOf(track,track.values[sampleFor(track,i)])),1)).join(' ');
+    markup+='<polyline points="'+vertices+'" fill="none" stroke="'+color+'" stroke-width="2" '+(track.dashed?'stroke-dasharray="5 4"':'')+'/><circle data-sample="'+j+'" r="4" fill="'+color+'"/>';
   });
-  $(id).innerHTML=markup+'</svg><div class="legend">'+series.map((s,i)=>'<span><i style="background:'+(s.color??colors[i])+'"></i>'+s.name+'</span>').join('')+'</div>';
+  markup+='<line data-time-cursor="true" stroke="'+token('--text')+'" stroke-width="1.5" stroke-dasharray="3 3" pointer-events="none"/>';
+  host.innerHTML=markup+'</svg><div class="legend">'+series.map((s,i)=>'<span><i style="background:'+(s.color??colors[i])+'"></i>'+s.name+'</span>').join('')+'</div>';
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='chart-toggle';toggle.textContent=host.classList.contains('chart-expanded')?'Collapse chart':'Expand chart';toggle.setAttribute('aria-expanded',String(host.classList.contains('chart-expanded')));
+  toggle.onclick=()=>{const expanded=host.classList.toggle('chart-expanded');toggle.textContent=expanded?'Collapse chart':'Expand chart';toggle.setAttribute('aria-expanded',String(expanded));};host.append(toggle);
+  const cursor=host.querySelector('[data-time-cursor]');cursor.setAttribute('x1',l);cursor.setAttribute('x2',l);cursor.setAttribute('y1',t);cursor.setAttribute('y2',h-b);
+  updateCursor(host.querySelector('svg'));
 }
 function setupPlayback(container,nasa=false) {
   const play=document.createElement('button'), reset=document.createElement('button'), step=document.createElement('button');
-  const slider=document.createElement('input'), output=document.createElement('output');
+  const slider=document.createElement('input'), output=document.createElement('output'), speed=document.createElement('select');
   play.className='primary'; play.textContent='Play'; reset.textContent='Reset'; step.textContent='Step';
+  speed.setAttribute('aria-label','Playback speed');['0.5','1','2','4'].forEach(value=>speed.add(new Option(value+'×',value)));speed.value='1';
+  speed.onchange=()=>{playbackState.speed=Number(speed.value);if(state.timer!==null){stop();playReplay();}};
   slider.type='range'; slider.min=0; slider.setAttribute('aria-label','Playback position');
-  play.onclick=()=>state.timer===null?playReplay():stop();
-  reset.onclick=()=>{stop(); position(0,nasa);};
-  step.onclick=()=>{stop(); position((nasa?state.nk:state.k)+1,nasa);};
-  slider.oninput=()=>{stop();position(Number(slider.value),nasa);};
-  container.replaceChildren(play,reset,step,slider,output);
+  const source=nasa?'NASA':container.id==='physics-playback'?'physics':'research';
+  play.onclick=()=>state.timer===null?playReplay(source):stop();
+  reset.onclick=()=>{stop(); position(0,nasa,source);};
+  step.onclick=()=>{stop(); position(Number(slider.value)+1,nasa,source);};
+  slider.oninput=()=>{stop();position(Number(slider.value),nasa,source);};
+  container.replaceChildren(play,reset,step,slider,speed,output);
 }
 function nasaCycle(){return data.nasa[state.cell]?.[state.cycle];}
 function isNasa(){return state.view==='data'&&state.dataset==='NASA';}
-function position(k,nasa=false){
+function position(k,nasa=false,source=''){
+  if(source==='physics'){
+    const max=physicsTime().length-1;physicsIndex=Math.min(max,Math.max(0,k));playbackState.sampleIndex=physicsIndex;playbackState.time=physicsTime()[physicsIndex]??0;
+    playbackState.scenario='physics-response:'+circuitModels[lab[0]]+':'+physicsResponseMode;renderPhysics();syncPlayback();if(k>=max)stop();return;
+  }
   const max=nasa?(nasaCycle()?.trace.length??1)-1:active().time.length-1;
   if(nasa) state.nk=Math.min(max,Math.max(0,k));
   else state.k=Math.min(max,Math.max(0,k));
+  playbackState.sampleIndex=nasa?state.nk:state.k;playbackState.time=nasa?nasaCycle()?.trace[state.nk]?.[0]??0:active().time[state.k]??0;
+  playbackState.scenario=nasa?'NASA:'+state.cell+':'+state.cycle:'research:'+state.scenario+':'+state.trial;
   render();
   if(k>=max) stop();
 }
 function stop(){
   if(state.timer!==null) clearInterval(state.timer);
   state.timer=null;
+  playbackState.status='paused';
   document.querySelectorAll('.playback .primary').forEach(el=>el.textContent='Play');
+  if($('explorer-play'))$('explorer-play').textContent='Play';
+  if($('sim-battery-art'))$('sim-battery-art').dataset.motion='paused';
+  if(explorerRun&&$('explorer-current-flow'))explorerRenderCircuit(explorerRun.channels.current_a[explorerSample],explorerRun.channels.time_s[explorerSample]);
 }
-function playReplay(){
+function playReplay(source=''){
   if(document.hidden)return;
-  const nasa=isNasa(), max=nasa?(nasaCycle()?.trace.length??1)-1:active().time.length-1;
+  const nasa=source==='NASA'||(!source&&isNasa()), physics=source==='physics',explorer=source==='explorer'||(!source&&state.view==='fundamentals'&&explorerRun),simulation=source==='simulation'||(!source&&state.view==='physics'&&simState.latest);
+  const max=physics?physicsTime().length-1:nasa?(nasaCycle()?.trace.length??1)-1:explorer?explorerRun.channels.time_s.length-1:simulation?simState.latest.channels.time_s.length-1:active().time.length-1;
   if(max<=0) return;
-  if((nasa?state.nk:state.k)>=max) position(0,nasa);
-  state.timer=setInterval(()=>position((nasa?state.nk:state.k)+(nasa?1:4),nasa),110);
+  let index=physics?physicsIndex:nasa?state.nk:explorer?explorerSample:simulation?simState.index:state.k;
+  if(index>=max){index=0;if(physics)position(0,false,'physics');else if(explorer)explorerShowSample(0);else if(simulation){renderSimulationClock(0);renderSimulationCharts();}else position(0,nasa,source);}
+  const speedControl=simulation?$('sim-speed'):explorer?$('explorer-speed'):physics?$('physics-playback').querySelector('select[aria-label="Playback speed"]'):nasa?$('nasa-playback').querySelector('select[aria-label="Playback speed"]'):$(state.view).querySelector('.playback-controls select[aria-label="Playback speed"]');
+  playbackState.status='playing';playbackState.speed=Number(speedControl?.value??1);
+  playbackState.scenario=physics?'physics-response:'+circuitModels[lab[0]]+':'+physicsResponseMode:nasa?'NASA:'+state.cell+':'+state.cycle:explorer?'synthetic:'+explorerScenarioIndex:simulation?'simulation:'+simState.latest.configuration.model:'research:'+state.scenario+':'+state.trial;
+  state.timer=setInterval(()=>{
+    const speed=simulation?Number($('sim-speed').value):playbackState.speed;
+    const step=simulation?speed:explorer?Math.max(1,Math.ceil(max/120)):nasa?1:4;
+    const current=physics?physicsIndex:nasa?state.nk:explorer?explorerSample:simulation?simState.index:state.k,next=Math.min(max,current+step);
+    if(physics)position(next,false,'physics');
+    else if(nasa||(!explorer&&!simulation))position(next,nasa,source);
+    else if(explorer){explorerShowSample(next);if(next>=max)stop();}
+    else{renderSimulationClock(next);renderSimulationCharts();if(next>=max)stop();}
+  },simulation?120:110/playbackState.speed);
+  if(explorer)$('explorer-play').textContent='Playing…';
+  if(simulation)$('sim-battery-art').dataset.motion='active';
   syncPlayback();
 }
 function syncPlayback(){
-  const nasa=isNasa(), el=nasa?$('nasa-playback'):$(state.view).querySelector('.playback-controls');
+  const nasa=isNasa(),physicsPage=state.view==='physics',physics=physicsPage&&$('circuit-explorer').open;
+  if(physicsPage&&!physics)return;
+  const el=nasa?$('nasa-playback'):physics?$('physics-playback'):$(state.view).querySelector('.playback-controls');
   if(!el)return;
-  const trace=nasa?nasaCycle()?.trace:active().time;
+  const trace=nasa?nasaCycle()?.trace:physics?physicsTime():active().time;
   if(!trace)return;
-  const k=nasa?state.nk:state.k, input=el.querySelector('input');
+  const k=nasa?state.nk:physics?physicsIndex:state.k, input=el.querySelector('input[type="range"]');
   input.max=trace.length-1;input.value=k;
   el.querySelector('output').textContent=fmt(nasa?trace[k][0]:trace[k],0)+' s';
   el.querySelector('.primary').textContent=state.timer===null?'Play':'Pause';
@@ -435,6 +495,7 @@ function renderEkf(){
     fmt(d.predicted_voltage_v[k],4)+' V = '+fmt(1000*d.innovation_v[k],2)+' mV</p>'+
     '<p class="equation">SOC⁺ = clip(SOC⁻ + gain × innovation) · '+pct(prior[0])+' → '+pct(correctedState[0])+'</p>'+
     '<p class="equation">σ(SOC) = √P₀₀ = '+fmt(100*Math.sqrt(p[0][0]),3)+' pp</p>';
+  $('ekf-scenario-note').textContent='Selected synthetic trajectory: '+active().name+' · plant '+(active().plant??'Thevenin')+' · initial reference SOC '+pct(c.truth[0])+'. The model combines SOC-dependent OCV, immediate current-related voltage drop and polarisation. When current falls, voltage may recover as polarisation relaxes; that rise alone does not mean the cell is charging.';
   $('ekf-readouts').innerHTML=[
     ['Predicted SOC',pct(d.predicted_state[k][0])],['Corrected SOC',pct(d.corrected_state[k][0])],
     ['Predicted polarisation',fmt(1000*d.predicted_state[k][1])+' mV'],['Corrected polarisation',fmt(1000*d.corrected_state[k][1])+' mV'],
@@ -471,7 +532,8 @@ function renderDataset(){
   if(!nasa){
     const c=active();
     [['voltage','Voltage (V)'],['current','Current (A)'],['temperature','Temperature (K)']].forEach(([key,name],i)=>{
-      if(i===0)$('synthetic-chart').innerHTML='<h2>'+c.name+'</h2><p>Simulated reference SOC '+pct(c.truth[state.k])+' · reference SOH '+pct(c.truth_soh)+'</p><div id="sy-voltage"></div><div id="sy-current"></div><div id="sy-temperature"></div>';
+      if(i===0&&($('synthetic-chart').dataset.trace!==state.scenario+':'+state.trial||!$('sy-voltage'))){$('synthetic-chart').dataset.trace=state.scenario+':'+state.trial;$('synthetic-chart').innerHTML='<h2>'+c.name+'</h2><p id="synthetic-selected"></p><div id="sy-voltage"></div><div id="sy-current"></div><div id="sy-temperature"></div>';}
+      if(i===0)$('synthetic-selected').textContent='Simulated reference SOC '+pct(c.truth[state.k])+' · reference SOH '+pct(c.truth_soh);
       chart('sy-'+key,c.time,[{name,values:c[key],color:colors[i+1]}],state.k,{label:name});
     });
     return;
@@ -479,14 +541,20 @@ function renderDataset(){
   renderNasaHistory();
   const c=nasaCycle();
   if(!c){$('nasa-chart').textContent='No local recording for this cycle. Obtain the NASA data with pipeline.py and rebuild the workbench.';return;}
-  $('nasa-chart').innerHTML='<h2>'+state.cell+' · discharge '+(state.cycle+1)+'</h2><p>Measured capacity '+fmt(c.capacity_ah,3)+' Ah · capacity-derived SOH '+pct(c.capacity_ah/2)+'</p><div id="nv"></div><div id="ni"></div><div id="nt"></div><p class="note">Replay uses 40 display samples per cycle. Current polarity follows NASA’s recorded channel. The archive’s current sign is preserved.</p>';
+  const traceKey=state.cell+':'+state.cycle;
+  if($('nasa-chart').dataset.trace!==traceKey||!$('nv')){
+    $('nasa-chart').dataset.trace=traceKey;
+    $('nasa-chart').innerHTML='<h2>'+state.cell+' · discharge '+(state.cycle+1)+'</h2><p>Measured capacity '+fmt(c.capacity_ah,3)+' Ah · capacity-derived SOH '+pct(c.capacity_ah/2)+'</p><div class="nasa-plots"><div><h3>Terminal voltage (V)</h3><div id="nv"></div></div><div><h3>Recorded current (A)</h3><div id="ni"></div></div><div><h3>Cell temperature (°C)</h3><div id="nt"></div></div></div><p class="note">Replay uses 40 display samples per cycle. Phase annotations are inferred from recorded current sign at sampled timestamps.</p>';
+  }
   const t=c.trace.map(r=>r[0]);
+  const phases=c.trace.map(row=>row[2]<-.05?'Discharge':row[2]>.05?'Charge':'Rest');
+  const phaseMarkers=phases.flatMap((phase,index)=>index&&phase!==phases[index-1]?[{time:t[index],label:phase}]:[]);
   [['nv','Measured voltage (V)'],['ni','Recorded current (A)'],['nt','Measured temperature (°C)']].forEach(([id,name],i)=>
-    chart(id,t,[{name,values:c.trace.map(r=>r[i+1]),color:colors[i+1]}],state.nk,{label:name}));
+    chart(id,t,[{name,values:c.trace.map(r=>r[i+1]),color:colors[i+1]}],state.nk,{label:name,markers:phaseMarkers}));
 }
 const circuitModels=['rint','thevenin','dual'], circuitNames=['Rint','Thevenin','Dual Polarisation'];
 const lab=[1,1,1,1];
-const simState={latest:null,baseline:null,index:0,timer:null};
+const simState={latest:null,baseline:null,index:0};
 function updateSimulationControls(){
   const model=$('sim-model').value;
   $('sim-r1-field').hidden=model==='rint';$('sim-c1-field').hidden=model==='rint';
@@ -545,11 +613,12 @@ function renderSimulationClock(index){
   const run=simState.latest;if(!run)return;
   const c=run.channels,k=Math.max(0,Math.min(c.time_s.length-1,Math.floor(index)));
   simState.index=k;$('sim-seek').max=c.time_s.length-1;$('sim-seek').value=k;
+  playbackState.sampleIndex=k;playbackState.time=c.time_s[k];playbackState.scenario='simulation:'+run.configuration.model;
   $('sim-clock').textContent=fmt(c.time_s[k],0)+' s';
   const soc=Math.max(0,Math.min(1,c.soc[k]));
   $('sim-cell-fill').setAttribute('y',String(147-128*soc));$('sim-cell-fill').setAttribute('height',String(128*soc));
   const current=c.current_a[k];
-  $('sim-battery-art').dataset.motion=simState.timer===null?'paused':current>1e-9?'up':current< -1e-9?'down':'paused';
+  $('sim-battery-art').dataset.motion=state.timer===null?'paused':current>1e-9?'up':current< -1e-9?'down':'paused';
   $('sim-viz-state').textContent=current>1e-9?'Discharging':current< -1e-9?'Charging':'Resting';
   $('sim-viz-readout').textContent=pct(soc)+' SOC · '+fmt(current,2)+' A · '+fmt(c.terminal_voltage_v[k],3)+' V · '+fmt(c.temperature_k[k]-273.15,1)+' °C';
   $('sim-circuit-status').textContent='Simulation playback at '+fmt(c.time_s[k],0)+' s · SOC '+pct(soc)+' · current '+fmt(current,2)+' A · modelled temperature '+fmt(c.temperature_k[k]-273.15,1)+' °C.';
@@ -612,7 +681,7 @@ async function runConfiguredSimulation(event){
     const response=await fetch('/api/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(simulationConfig())});
     const payload=await response.json();
     if(!response.ok)throw new Error(payload.error||'The local simulation request failed.');
-    simState.latest=payload;simState.index=0;renderSimulationCharts();
+    stop();chartEpoch++;simState.latest=payload;simState.index=0;renderSimulationCharts();renderSimulationClock(0);
     $('sim-save-baseline').disabled=false;$('sim-save-baseline').textContent=simState.baseline?'Replace baseline':'Save as baseline';
     $('sim-compare-button').disabled=!simState.baseline||simState.baseline===simState.latest;
     simulationStatus('Simulation complete · '+payload.channels.time_s.length+' exact 1 second samples · Python engine v'+payload.software_version,'success');
@@ -621,17 +690,9 @@ async function runConfiguredSimulation(event){
     simulationStatus(error instanceof TypeError?launch:error.message,'error');
   }finally{button.disabled=false;$('sim-form').classList.remove('sim-loading');}
 }
-function pauseSimulation(){if(simState.timer!==null)clearInterval(simState.timer);simState.timer=null;$('sim-battery-art').dataset.motion='paused';}
+function pauseSimulation(){stop();$('sim-battery-art').dataset.motion='paused';}
 function playSimulation(){
-  const run=simState.latest;if(!run)return;pauseSimulation();
-  if(simState.index>=run.channels.time_s.length-1)renderSimulationClock(0);
-  const speed=Number($('sim-speed').value);
-  simState.timer=setInterval(()=>{
-    const next=simState.index+speed;
-    if(next>=run.channels.time_s.length-1){renderSimulationClock(run.channels.time_s.length-1);pauseSimulation();}
-    else renderSimulationClock(next);
-  },120);
-  renderSimulationClock(simState.index);
+  if(!simState.latest)return;stop();playbackState.speed=Number($('sim-speed').value);playReplay();renderSimulationClock(simState.index);renderSimulationCharts();
 }
 function resetSimulation(){
   pauseSimulation();simState.latest=null;simState.baseline=null;simState.index=0;$('sim-form').reset();updateSimulationControls();
@@ -665,38 +726,54 @@ function renderPhysics(){
   renderSelectedCircuit();
   renderSimulationCharts();
   const explanations=[
-    ['Rint','Open-circuit voltage with an instantaneous series-resistance drop. No polarization state.','V = OCV − I·R₀','Useful baseline. It cannot represent voltage relaxation.'],
-    ['Thevenin','One resistor-capacitor branch represents a single polarization time scale.','τ₁ = R₁·C₁','A compact approximation to transient response.'],
-    ['Dual Polarisation','Two resistor-capacitor branches represent fast and slow transients.','τ₁ = R₁·C₁ · τ₂ = R₂·C₂','More flexible response with more parameters.'],
-    ['Diffusion','Finite-volume transport creates bulk and surface concentration states.','∂c/∂t = D·∇²c','Independent synthetic plant, not an electrochemical chemistry model.'],
+    ['Rint','The simplest circuit: an OCV source and one internal resistance create an immediate voltage change. No delayed recovery is represented.','Vₜ = OCV − I·R₀','A baseline for immediate voltage sag.'],
+    ['Thevenin','Adds one resistor-capacitor branch. Its stored polarisation changes over time and relaxes after the current changes.','τ₁ = R₁·C₁','One transient time scale.'],
+    ['Dual Polarisation','Adds a second RC branch to represent a second, slower or faster voltage-relaxation response.','τ₁ = R₁·C₁; τ₂ = R₂·C₂','More flexibility and more parameters.'],
+    ['Diffusion','An independent synthetic plant tracks transport through bulk and surface concentration states.','Finite-volume transport','Not a fitted chemistry model or an equivalent circuit.'],
   ];
-  $('physics-model-explanation').innerHTML=explanations.map(([name,description,equation,limit],i)=>'<button data-model="'+i+'" aria-pressed="'+(i===lab[0])+'">'+name+'</button>').join('')+
-    '<p id="physics-model-description">'+explanations[lab[0]][1]+' '+explanations[lab[0]][2]+' · '+explanations[lab[0]][3]+'</p>';
-  $('physics-model-explanation').querySelectorAll('button').forEach(button=>button.onclick=()=>{lab[0]=Number(button.dataset.model);renderPhysics();});
+  if($('physics-model-explanation').dataset.model!==String(lab[0])){
+    $('physics-model-explanation').dataset.model=String(lab[0]);
+    $('physics-model-explanation').innerHTML=explanations.map(([name],i)=>'<button data-model="'+i+'" aria-pressed="'+(i===lab[0])+'">'+name+'</button>').join('')+
+      '<p id="physics-model-description">'+explanations[lab[0]][1]+'</p><details><summary>Engineering detail</summary><p id="physics-model-detail">'+explanations[lab[0]][2]+' · '+explanations[lab[0]][3]+'</p></details>';
+    $('physics-model-explanation').querySelectorAll('button').forEach(button=>button.onclick=()=>{chartEpoch++;lab[0]=Number(button.dataset.model);renderPhysics();});
+  }
+  $('physics-response-mode').value=String(physicsResponseMode);
+  $('physics-response-mode').disabled=lab[0]===3;
+  $('physics-response-title').textContent=physicsResponseMode?'Voltage deviation from OCV':'Terminal voltage response';
+  $('physics-response-note').textContent=physicsResponseMode?'Deviation is OCV minus terminal voltage. The three traces use the same profile, sign convention and time axis.':'Terminal voltage for Rint, Thevenin and Dual Polarisation under the same profile and time axis. RC branches add transient relaxation after load changes.';
   if(!$('circuit-explorer').open)return;
+  physicsIndex=Math.max(0,Math.min(physicsTime().length-1,physicsIndex));
   if(lab[0]===3){
     $('physics-controls').hidden=true;
-    const caseData=data.scenarios.find(item=>item.plant==='diffusion');
+    const caseData=physicsCase();
     if(caseData){
       const run=Object.values(caseData.trials)[0];
-      chart('physics-chart',caseData.time,[{name:'Diffusion plant terminal voltage (V)',values:caseData.voltage}],caseData.time.length-1,{label:'Independent diffusion plant terminal voltage'});
-      chart('terminal-chart',caseData.time,[{name:'Measured discharge current (A)',values:caseData.current}],caseData.time.length-1,{label:'Diffusion plant discharge current'});
+      $('physics-response-title').textContent='Independent diffusion plant · terminal voltage';
+      $('physics-response-note').textContent='This independent synthetic plant is not one of the equivalent circuits. Its recorded reference voltage and current are shown on the same selected time sample.';
+      chart('physics-chart',caseData.time,[{name:'Diffusion plant terminal voltage (V)',values:caseData.voltage}],physicsIndex,{label:'Independent diffusion plant terminal voltage'});
+      chart('terminal-chart',caseData.time,[{name:'Diffusion plant current (A)',values:caseData.current}],physicsIndex,{label:'Independent diffusion plant current'});
+      const slider=$('physics-playback').querySelector('input[type="range"]');slider.max=caseData.time.length-1;slider.value=physicsIndex;$('physics-playback').querySelector('output').textContent=fmt(caseData.time[physicsIndex],0)+' s';
+      $('physics-playback').hidden=false;
       $('circuit').innerHTML='<p>Independent finite-volume diffusion plant. This is a separate synthetic ground-truth generator, not an equivalent-circuit response or chemistry-calibrated model.</p>';
-      $('physics-readouts').innerHTML=labelValue('Plant',safeText(caseData.name))+labelValue('Truth SOC at end',pct(caseData.truth.at(-1)))+labelValue('Fixed EKF SOC MAE',fmt(run.metrics['Fixed EKF'].mae_pp,3)+' pp');
+      $('physics-readouts').innerHTML=labelValue('Time',fmt(caseData.time[physicsIndex],0)+' s')+labelValue('Terminal voltage',fmt(caseData.voltage[physicsIndex],3)+' V')+labelValue('Current',fmt(caseData.current[physicsIndex],2)+' A')+labelValue('Plant',safeText(caseData.name))+labelValue('Fixed EKF SOC MAE',fmt(run.metrics['Fixed EKF'].mae_pp,3)+' pp');
     }
     return;
   }
   $('physics-controls').hidden=false;
   const model=circuitModels[lab[0]], amps=[0.8,1.6,2.4][lab[1]], r=[0.7,1,1.5][lab[2]];
+  const modelSelect=$('physics-controls').querySelector('select');if(modelSelect)modelSelect.selectedIndex=lab[0];
   const capacityControl=$('physics-controls').querySelector('[aria-label="Capacitance scale"]');
   capacityControl.disabled=model==='rint';
   const c=model==='rint'?1:[0.5,1,2][lab[3]];
   const run=data.physics[[model,amps,r,c].join(':')], time=run.ohmic.map((_,i)=>i);
-  chart('physics-chart',time,[{name:'Ohmic I·R₀ (V)',values:run.ohmic},
-    ...run.polarisation.map((values,i)=>({name:'Polarisation '+(i+1)+' (V)',values}))],
-    time.length-1,{label:'Circuit voltage drops'});
-  chart('terminal-chart',time,[{name:'Terminal voltage (V)',values:run.terminal}],time.length-1,
-    {label:'Terminal voltage under a pulse'});
+  const compared=circuitModels.map((name,i)=>{
+    const cap=i===0?1:c,response=data.physics[[name,amps,r,cap].join(':')];
+    const values=physicsResponseMode?response.ohmic.map((value,j)=>value+response.polarisation.reduce((sum,branch)=>sum+branch[j],0)):response.terminal;
+    return {name:name==='dual'?'Dual Polarisation':name[0].toUpperCase()+name.slice(1),values,color:colors[i]};
+  });
+  chart('physics-chart',time,compared,physicsIndex,{label:physicsResponseMode?'ECM voltage deviation from OCV':'ECM terminal voltage comparison'});
+  chart('terminal-chart',time,[{name:'Current (A)',values:run.current_a}],physicsIndex,{label:'Shared equivalent-circuit current profile'});$('physics-playback').hidden=false;
+  const physicsSlider=$('physics-playback').querySelector('input[type="range"]');physicsSlider.max=time.length-1;physicsSlider.value=physicsIndex;$('physics-playback').querySelector('output').textContent=fmt(time[physicsIndex],0)+' s';
   let svg='<svg class="illustration" viewBox="0 0 360 130" role="img" aria-label="'+circuitNames[lab[0]]+' circuit"><path d="M30 68H54M78 68H100M100 68h9l7 -9 10 18 10 -18 10 18 9 -9h18" fill="none" stroke="'+token('--accent')+'" stroke-width="2"/><path d="M54 55v26M65 50v36M65 68h13" stroke="'+token('--text')+'" stroke-width="2"/><text x="35" y="107">OCV</text><text x="118" y="43">R₀</text>';
   let x=173;
   run.tau.forEach((_,i)=>{
@@ -704,14 +781,15 @@ function renderPhysics(){
     x+=66;
   });
   $('circuit').innerHTML=svg+'<path d="M'+x+' 68H344" stroke="'+token('--accent')+'" stroke-width="2"/><circle cx="344" cy="68" r="4" fill="'+token('--accent')+'"/></svg>';
-  $('physics-readouts').innerHTML=labelValue('Ohmic step',fmt(run.ohmic[10]*1000,1)+' mV')+
+  $('physics-readouts').innerHTML=labelValue('Time',fmt(time[physicsIndex],0)+' s')+labelValue('Terminal voltage',fmt(run.terminal[physicsIndex],3)+' V')+
+    labelValue('Current',fmt(run.current_a[physicsIndex],2)+' A')+labelValue('Ohmic drop at 10 s',fmt(run.ohmic[10]*1000,1)+' mV')+
     run.tau.map((tau,i)=>labelValue('τ'+(i+1)+' = R × C',fmt(tau,1)+' s')).join('');
 }
 const mlNames=['Ridge','Random Forest','HistGradientBoosting'];
 const lessons=[
-  'Ridge sums feature contributions and shrinks coefficients toward zero. Residuals are observations minus predictions.',
-  'Each tree walks a decision path to a leaf. The forest averages the leaves’ predictions.',
-  'Binned features route observations through a sequence of trees. Each tree estimates a correction to the previous prediction under squared loss.',
+  'Ridge Regression learns a weight for each measured feature and combines their contributions. L2 regularisation discourages very large weights, which can make the fit less sensitive to noisy features.',
+  'Random Forest grows many decision trees from varied training samples and features. Each tree follows measured values to a prediction; the forest averages those predictions to reduce dependence on one tree.',
+  'HistGradientBoosting adds small decision trees in sequence. Each new tree learns a correction to the remaining errors, and the corrected predictions are combined into the final SOH estimate.',
 ];
 let mlIndex=0, surfaceAngle=35;
 function workedExample(){
@@ -745,7 +823,8 @@ function renderMl(){
   for(let i=0;i<10;i++){
     svg+=line(z[i].map((v,j)=>[j,i,v]))+line(z.map((r,j)=>[i,j,r[i]]));
   }
-  $('surface').innerHTML=svg+'<text x="12" y="224">X · '+surface.features[0]+' ('+fmt(surface.x[0])+' to '+fmt(surface.x.at(-1))+')</text><text x="12" y="244">Y · '+surface.features[1]+' ('+fmt(surface.y[0],1)+' to '+fmt(surface.y.at(-1),1)+')</text><text x="12" y="20">Height · predicted SOH</text></svg>';
+  const zValues=z.flat(),zMin=Math.min(...zValues)*100,zMax=Math.max(...zValues)*100;
+  $('surface').innerHTML=svg+'</svg><div class="surface-labels"><span><strong>X axis</strong> · '+safeText(surface.features[0])+': '+fmt(surface.x[0],3)+' to '+fmt(surface.x.at(-1),3)+'</span><span><strong>Y axis</strong> · '+safeText(surface.features[1])+': '+fmt(surface.y[0],1)+' to '+fmt(surface.y.at(-1),1)+'</span><span><strong>Z axis</strong> · predicted SOH: '+fmt(zMin,1)+' to '+fmt(zMax,1)+'%</span></div>';
   $('ml-explanation').textContent=lessons[mlIndex];
   if(!$('lesson-input')){
     $('ml-example').innerHTML='<label id="lesson-label" for="lesson-input"></label> <input id="lesson-input" type="range" min="0" max="30" value="10"><p class="equation" id="worked-result"></p>';
@@ -801,8 +880,8 @@ const explorerScenarios=[
   {name:'Cold outdoor use',summary:'A portable device operates outside in winter at a low ambient temperature.',detail:'The shared ECM applies its temperature-dependent R₀ relation, so the voltage response changes with the modelled temperature. This simplified example does not calculate cold-related capacity loss.',config:{model:'thevenin',profile:'constant_discharge',duration_s:600,current_a:1.2,initial_soc:.85,soh:1,nominal_capacity_ah:2,ambient_temperature_c:-5,r0_ohm:.035,r1_ohm:.018,c1_f:650}},
   {name:'Aged battery example',summary:'A configured cell has lower usable capacity and higher resistance than a fresh reference case.',detail:'This synthetic configuration uses 80% SOH and a higher R₀. It illustrates how a capacity-scaled charge counter and voltage sag can differ; it is not a life-cycle ageing simulation or a universal capacity/resistance relationship.',config:{model:'thevenin',profile:'drive_style',duration_s:600,current_a:1.2,initial_soc:.85,soh:.8,nominal_capacity_ah:2,ambient_temperature_c:25,r0_ohm:.05,r1_ohm:.018,c1_f:650}},
 ];
-let explorerScenarioIndex=0,explorerRun=null,explorerSample=0,explorerTimer=null,explorerRequest=0;
-function explorerPause(){if(explorerTimer!==null)clearInterval(explorerTimer);explorerTimer=null;if($('explorer-play'))$('explorer-play').textContent='Play';}
+let explorerScenarioIndex=0,explorerRun=null,explorerSample=0,explorerRequest=0;
+function explorerPause(){stop();if($('explorer-play'))$('explorer-play').textContent='Play';}
 function explorerComponent(index){
   state.layer=index;renderCutaway();
 }
@@ -810,15 +889,15 @@ function renderCutaway(){
   const colors=layers.map(layer=>layer.color);
   const selected=state.layer;
   const parts=[
-    '<g class="cell-part" data-layer="5" role="button" tabindex="0" aria-label="Inspect cell casing" aria-pressed="'+(selected===5)+'"><rect x="54" y="36" width="210" height="222" rx="42" fill="var(--steel-light)" stroke="'+(selected===5?'var(--accent)':'var(--steel)')+'" stroke-width="'+(selected===5?6:3)+'"/><ellipse cx="159" cy="38" rx="105" ry="19" fill="var(--steel-light)" stroke="var(--steel)" stroke-width="2"/><path d="M76 228c44 36 122 36 166 0" fill="none" stroke="var(--steel)" stroke-width="3"/><rect x="138" y="19" width="42" height="14" rx="3" fill="var(--steel)"/><title>Generic cylindrical cell casing</title></g>',
-    '<g class="cell-part" data-layer="4" role="button" tabindex="0" aria-label="Inspect current collectors" aria-pressed="'+(selected===4)+'"><rect x="101" y="65" width="8" height="158" fill="'+colors[4]+'" stroke="'+(selected===4?'var(--accent)':'var(--text)')+'"/><rect x="208" y="65" width="8" height="158" fill="'+colors[4]+'" stroke="'+(selected===4?'var(--accent)':'var(--text)')+'"/><path d="M105 66V49M212 66V49" stroke="var(--steel)" stroke-width="5"/><title>Copper and aluminium collector foils</title></g>',
+    '<g class="cell-part" data-layer="5" role="button" tabindex="0" aria-label="Inspect cell casing" aria-pressed="'+(selected===5)+'"><rect x="54" y="28" width="210" height="290" rx="42" fill="var(--steel-light)" stroke="'+(selected===5?'var(--accent)':'var(--steel)')+'" stroke-width="'+(selected===5?6:3)+'"/><ellipse cx="159" cy="30" rx="105" ry="19" fill="var(--steel-light)" stroke="var(--steel)" stroke-width="2"/><path d="M76 286c44 36 122 36 166 0" fill="none" stroke="var(--steel)" stroke-width="3"/><rect x="138" y="19" width="42" height="14" rx="3" fill="var(--steel)"/><title>Generic cylindrical cell casing</title></g>',
+    '<g class="cell-part" data-layer="4" role="button" tabindex="0" aria-label="Inspect current collectors" aria-pressed="'+(selected===4)+'"><rect x="101" y="65" width="8" height="158" fill="'+colors[4]+'" stroke="'+(selected===4?'var(--accent)':'var(--text)')+'"/><rect x="208" y="65" width="8" height="158" fill="'+colors[4]+'" stroke="'+(selected===4?'var(--accent)':'var(--text)')+'"/><path d="M105 66V42M212 66V42" stroke="var(--steel)" stroke-width="5"/><title>Copper and aluminium collector foils</title></g>',
     '<g class="cell-part" data-layer="0" role="button" tabindex="0" aria-label="Inspect graphite-based anode example" aria-pressed="'+(selected===0)+'"><path d="M109 78h99v49h-99z" fill="'+colors[0]+'" stroke="'+(selected===0?'var(--accent)':'var(--text)')+'" stroke-width="'+(selected===0?4:1)+'"/><text x="158" y="107" text-anchor="middle" fill="var(--text)" font-size="12">Anode</text><title>Representative anode layer</title></g>',
     '<g class="cell-part" data-layer="2" role="button" tabindex="0" aria-label="Inspect porous separator" aria-pressed="'+(selected===2)+'"><rect x="109" y="129" width="99" height="14" fill="'+colors[2]+'" stroke="'+(selected===2?'var(--accent)':'var(--text)')+'" stroke-width="'+(selected===2?4:1)+'"/><path d="M112 136h92" stroke="var(--surface)" stroke-dasharray="2 5"/><title>Porous separator</title></g>',
     '<g class="cell-part" data-layer="1" role="button" tabindex="0" aria-label="Inspect cathode example" aria-pressed="'+(selected===1)+'"><path d="M109 145h99v49h-99z" fill="'+colors[1]+'" stroke="'+(selected===1?'var(--accent)':'var(--text)')+'" stroke-width="'+(selected===1?4:1)+'"/><text x="158" y="174" text-anchor="middle" fill="var(--text)" font-size="12">Cathode</text><title>Representative cathode layer</title></g>',
     '<g class="cell-part" data-layer="3" role="button" tabindex="0" aria-label="Inspect electrolyte" aria-pressed="'+(selected===3)+'"><path d="M111 64h94v154h-94z" fill="none" stroke="'+colors[3]+'" stroke-width="5" stroke-dasharray="5 7" opacity=".8"/><text x="158" y="211" text-anchor="middle" fill="var(--muted)" font-size="11">electrolyte in pores</text><title>Electrolyte wets the porous layers</title></g>',
   ];
-  let svg='<svg class="illustration explorer-cutaway-svg" viewBox="0 0 520 300" role="img" aria-label="Schematic generic cylindrical lithium-ion cell cutaway; not to scale"><defs><marker id="cutaway-ion-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0L6 3 0 6Z" fill="var(--accent)"/></marker></defs><style>.cell-part{cursor:pointer}.cell-part:hover,.cell-part:focus-visible{filter:brightness(1.12);outline:none}.cell-part:focus-visible rect,.cell-part:focus-visible path{stroke:var(--accent);stroke-width:5}@media(prefers-reduced-motion:no-preference){.ion-flow{animation:ion 1.6s linear infinite}}</style>'+parts.join('');
-  svg+='<path class="ion-flow" d="M'+(state.ionMode===2?'205':'114')+' 239H'+(state.ionMode===2?'114':'205')+'" stroke="var(--accent)" stroke-width="3" marker-end="url(#cutaway-ion-arrow)"/><text x="159" y="256" text-anchor="middle" fill="var(--muted)" font-size="11">Li⁺ '+(state.ionMode===2?'charge ←':'discharge →')+'</text><g fill="var(--muted)" font-size="12"><text x="300" y="72">Active electrode layers</text><text x="300" y="94">Anode / separator / cathode</text><text x="300" y="136">Electrolyte fills porous layers</text><text x="300" y="178">Foils collect electron current</text><text x="300" y="220">Metal can provides enclosure</text></g></svg>';
+  let svg='<svg class="illustration explorer-cutaway-svg" viewBox="0 0 520 340" role="img" aria-label="Schematic generic cylindrical lithium-ion cell cutaway showing a wound electrode assembly; not to scale"><title>Generic lithium-ion cylindrical cell with a schematic wound electrode assembly</title><defs><marker id="cutaway-ion-arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0L6 3 0 6Z" fill="var(--accent)"/></marker></defs><style>.cell-part{cursor:pointer}.cell-part:hover,.cell-part:focus-visible{filter:brightness(1.12);outline:none}.cell-part:focus-visible rect,.cell-part:focus-visible path{stroke:var(--accent);stroke-width:5}@media(prefers-reduced-motion:no-preference){.ion-flow{animation:ion 1.6s linear infinite}}</style>'+parts.join('');
+  svg+='<path class="ion-flow" d="M'+(state.ionMode===2?'205':'114')+' 270H'+(state.ionMode===2?'114':'205')+'" stroke="var(--accent)" stroke-width="3" marker-end="url(#cutaway-ion-arrow)"/><text x="159" y="292" text-anchor="middle" fill="var(--muted)" font-size="11">Li⁺ '+(state.ionMode===2?'charge ←':'discharge →')+'</text><g fill="var(--muted)" font-size="12"><text x="300" y="72">Wound electrode assembly</text><text x="300" y="94">Anode · separator · cathode</text><text x="300" y="136">Electrolyte fills porous layers</text><text x="300" y="178">Foils collect electron current</text><text x="300" y="220">Metal casing and terminal</text></g></svg>';
   $('cutaway-drawing').innerHTML=svg;
   $('layer-title').textContent=layers[selected].name;
   $('layer-detail').textContent=layers[selected].function;
@@ -867,41 +946,61 @@ function explorerTemperature(tempC,ambientC,previousC){
   const trend=previousC===null?'':tempC>previousC+.005?' · warming':tempC<previousC-.005?' · cooling':' · nearly steady';
   $('explorer-temperature-note').textContent='Modelled battery '+fmt(tempC,1)+' °C · ambient '+fmt(ambientC,1)+' °C · difference '+fmt(tempC-ambientC,1)+' °C'+trend;
 }
+function explorerRenderCircuit(current,time){
+  const connected=Math.abs(current)>1e-9,flow=$('explorer-current-flow');
+  $('explorer-switch-arm').setAttribute('d',connected?'M152 32L184 32':'M152 32L180 18');
+  $('explorer-switch-label').textContent=connected?'Closed · load connected':'Open · zero-current sample';
+  $('explorer-load-label').textContent=['Portable device','High demand','Outdoor device','Generic load'][explorerScenarioIndex];
+  flow.dataset.moving=String(connected&&state.timer!==null);flow.dataset.direction=current<0?'reverse':'forward';
+  flow.setAttribute('stroke-width',String(Math.min(5,1.5+Math.abs(current)*.6)));
+  $('explorer-circuit-status').textContent=(state.timer===null?'Paused':'Playing')+' at '+fmt(time,0)+' s · '+(current>0?'discharge':current<0?'charge':'rest')+' · '+fmt(current,2)+' A';
+}
 function explorerShowSample(index){
   if(!explorerRun)return;
   const channels=explorerRun.channels,k=Math.max(0,Math.min(index,channels.time_s.length-1));explorerSample=k;
   const temp=channels.temperature_k[k]-273.15,ambient=explorerRun.configuration.ambient_temperature_c;
+  playbackState.sampleIndex=k;playbackState.time=channels.time_s[k];playbackState.scenario='synthetic:'+explorerScenarioIndex;
+  const initialSoc=channels.soc[0],socChange=(channels.soc[k]-initialSoc)*100,changeText=(socChange<0?'−':'+')+fmt(Math.abs(socChange),2)+' percentage points';
   const trendWindow=Math.min(30,k),prev=k?channels.temperature_k[k-trendWindow]-273.15:null;
   $('explorer-cell').setAttribute('aria-label','Illustrative generic cylindrical cell; simulated state of charge '+fmt(100*channels.soc[k],1)+' percent');
   const height=150*Math.max(0,Math.min(1,channels.soc[k]));
   $('explorer-soc-fill').setAttribute('y',196-height);$('explorer-soc-fill').setAttribute('height',height);
-  $('explorer-readouts').innerHTML=labelValue('Modelled SOC',pct(channels.soc[k]))+
+  $('explorer-ghost-level').setAttribute('y1',String(196-150*initialSoc));$('explorer-ghost-level').setAttribute('y2',String(196-150*initialSoc));
+  $('explorer-readouts').innerHTML=labelValue('Initial SOC reference',pct(initialSoc))+
+    labelValue('Modelled SOC',pct(channels.soc[k]))+labelValue('Change since start',changeText+' · '+(socChange<0?'below':'above')+' reference')+
     labelValue('Modelled usable capacity',fmt(channels.available_capacity_ah[k],2)+' Ah')+
     labelValue('Modelled terminal voltage',fmt(channels.terminal_voltage_v[k],3)+' V')+
     labelValue('Applied current',fmt(channels.current_a[k],2)+' A')+
     labelValue('Modelled battery temperature',fmt(temp,1)+' °C')+
     labelValue('Ambient temperature',fmt(ambient,1)+' °C')+
     labelValue('Configured SOH',pct(explorerRun.configuration.soh??1));
+  const time=channels.time_s;
+  chart('explorer-voltage-chart',time,[{name:'Terminal voltage (V)',values:channels.terminal_voltage_v}],k,{label:'Explorer terminal voltage'});
+  chart('explorer-current-chart',time,[{name:'Applied current (A)',values:channels.current_a}],k,{label:'Explorer current'});
+  chart('explorer-soc-chart',time,[{name:'SOC (%)',values:channels.soc,scale:100}],k,{label:'Explorer state of charge',min:0,max:100,decimals:1});
+  explorerRenderCircuit(channels.current_a[k],channels.time_s[k]);
   explorerTemperature(temp,ambient,prev);
   $('explorer-seek').value=k;$('explorer-time').textContent=fmt(channels.time_s[k],0)+' s';
 }
 function explorerRunScenario(index){
-  explorerPause();explorerScenarioIndex=index;explorerRun=null;explorerSample=0;
+  explorerPause();chartEpoch++;['explorer-voltage-chart','explorer-current-chart','explorer-soc-chart'].forEach(id=>$(id).replaceChildren());explorerScenarioIndex=index;explorerRun=null;explorerSample=0;
   const scenario=explorerScenarios[index],request=++explorerRequest;
   $('explorer-scenario-title').textContent=scenario.name;
   $('explorer-scenario-description').textContent=scenario.summary+' '+scenario.detail;
   $('explorer-readouts').replaceChildren();$('explorer-temperature-note').textContent='Run the selected synthetic example to show the ECM thermal state.';
   $('explorer-soc-fill').setAttribute('height','0');$('explorer-soc-fill').setAttribute('y','196');
   $('explorer-seek').disabled=true;$('explorer-play').disabled=true;$('explorer-pause').disabled=true;
+  $('explorer-restart').disabled=true;
   $('explorer-status').dataset.state='';$('explorer-status').textContent='Running local Python simulation…';
   $('explorer-scenario-controls').querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
   fetch('/api/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(scenario.config)})
     .then(async response=>{const result=await response.json();if(!response.ok)throw new Error(result.error||'Simulation request failed.');return result;})
     .then(result=>{
       if(request!==explorerRequest)return;
-      explorerRun=result;explorerSample=0;
+      chartEpoch++;explorerRun=result;explorerSample=0;
       $('explorer-seek').max=result.channels.time_s.length-1;$('explorer-seek').value=0;$('explorer-seek').disabled=false;
       $('explorer-play').disabled=false;$('explorer-pause').disabled=false;
+      $('explorer-restart').disabled=false;
       $('explorer-status').dataset.state='success';$('explorer-status').textContent='Python-generated synthetic ECM output · '+result.configuration.model+' · positive current discharges · not NASA data';
       explorerShowSample(0);
     }).catch(error=>{
@@ -922,13 +1021,12 @@ function renderExplorer(){
     $('explorer-scenario-controls').dataset.ready='true';
     $('explorer-seek').oninput=()=>explorerShowSample(Number($('explorer-seek').value));
     $('explorer-play').onclick=()=>{
-      if(!explorerRun)return;explorerPause();
-      if(explorerSample>=explorerRun.channels.time_s.length-1)explorerShowSample(0);
-      explorerTimer=setInterval(()=>{const step=Math.max(1,Math.ceil(explorerRun.channels.time_s.length/120));const next=explorerSample+step;if(next>=explorerRun.channels.time_s.length-1){explorerShowSample(explorerRun.channels.time_s.length-1);explorerPause();}else explorerShowSample(next);},100);
-      $('explorer-play').textContent='Playing…';
+      if(!explorerRun)return;playReplay();$('explorer-play').textContent='Playing…';
     };
-    $('explorer-pause').onclick=explorerPause;
-    if(!window.explorerVisibilityHandler){window.explorerVisibilityHandler=true;document.addEventListener('visibilitychange',()=>{if(document.hidden)explorerPause();});}
+    $('explorer-pause').onclick=stop;
+    $('explorer-restart').onclick=()=>{stop();explorerShowSample(0);};
+    $('explorer-speed').onchange=()=>{playbackState.speed=Number($('explorer-speed').value);if(state.timer!==null){stop();playReplay();}};
+    if(!window.explorerVisibilityHandler){window.explorerVisibilityHandler=true;document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});}
     setupCutaway();
     explorerRunScenario(explorerScenarioIndex);
   }else if(!explorerRun&&$('explorer-status').textContent==='')explorerRunScenario(explorerScenarioIndex);
@@ -940,8 +1038,8 @@ function updateScenarioControls(){
   document.querySelectorAll('.scenario-controls').forEach(el=>{
     const old=el.contains(document.activeElement)?[...el.querySelectorAll('select')].indexOf(document.activeElement):-1;
     el.replaceChildren(
-      select('Scenario',data.scenarios.map(s=>s.name),state.scenario,index=>{stop();state.scenario=index;state.trial=0;state.k=0;updateScenarioControls();render();}),
-      select('Initial SOC',Object.keys(active().trials),state.trial,index=>{stop();state.trial=index;render();})
+      select('Scenario',data.scenarios.map(s=>s.name),state.scenario,index=>{stop();chartEpoch++;state.scenario=index;state.trial=0;state.k=0;updateScenarioControls();render();}),
+      select('Initial SOC',Object.keys(active().trials),state.trial,index=>{stop();chartEpoch++;state.trial=index;render();})
     );
     if(old>=0)el.querySelectorAll('select')[old].focus();
   });
@@ -951,8 +1049,8 @@ function updateNasaControls(){
   $('nasa-controls').replaceChildren();
   if(!cells.length)return;
   $('nasa-controls').append(
-    select('Cell',cells,cells.indexOf(state.cell),i=>{stop();state.cell=cells[i];state.cycle=0;state.nk=0;updateNasaControls();render();}),
-    select('Discharge cycle',data.nasa[state.cell].map((_,i)=>String(i+1)),state.cycle,i=>{stop();state.cycle=i;state.nk=0;render();})
+    select('Cell',cells,cells.indexOf(state.cell),i=>{stop();chartEpoch++;state.cell=cells[i];state.cycle=0;state.nk=0;updateNasaControls();render();}),
+    select('Discharge cycle',data.nasa[state.cell].map((_,i)=>String(i+1)),state.cycle,i=>{stop();chartEpoch++;state.cycle=i;state.nk=0;render();})
   );
 }
 function render(){
@@ -968,6 +1066,7 @@ function render(){
 }
 function navigate(view){
   stop();pauseSimulation();window.stopExplorerPlayback?.();state.view=view;
+  document.querySelectorAll('.chart-expanded').forEach(host=>{host.classList.remove('chart-expanded');const button=host.querySelector('.chart-toggle');if(button){button.textContent='Expand chart';button.setAttribute('aria-expanded','false');}});
   document.querySelectorAll('.view').forEach(section=>section.hidden=section.id!==view);
   document.querySelectorAll('nav button').forEach(button=>{
     if(button.dataset.view===view)button.setAttribute('aria-current','page');
@@ -979,7 +1078,7 @@ function navigate(view){
 }
 function clearInactiveVisuals(activeView){
   const graphics={
-    fundamentals:['cutaway-drawing'],physics:['sim-voltage-chart','sim-soc-chart','sim-current-chart','sim-temperature-chart','sim-polarisation-chart','sim-compare-voltage','sim-compare-soc','physics-chart','terminal-chart','circuit','sim-circuit'],
+    fundamentals:['cutaway-drawing','explorer-voltage-chart','explorer-current-chart','explorer-soc-chart'],physics:['sim-voltage-chart','sim-soc-chart','sim-current-chart','sim-temperature-chart','sim-polarisation-chart','sim-compare-voltage','sim-compare-soc','physics-chart','terminal-chart','circuit','sim-circuit'],
     data:['synthetic-chart','nasa-chart','nasa-capacity-history','nasa-soh-history'],ml:['surface'],ekf:['ekf-chart','ekf-soc'],hybrid:['hybrid-chart','adaptive-voltage'],reports:['report-results','report-capacity'],
   };
   for(const [view,ids] of Object.entries(graphics))if(view!==activeView)
@@ -1006,7 +1105,7 @@ $('theme-toggle').onclick=()=>{
   $('theme-toggle').textContent=dark?'Light mode':'Dark mode';
   render();
 };
-document.querySelector('#circuit-explorer').addEventListener('toggle',()=>{if($('circuit-explorer').open)renderPhysics();});
+document.querySelector('#circuit-explorer').addEventListener('toggle',()=>{if($('circuit-explorer').open){renderPhysics();syncPlayback();}});
 $('sim-model').addEventListener('change',updateSimulationControls);
 $('sim-form').addEventListener('focusin',event=>{if(/^sim-(soc|current|r0|r1|c1|r2|c2)$/.test(event.target.id)){
   activeCircuitParameter=event.target.id;renderSelectedCircuit(event.target.id);
@@ -1028,9 +1127,9 @@ $('sim-compare-button').addEventListener('click',()=>{
 });
 $('sim-reset').addEventListener('click',resetSimulation);
 $('sim-play').addEventListener('click',playSimulation);$('sim-pause').addEventListener('click',pauseSimulation);
-$('sim-restart').addEventListener('click',()=>{pauseSimulation();renderSimulationClock(0);});
-$('sim-seek').addEventListener('input',()=>{pauseSimulation();renderSimulationClock(Number($('sim-seek').value));});
-$('sim-speed').addEventListener('change',()=>{if(simState.timer!==null)playSimulation();});
+$('sim-restart').addEventListener('click',()=>{pauseSimulation();renderSimulationClock(0);renderSimulationCharts();});
+$('sim-seek').addEventListener('input',()=>{pauseSimulation();renderSimulationClock(Number($('sim-seek').value));renderSimulationCharts();});
+$('sim-speed').addEventListener('change',()=>{if(state.timer!==null)playSimulation();});
 $('sim-results').querySelector('details').addEventListener('toggle',()=>{if($('sim-results').querySelector('details').open)renderSimulationCharts();});
 $('sim-export-json').addEventListener('click',()=>downloadSimulation('json'));
 $('sim-export-csv').addEventListener('click',()=>downloadSimulation('csv'));
@@ -1040,16 +1139,19 @@ document.querySelectorAll('.playback-controls').forEach(el=>setupPlayback(el));
 setupPlayback($('nasa-playback'),true);
 updateScenarioControls();updateNasaControls();
 if(data.hybrid_b){
-  $('hybrid-title').textContent='Hybrid B laboratory';
-  $('hybrid-intro').textContent='Compare five ways to estimate charge from the same measurements. Hybrid A adapts capacity and Hybrid B adapts its supported battery parameters. Eligible matched scenarios include an oracle for reference.';
+  $('hybrid-title').textContent='Investigation Lab';
+  $('hybrid-intro').textContent='Evaluate estimator reliability and generalisation across the selected operating condition and physical model. Compare the traces and independent-cohort evidence; SOC Estimation focuses on the step-by-step filter mechanics.';
   $('hybrid-flow').innerHTML='<span>Measurements</span>› <span>ML features</span>› <span>Estimated parameters</span>› <span>Adaptive model</span>› <span>EKF</span>› <span>SOC</span>';
   $('ekf-estimator').append(select('Filter trace',['Hybrid A','Hybrid B'],0,i=>{
-    stop();state.ekfMode=i;render();
+    stop();chartEpoch++;state.ekfMode=i;render();
   }));
 }
-$('dataset-controls').append(select('Dataset',['Synthetic','NASA'],1,index=>{stop();state.dataset=index?'NASA':'Synthetic';render();}));
+$('dataset-controls').append(select('Dataset',['Synthetic','NASA'],1,index=>{stop();chartEpoch++;$('nasa-chart').dataset.trace='';state.dataset=index?'NASA':'Synthetic';render();}));
 [['Model',circuitNames],['Pulse current',['0.8 A','1.6 A','2.4 A']],['Resistance scale',['0.7×','1×','1.5×']],['Capacitance scale',['0.5×','1×','2×']]].forEach(([name,options],i)=>
-  $('physics-controls').append(select(name,options,lab[i],index=>{lab[i]=index;renderPhysics();})));
+  $('physics-controls').append(select(name,options,lab[i],index=>{chartEpoch++;lab[i]=index;renderPhysics();})));
+$('physics-response-mode').addEventListener('change',event=>{chartEpoch++;physicsResponseMode=Number(event.target.value);renderPhysics();});
+$('physics-response-mode').value=String(physicsResponseMode);
+$('physics-playback').classList.add('playback-controls');setupPlayback($('physics-playback'));
 $('ml-controls').append(select('Estimator',mlNames,0,index=>{mlIndex=index;renderMl();}));
 $('ml-controls').insertAdjacentHTML('beforeend','<label>Rotate surface <input id="angle" type="range" min="10" max="80" value="35"></label>');
 $('angle').oninput=event=>{surfaceAngle=Number(event.target.value);renderMl();};

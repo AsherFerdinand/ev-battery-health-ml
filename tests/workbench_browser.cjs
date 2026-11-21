@@ -31,7 +31,7 @@ const {gunzipSync} = require('node:zlib');
   }
   const blank=(await resources())[0];
   const errors=[];
-  page.on('pageerror',error=>errors.push(error.message));
+  page.on('pageerror',error=>errors.push(error.stack||error.message));
   page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
   const startup=[];
   for(let i=0;i<5;i++){
@@ -67,6 +67,15 @@ const {gunzipSync} = require('node:zlib');
   assert.match(reportResponse.headers()['content-type'],/text\/markdown/);
   await check('#report-capacity',/Final thevenin/);
   assert.equal(await page.locator('[data-view="hybrid"]').textContent(),'Investigation Lab');
+  await page.locator('[data-view="hybrid"]').click();
+  await check('#hybrid',/Evaluate estimator reliability/);
+  await check('#hybrid',/It rejected every adaptation on both independent final cohorts/);
+  await check('#hybrid',/not a validated selective reliability detector/);
+  await page.locator('[data-view="ekf"]').click();
+  await check('#ekf',/Coulomb Counting/);
+  await check('#ekf',/Fixed EKF/);
+  await check('#ekf',/Hybrid A \/ B/);
+  await check('#ekf',/Safeguarded Hybrid B/);
   await page.locator('[data-view="fundamentals"]').click();
   await page.getByRole('button',{name:'Switch color theme'}).click();
   assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
@@ -80,6 +89,8 @@ const {gunzipSync} = require('node:zlib');
   let payload, robustIndex;
   if(hasAdaptive||hasRobust){
    const exportedHtml=await (await context.request.get(url.href)).text();
+   assert.equal((exportedHtml.match(/\bsetInterval\(/g)||[]).length,1,'All workbench playback sources share one interval timer');
+   assert.doesNotMatch(exportedHtml,/explorerTimer|simState\.timer/,'No isolated Explorer or Simulation Lab playback timer remains');
    const encoded=exportedHtml.match(/id="workbench-data"[^>]*>([^<]+)/)[1];
    payload=JSON.parse(gunzipSync(Buffer.from(encoded,'base64')));
   }
@@ -131,6 +142,13 @@ const {gunzipSync} = require('node:zlib');
     run.adaptive.parameters[key].estimated.toFixed(unit==='Ω'?5:2)+' '+unit);
    const values=await page.locator('#adaptive-parameters tbody tr td:nth-child(3)').allTextContents();
    assert.deepEqual(values,printed,'Parameter display must match the exported update exactly');
+   const times=payload.scenarios[0].time, researchSamples=[0,Math.floor((times.length-1)/2),times.length-1],researchCursor=[];
+   for(const sample of researchSamples){
+    await seek('hybrid',sample);
+    await check('#hybrid-chart .chart-sample',new RegExp('^'+Number(times[sample]).toFixed(1)+' s'));
+    researchCursor.push(Number(await page.locator('#hybrid-chart [data-time-cursor]').getAttribute('x1')));
+   }
+   assert.ok(researchCursor[0]<researchCursor[1]&&researchCursor[1]<researchCursor[2],'Research plot cursor follows start, middle, and end selections');
   }
   await seek('hybrid',180);
   await check('#update-note',/Capacity changes at 180 s/);
@@ -176,6 +194,23 @@ const {gunzipSync} = require('node:zlib');
   assert.ok(await page.locator('#sim-circuit [data-focus="sim-r2"]').count());
   await page.locator('#sim-model').selectOption('thevenin');
   await page.locator('#circuit-explorer > summary').click();
+  await page.locator('#physics-model-explanation [data-model="0"]').click();
+  await check('#physics-model-description',/simplest circuit.*immediate voltage change/);
+  await page.locator('#physics-model-explanation [data-model="1"]').click();
+  await check('#physics-model-description',/one resistor-capacitor branch/);
+  await page.locator('#physics-model-explanation [data-model="2"]').click();
+  await check('#physics-model-description',/second RC branch/);
+  await page.locator('#physics-model-explanation [data-model="1"]').click();
+  const physicsCursor=[];
+  for(const sample of [0,60,120]){
+   await page.locator('#physics-playback input[aria-label="Playback position"]').fill(String(sample));
+   await check('#physics-chart .chart-sample',new RegExp('^'+sample+'\\.0 s'));
+   physicsCursor.push(Number(await page.locator('#physics-chart [data-time-cursor]').getAttribute('x1')));
+  }
+  assert.ok(physicsCursor[0]<physicsCursor[1]&&physicsCursor[1]<physicsCursor[2],'ECM comparison uses a shared response playback clock');
+  await page.locator('#physics-response-mode').selectOption('1');
+  assert.equal(await page.locator('#physics-chart polyline').count(),3,'Voltage-deviation mode compares all three ECM outputs');
+  await page.locator('#physics-response-mode').selectOption('0');
   await page.locator('#sim-duration').fill('60');
   await page.locator('#sim-profile').selectOption('constant_discharge');
   await page.locator('#sim-current').fill('1');
@@ -183,7 +218,16 @@ const {gunzipSync} = require('node:zlib');
   await page.waitForFunction(()=>document.querySelector('#sim-status').textContent.startsWith('Simulation complete'));
   await check('#sim-status',/Simulation complete.*61 exact/);
   assert.ok(await page.locator('#sim-voltage-chart svg').count());
+  assert.equal(await page.locator('#sim-voltage-chart polyline').count(),1,'Simulation chart retains the complete trajectory');
   await check('#sim-inspector',/Thevenin.*terminal energy out/i);
+  const simulationCursor=[];
+  for(const sample of [0,30,60]){
+   await page.locator('#sim-seek').fill(String(sample));
+   await check('#sim-clock',new RegExp('^'+sample+' s$'));
+   await check('#sim-voltage-chart .chart-sample',new RegExp('^'+sample+'\\.0 s'));
+   simulationCursor.push(Number(await page.locator('#sim-voltage-chart [data-time-cursor]').getAttribute('x1')));
+  }
+  assert.ok(simulationCursor[0]<simulationCursor[1]&&simulationCursor[1]<simulationCursor[2], 'Simulation chart cursor follows start, middle, and end selections');
   await page.locator('#sim-results details summary').click();
   await page.waitForFunction(()=>document.querySelector('#sim-polarisation-chart').textContent.includes('RC branch 1'));
   await check('#sim-polarisation-chart',/RC branch 1/);
@@ -223,10 +267,14 @@ const {gunzipSync} = require('node:zlib');
   await page.getByRole('button',{name:'Run simulation'}).click();
   assert.equal(await page.locator('#sim-duration').evaluate(input=>input.validity.valid),false);
   await page.locator('#sim-duration').fill('60');
+  await page.getByRole('button',{name:'Battery Physics',exact:true}).click();
+  if(!await page.locator('#circuit-explorer').evaluate(details=>details.open)) await page.locator('#circuit-explorer > summary').click();
   await page.getByLabel('Model',{exact:true}).selectOption('2');
   await page.getByLabel('Capacitance scale').selectOption('2');
   await check('#physics-readouts',/τ2/);
   await page.getByRole('button',{name:'Machine Learning',exact:true}).click();
+  await check('#surface',/X axis.*Voltage change \(V\).*Y axis.*Mean temperature \(K\).*Z axis.*SOH/);
+  await check('#ml',/SOH percentage points.*Lower values are generally better/);
   if(await page.locator('#trained-detail').isVisible()){
    await check('#trained-material',/standardised features/);
    await page.getByLabel('Estimator',{exact:true}).selectOption('1');
@@ -239,6 +287,7 @@ const {gunzipSync} = require('node:zlib');
   await check('#worked-result',/Stage 3 of 3/);
   await page.getByRole('button',{name:'Dataset Explorer',exact:true}).click();
   await check('#nasa-intro',/NASA battery ageing/);
+  await check('#nasa-data',/Phase annotations are inferred.*current sign/);
   await page.getByLabel('Dataset',{exact:true}).selectOption('0');
   await check('#synthetic-chart',/Simulated reference SOC/);
   await page.getByLabel('Dataset',{exact:true}).selectOption('1');
@@ -247,6 +296,15 @@ const {gunzipSync} = require('node:zlib');
    await page.getByLabel('Cell',{exact:true}).selectOption('1');
    await page.getByLabel('Discharge cycle').selectOption({index:7});
    await check('#nasa-chart',/B0006.*discharge 8/);
+   const nasaCursor=[];
+   for(const sample of [0,20,39]){
+    await page.locator('#nasa-playback input[aria-label="Playback position"]').fill(String(sample));
+    const expectedTime=payload?.nasa?.B0006?.[7]?.trace?.[sample]?.[0];
+    if(Number.isFinite(expectedTime)) await check('#nv .chart-sample',new RegExp('^'+Number(expectedTime).toFixed(1)+' s'));
+    else await check('#nv .chart-sample',/ s · Measured voltage/);
+    nasaCursor.push(Number(await page.locator('#nv [data-time-cursor]').getAttribute('x1')));
+   }
+   assert.ok(nasaCursor[0]<nasaCursor[1]&&nasaCursor[1]<nasaCursor[2], 'NASA plots follow the selected irregular timestamp');
    await page.locator('#nasa-playback input[aria-label="Playback position"]').fill('25');
    if(process.env.WORKBENCH_SCREENSHOT_DIR) await page.screenshot({path:join(process.env.WORKBENCH_SCREENSHOT_DIR,'nasa-dataset.png'),fullPage:true});
    await page.locator('#nasa-playback').getByRole('button',{name:'Step',exact:true}).click();
@@ -257,13 +315,33 @@ const {gunzipSync} = require('node:zlib');
   await page.getByRole('button',{name:'Battery Explorer',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
   await check('#explorer-readouts',/Modelled SOC.*Modelled terminal voltage/);
+  await check('#explorer-readouts',/Initial SOC reference.*Change since start/);
   const initialFill=Number(await page.locator('#explorer-soc-fill').getAttribute('height'));
   await page.locator('#explorer-scenario-controls').getByRole('button',{name:'Heavy device usage'}).click();
   await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
   await check('#explorer-readouts',/2\.80 A/);
   await page.locator('#explorer-seek').fill('20');
+  await page.locator('#explorer-play').click();
+  await page.waitForFunction(()=>document.querySelector('#explorer-current-flow').dataset.moving==='true');
+  await page.locator('#explorer-pause').click();
+  assert.equal(await page.locator('#explorer-current-flow').getAttribute('data-moving'),'false','Pause freezes the circuit animation');
+  await page.locator('#explorer-seek').fill('20');
+  await check('#explorer-voltage-chart .chart-sample',/^20\.0 s/);
+  const explorerCursor=[];
+  for(const sample of [0,20,40]){
+   await page.locator('#explorer-seek').fill(String(sample));
+   await check('#explorer-voltage-chart .chart-sample',new RegExp('^'+sample+'\\.0 s'));
+   explorerCursor.push(Number(await page.locator('#explorer-voltage-chart [data-time-cursor]').getAttribute('x1')));
+  }
+  assert.ok(explorerCursor[0]<explorerCursor[1]&&explorerCursor[1]<explorerCursor[2], 'Explorer charts follow start, middle, and end selections');
+  await page.locator('#explorer-seek').fill('20');
+  await page.locator('#explorer-voltage-chart .chart-toggle').click();
+  assert.equal(await page.locator('#explorer-voltage-chart').getAttribute('class'),'chart-expanded');
+  await page.locator('#explorer-voltage-chart .chart-toggle').click();
   assert.ok(Number(await page.locator('#explorer-soc-fill').getAttribute('height'))<initialFill,'Discharge animation follows decreasing SOC');
   await check('#explorer-temperature-note',/warming/);
+  await page.locator('#explorer-restart').click();
+  await check('#explorer-time',/^0 s$/);
   await page.locator('#explorer-scenario-controls').getByRole('button',{name:'Cold outdoor use'}).click();
   await page.waitForFunction(()=>document.querySelector('#explorer-status').textContent.startsWith('Python-generated'));
   await check('#explorer-temperature-note',/ambient -5\.0 °C/);
