@@ -46,10 +46,47 @@ const {gunzipSync} = require('node:zlib');
   const hasAdaptive = await page.locator('#adaptive-panel').isVisible();
   if (process.env.REQUIRE_HYBRID_B) assert.ok(hasAdaptive, 'Hybrid B payload required');
   const seek = (view, sample) => page.locator('#'+view+' input[aria-label="Playback position"]').fill(String(sample));
-  if(hasAdaptive){
+  const hasRobust=await page.locator('#robust-validation').isVisible();
+  if (process.env.REQUIRE_ROBUST) assert.ok(hasRobust, 'Robust validation payload required');
+  let payload, robustIndex;
+  if(hasAdaptive||hasRobust){
    const exportedHtml=await (await context.request.get(url.href)).text();
    const encoded=exportedHtml.match(/id="workbench-data"[^>]*>([^<]+)/)[1];
-   const payload=JSON.parse(gunzipSync(Buffer.from(encoded,'base64')));
+   payload=JSON.parse(gunzipSync(Buffer.from(encoded,'base64')));
+  }
+  if(hasRobust){
+   await check('#robust-capacity',/MAE.*Clipped/);
+   const cohorts=page.locator('#robust-cohorts details');
+   assert.equal(await cohorts.count(),payload.robust.cohorts.length);
+   await cohorts.first().locator('summary').click();
+   await check('#robust-cohorts',/Rejection rate/);
+   let found=0;
+   for(let i=0;i<payload.scenarios.length;i++){
+    const scenario=payload.scenarios[i], run=Object.values(scenario.trials)[0];
+    if(!run.robust?.decision)continue;
+    found++;
+    robustIndex ??= i;
+    const decision=run.robust.decision;
+    const window=decision.window_s??payload.robust.window_s??run.adaptive?.window_s??payload.hybrid_b.window_s;
+    const index=scenario.time.indexOf(window);
+    assert.ok(index>0);
+    await page.locator('#hybrid').getByLabel('Scenario',{exact:true}).selectOption({index:i});
+    await seek('hybrid',index-1);
+    await check('#robust-status',/Collecting causal observations/);
+    assert.equal(await page.locator('#robust-reasons').isVisible(),false);
+    await seek('hybrid',index);
+    await check('#robust-status',decision.accepted?/Accepted at/:/Rejected at/);
+    await check('#hybrid-chart',/Safeguarded Hybrid B/);
+    await check('#adaptive-voltage',/Safeguarded Hybrid B/);
+    const capacity=(decision.applied_capacity_c/3600).toFixed(3)+' Ah';
+    assert.equal(await page.locator('#robust-parameters tbody tr').first().locator('td').last().textContent(),capacity);
+   }
+   assert.ok(found>0,'At least one robustness playback is required');
+   await page.locator('#hybrid').getByLabel('Scenario',{exact:true}).selectOption({index:0});
+   const initialWindow=payload.hybrid_b.window_s;
+   await seek('hybrid',payload.scenarios[0].time.indexOf(initialWindow));
+  }
+  if(hasAdaptive){
    const scenario=payload.scenarios[0], run=Object.values(scenario.trials)[0];
    const timing = await page.locator('#adaptive-timing').textContent();
    const cutoff = Number(timing.match(/Window closes at (\d+) s/)[1]);
@@ -60,7 +97,7 @@ const {gunzipSync} = require('node:zlib');
    await check('#adaptive-timing',/Collecting measured features/);
    await page.locator('#hybrid').getByRole('button',{name:'Step',exact:true}).click();
    await check('#adaptive-timing',/first affect prediction on the following interval/);
-   assert.equal(await page.locator('#adaptive-voltage svg polyline').count(),3);
+   assert.equal(await page.locator('#adaptive-voltage svg polyline').count(),run.robust?4:3);
    const printed=payload.hybrid_b.parameters.map(({key,unit})=>
     run.adaptive.parameters[key].estimated.toFixed(unit==='Ω'?5:2)+' '+unit);
    const values=await page.locator('#adaptive-parameters tbody tr td:nth-child(3)').allTextContents();
@@ -133,9 +170,10 @@ const {gunzipSync} = require('node:zlib');
   await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),'No mobile overflow');
   await page.setViewportSize({width:1440,height:930});
+  await page.locator('[data-view="hybrid"]').click();
+  if(robustIndex!==undefined)
+   await page.locator('#hybrid').getByLabel('Scenario',{exact:true}).selectOption({index:robustIndex});
   const renders=await page.evaluate(()=>{
-    const nav=document.querySelector('[data-view="hybrid"]');
-    nav.click();
     const slider=document.querySelector('#hybrid input');
     return Array.from({length:50},(_,i)=>{
       slider.value=String(i*14);

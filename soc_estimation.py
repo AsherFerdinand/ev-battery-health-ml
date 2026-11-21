@@ -126,7 +126,7 @@ def thevenin_ekf(measurements, initial_soc, capacity_c, params=Thevenin(), *,
     corrected = np.empty_like(predicted)
     posterior = np.empty((n, 2, 2))
     gain_trace = np.empty_like(predicted)
-    predicted_v, innovation, capacities = np.empty((3, n))
+    predicted_v, innovation, capacities, innovation_variance = np.empty((4, n))
     for k in range(n):
         if k:
             dt = time[k] - time[k-1]
@@ -138,7 +138,8 @@ def thevenin_ekf(measurements, initial_soc, capacity_c, params=Thevenin(), *,
         predicted_v[k], observation = voltage_observation(state, amps[k], r0[k])
         innovation[k] = volts[k] - predicted_v[k]
         projected = covariance @ observation
-        gain = projected / (observation @ projected + voltage_variance)
+        innovation_variance[k] = observation @ projected + voltage_variance
+        gain = projected / innovation_variance[k]
         state = state + gain * innovation[k]
         state[0] = np.clip(state[0], 0, 1)
         remainder = identity - np.outer(gain, observation)
@@ -154,5 +155,6 @@ def thevenin_ekf(measurements, initial_soc, capacity_c, params=Thevenin(), *,
         "estimated_soc": corrected[:, 0], "corrected_state": corrected,
         "predicted_state": predicted, "covariance": posterior, "kalman_gain": gain_trace,
         "predicted_voltage_v": predicted_v, "innovation_v": innovation,
+        "innovation_variance_v2": innovation_variance,
         "capacity_c": capacities,
     }

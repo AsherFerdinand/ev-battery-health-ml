@@ -7,3 +7,4 @@
 - Keep data, generated HTML, models and caches in ignored directories. Preserve published Phase 1–4 outputs and their original reproduction workflow.
 - Resume milestone work from [docs/PROGRESS.md](docs/PROGRESS.md). Use targeted checks for each change and the full suite for delivery.
 - Hybrid B adapts capacity and reference-temperature R₀ after a causal observation window. Keep R₁/C₁ fixed unless a new identifiability study supports changes.
+- For v2 release verification run `python robust_validation.py --full`, both workbench export checks, and the browser check with `REQUIRE_ROBUST=1`. Keep final duty families separate from model and safeguard selection.

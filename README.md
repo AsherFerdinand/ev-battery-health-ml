@@ -286,3 +286,7 @@ The synthetic comparison found that a better capacity estimate could still incre
 ### Hybrid B visual workbench v1.4–v1.5
 
 The same offline launch now compares Hybrid B with the v1.3 estimators. Explore its causal capacity and ohmic-resistance updates, representative trained-model traces, synchronized EKF equations and directional ion flow. Run `build_workbench.py --full --no-open` with the project Python to regenerate the complete synthetic comparison, including the separate RC stress cohort. [Engineering report](docs/hybrid-b-workbench.md)
+
+### v2.0 robust hybrid validation
+
+The workbench now compares the original estimators and an audited Hybrid B safeguard on independent synthetic duty families. The revised capacity model reduced held-out capacity error, while the development-selected safeguard retained fixed parameters and matched fixed EKF behavior. The NASA data supports measurement replay and capacity-derived SOH studies. Independent experimental SOC ground truth remains unavailable. [Release report and offline reproduction](docs/robust-hybrid-v2.md)

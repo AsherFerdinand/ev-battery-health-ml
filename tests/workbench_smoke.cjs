@@ -14,15 +14,35 @@ assert.ok(inlineScript);
 new (require('node:vm').Script)(inlineScript[1]);
 assert.ok(!/https?:\/\/.+\.js/.test(html), 'Offline application requires no remote scripts');
 
+assert.ok(data.robust.cohorts.length >= 2);
 let traces = 0;
+let robustTraces = 0;
 for (const scenario of data.scenarios) {
   const index = scenario.time.indexOf(data.window_s);
   for (const trial of Object.values(scenario.trials)) {
     const d = trial.diagnostics;
     const hybrid = d.corrected_state.map(pair => pair[0]);
     const b = trial.adaptive.diagnostics;
-    const kB = scenario.time.indexOf(data.hybrid_b.window_s);
-    assert.ok(trial.adaptive.update_applied);
+    const kB = scenario.time.indexOf(trial.adaptive.window_s ?? data.hybrid_b.window_s);
+    assert.ok(kB > 0);
+    if (trial.robust) {
+      robustTraces++;
+      const guard = trial.robust;
+      const guarded = guard.soc ?? trial.soc['Fixed EKF'];
+      const pred = guard.predicted_voltage_v ?? trial.adaptive.fixed_voltage_v;
+      assert.ok(guard.decision.reasons.length);
+      assert.deepEqual(guarded.slice(0, kB+1), trial.soc['Fixed EKF'].slice(0, kB+1));
+      assert.deepEqual(pred.slice(0, kB+1), trial.adaptive.fixed_voltage_v.slice(0, kB+1));
+      if (!guard.decision.accepted) {
+        assert.deepEqual(guarded, trial.soc['Fixed EKF']);
+        assert.deepEqual(pred, trial.adaptive.fixed_voltage_v);
+      }
+      const post = guarded.slice(kB+1).reduce((sum, value, i) =>
+        sum + 100*Math.abs(value-scenario.truth[i+kB+1]), 0)/(guarded.length-kB-1);
+      assert.ok(Math.abs(post-trial.metrics['Safeguarded Hybrid B'].adaptive_post_mae_pp) < 1e-12);
+    } else {
+      assert.ok(trial.adaptive.update_applied);
+    }
     assert.deepEqual(b.corrected_state.slice(0, kB+1).map(pair => pair[0]),
                      trial.soc['Fixed EKF'].slice(0, kB+1));
     assert.deepEqual(b.predicted_voltage_v.slice(0, kB+1),
@@ -51,6 +71,7 @@ for (const scenario of data.scenarios) {
     traces++;
   }
 }
-assert.equal(traces, 18);
+assert.equal(traces-robustTraces, 18);
+assert.ok(robustTraces >= 2);
 assert.equal(Object.keys(data.physics).length, 63);
-console.log('Workbench export checks passed for 18 paired trace sets and 63 circuit examples.');
+console.log('Workbench export checks passed for '+traces+' paired trace sets and 63 circuit examples.');

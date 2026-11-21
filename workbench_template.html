@@ -27,6 +27,11 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 #cutaway button[aria-pressed=true]{background:#e0f3be}.illustration{width:100%;max-height:330px;display:block}.equation{font:15px ui-monospace,monospace;background:#ecf1e9;padding:8px;border-radius:6px;overflow-wrap:anywhere}
 @media(max-width:940px){.shell{grid-template-columns:180px minmax(0,1fr)}aside{padding:23px 13px}.columns{grid-template-columns:1fr}}
 @media(max-width:620px){.shell{display:block}aside{position:static;height:auto;padding:14px 16px}.brand{margin:0 0 10px}nav{display:flex;overflow:auto}nav button{white-space:nowrap}aside footer{display:none}main{padding:19px 14px}header{margin-bottom:16px}}
+#robust-status{border-left:3px solid #587079;padding:6px 10px;background:#f3f6f3}
+#robust-status[data-decision=accepted]{border-color:#187955;background:#edf7ec}
+#robust-status[data-decision=rejected]{border-color:#ac5537;background:#fbf0ea}
+#robust-cohorts details{padding:7px 0;border-bottom:1px solid #e3e9e2}
+#robust-cohorts summary{cursor:pointer;font-weight:600}
 .ion-flow{stroke:#286b7d;stroke-width:3;stroke-dasharray:7 5}.learning-controls label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.learning-controls input{max-width:100%}.trained-detail li{margin:4px 0}.trained-detail table{font-size:13px}.formula-stack{display:grid;gap:6px;margin-top:10px}.formula-stack p{margin:0}
 </style>
 </head>
@@ -52,7 +57,15 @@ table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:7px 9px;
 <div class="card"><h2>One-step voltage predictions</h2><div id="adaptive-voltage"></div></div>
 <div class="card"><h2>Battery parameters</h2><p id="adaptive-timing" class="note"></p><div id="adaptive-parameters" class="table-wrap"></div><p id="adaptive-result" class="note"></p></div>
 </div></div>
+<div class="card" id="robust-audit" hidden>
+<h2>Safeguard decision</h2><p id="robust-status"></p><ul id="robust-reasons"></ul><div class="table-wrap" id="robust-parameters"></div><dl class="readouts" id="robust-readouts"></dl>
+</div>
 <div class="card"><h2>Full-trajectory errors</h2><p class="note" id="tradeoff"></p><div class="table-wrap" id="metrics"></div></div>
+<div class="card" id="robust-validation" hidden>
+<h2>Robustness outcomes</h2><p class="note" id="robust-policy"></p>
+<h3>Matched and mismatched cohorts</h3><div id="robust-cohorts"></div>
+<h3>Capacity predictions</h3><div class="table-wrap" id="robust-capacity"></div>
+</div>
 </section>
 <section id="ekf" class="view" hidden>
 <h1>Extended Kalman filter</h1><p class="intro">Follow one filter correction at a time. Pick a different initial SOC to inspect convergence with the same sensor readings.</p>
@@ -119,6 +132,8 @@ const active = () => data.scenarios[state.scenario];
 const trial = () => Object.values(active().trials)[state.trial];
 const fmt = (x, decimals=2) => Number(x).toFixed(decimals);
 const pct = x => fmt(x*100)+'%';
+const safeText = value => String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const reported = (value,format) => Number.isFinite(value)?format(value):'Unavailable';
 const labelValue = (label,value) => '<div><dt>'+label+'</dt><dd>'+value+'</dd></div>';
 function select(label, values, current, update) {
   const container = document.createElement('label');
@@ -209,12 +224,14 @@ function syncPlayback(){
 }
 function renderHybrid(){
   const c=active(), run=trial(), k=state.k;
-  const estimates=['Coulomb Counting','Fixed EKF','Hybrid A','Hybrid B','Oracle EKF'];
+  const estimates=['Coulomb Counting','Fixed EKF','Hybrid A','Hybrid B','Oracle EKF','Safeguarded Hybrid B'];
   const series=[{name:'Synthetic reference (%)',values:c.truth.map(x=>100*x),dashed:true}];
   estimates.forEach((name,i)=>{
-    if(run.soc[name])series.push({name,values:run.soc[name].map(x=>100*x),color:colors[i+1]});
+    const values = name==='Safeguarded Hybrid B'&&run.robust?
+      run.robust.soc??run.soc['Fixed EKF']:run.soc[name];
+    if(values)series.push({name,values:values.map(x=>100*x),color:colors[i+1]??'#b24563'});
   });
-  const bWindow=data.hybrid_b?.window_s;
+  const bWindow=run.adaptive?.window_s??data.hybrid_b?.window_s;
   const markers=[{time:data.window_s,label:bWindow===data.window_s?'A/B':'A'}];
   if(bWindow!==undefined&&bWindow!==data.window_s)markers.push({time:bWindow,label:'B'});
   chart('hybrid-chart',c.time,series,k,{label:'State of charge comparison',markers,decimals:1});
@@ -232,6 +249,7 @@ function renderHybrid(){
   $('tradeoff').textContent='After its '+data.window_s+' s update, Hybrid A’s SOC MAE is '+comparison+
     ' for this run. Both filters use the same voltage observation model. Hybrid A changes the assumed capacity used to propagate charge.';
   renderAdaptive(c,run,k);
+  renderRobustDecision(c,run,k);
   $('metrics').innerHTML='<table><thead><tr><th>Estimator</th><th>SOC MAE (pp)</th><th>'+ (bWindow==null?'After update':'After '+bWindow+' s') +' (pp)</th><th>Voltage RMSE (mV)</th></tr></thead><tbody>'+
     Object.entries(run.metrics).map(([name,m])=>'<tr><th>'+name+'</th><td>'+fmt(m.mae_pp)+'</td><td>'+fmt(m.adaptive_post_mae_pp??m.post_mae_pp)+'</td><td>'+fmt(m.voltage_rmse_mv,1)+'</td></tr>').join('')+'</tbody></table>';
 }
@@ -239,24 +257,29 @@ function renderAdaptive(c,run,k){
   const config=data.hybrid_b, adaptive=run.adaptive;
   $('adaptive-panel').hidden=!config||!adaptive;
   if(!config||!adaptive)return;
+  const window=adaptive.window_s??config.window_s;
+  const models=adaptive.models??config.models;
   chart('adaptive-voltage',c.time,[
     {name:'Measured (V)',values:c.voltage},
     {name:'Fixed EKF (V)',values:adaptive.fixed_voltage_v},
     {name:'Hybrid B (V)',values:adaptive.diagnostics.predicted_voltage_v},
-  ],k,{label:'Measured and predicted terminal voltage',update:config.window_s});
-  const before=c.time[k]<config.window_s;
+    ...(run.robust?[{
+      name:'Safeguarded Hybrid B (V)',values:run.robust.predicted_voltage_v??adaptive.fixed_voltage_v,color:'#b24563'
+    }]:[]),
+  ],k,{label:'Measured and predicted terminal voltage',update:window});
+  const before=c.time[k]<window;
   $('adaptive-timing').textContent=before?
-    'Collecting measured features through '+config.window_s+' s. Hybrid B is using its fixed priors.':
-    'Window closes at '+config.window_s+' s. The estimates first affect prediction on the following interval.';
+    'Collecting measured features through '+window+' s. Hybrid B is using its fixed priors.':
+    'Window closes at '+window+' s. The estimates first affect prediction on the following interval.';
   if(!before&&!adaptive.update_applied)
     $('adaptive-timing').textContent='Too few current steps for an update. Hybrid B keeps its fixed priors.';
-  if(!before&&adaptive.parameters.capacity_c.estimated===data.nominal_c)
+  if(!before&&adaptive.update_applied&&adaptive.parameters.capacity_c.estimated===data.nominal_c)
     $('adaptive-timing').textContent+=' Capacity reached the nominal upper bound, leaving its prior unchanged.';
   if(config.policy)$('adaptive-timing').textContent+=' '+config.policy;
   $('adaptive-parameters').innerHTML='<table><thead><tr><th>Parameter</th><th>Fixed</th><th>Hybrid B</th><th>Reference</th></tr></thead><tbody>'+
     config.parameters.map(({key,label,unit})=>{
       const value=adaptive.parameters[key], format=v=>v==null?'Unavailable':fmt(v,unit==='Ω'?5:2)+' '+unit;
-      const model=config.models?.[key];
+      const model=models?.[key];
       return '<tr><th>'+label+(model?'<br><small>'+model+'</small>':'')+'</th><td>'+format(value.fixed)+'</td><td>'+
         format(before?value.fixed:value.estimated)+'</td><td>'+format(value.reference)+'</td></tr>';
     }).join('')+'</tbody></table>';
@@ -267,6 +290,63 @@ function renderAdaptive(c,run,k){
     fmt(Math.abs(value),3)+' '+unit+' '+(value>0?'higher':'lower')+' than fixed EKF';
   $('adaptive-result').textContent='Across this trajectory, Hybrid B’s SOC MAE is '+describe(change,'pp')+
     ' and voltage RMSE is '+describe(voltage,'mV')+'. Compare both errors to see when a better voltage fit tracks SOC more closely.';
+}
+function renderRobustDecision(c,run,k){
+  const decision=run.robust?.decision;
+  $('robust-audit').hidden=!decision;
+  if(!decision)return;
+  const window=decision.window_s??data.robust?.window_s??run.adaptive?.window_s??data.hybrid_b?.window_s;
+  const pending=c.time[k]<window;
+  const status=$('robust-status');
+  status.dataset.decision=pending?'pending':decision.accepted?'accepted':'rejected';
+  status.textContent=pending?
+    'Collecting causal observations through '+window+' s. The filter uses its priors.':
+    decision.accepted?'Accepted at '+window+' s. The applied parameters affect the next prediction.':
+    'Rejected at '+window+' s. The filter retains its prior parameters.';
+  const reasons=$('robust-reasons');
+  reasons.hidden=pending||!decision.reasons?.length;
+  reasons.innerHTML=pending?'':(decision.reasons??[]).map(reason=>'<li>'+safeText(reason)+'</li>').join('');
+  const ah=value=>reported(value,x=>fmt(x/3600,3)+' Ah');
+  const ohm=value=>reported(value,x=>fmt(x*1000,2)+' mΩ');
+  const prior=run.adaptive?.parameters??{};
+  $('robust-parameters').innerHTML='<table><thead><tr><th>Parameter</th><th>Prior</th><th>Raw estimate</th><th>Bounded original</th><th>Revised candidate</th><th>Applied</th></tr></thead><tbody>'+
+    [
+      ['Capacity',prior.capacity_c?.fixed,decision.raw_capacity_c,decision.clipped_capacity_c,decision.revised_capacity_c,decision.applied_capacity_c,ah],
+      ['R₀ at reference temperature',prior.r0_ref_ohm?.fixed,decision.raw_r0_ref_ohm,decision.clipped_r0_ref_ohm,null,decision.applied_r0_ref_ohm,ohm],
+    ].map(([label,fixed,raw,bounded,revised,applied,format])=>'<tr><th>'+label+'</th><td>'+format(fixed)+'</td>'+
+      [raw,bounded,revised].map(value=>'<td>'+(pending?'Awaiting window':format(value))+'</td>').join('')+
+      '<td>'+format(pending?fixed:applied)+'</td></tr>').join('')+'</tbody></table>';
+  $('robust-readouts').hidden=pending;
+  $('robust-readouts').innerHTML=pending?'':[
+    ['Feature distance',reported(decision.features_distance,x=>fmt(x,3))],
+    ['Current steps',reported(decision.current_steps,x=>fmt(x,0))],
+    ['Innovation RMS ratio',reported(decision.innovation_ratio,x=>fmt(x,3))],
+  ].map(([name,value])=>labelValue(name,value)).join('');
+}
+function renderRobustValidation(){
+  const robust=data.robust;
+  if(!robust)return;
+  $('robust-validation').hidden=false;
+  $('robust-policy').textContent=robust.policy;
+  const metric=(row,key,decimals)=>reported(row?.[key],x=>fmt(x,decimals));
+  $('robust-cohorts').innerHTML=(robust.cohorts??[]).map(cohort=>{
+    const count=cohort.cases;
+    const rate=reported(cohort.rejection_rate,pct);
+    const original=reported(cohort.harmful_original,pct);
+    const guarded=reported(cohort.harmful_guarded,pct);
+    return '<details><summary>'+safeText(cohort.name)+' · '+safeText(cohort.plant)+' · '+safeText(count)+
+      ' cases</summary><p>Rejection rate '+rate+' · harmful updates: original '+original+
+      ', safeguarded '+guarded+
+      (Number.isInteger(cohort.false_accept)&&Number.isInteger(cohort.false_reject)?
+        ' · false accept '+cohort.false_accept+', false reject '+cohort.false_reject:'')+
+      '</p><div class="table-wrap"><table><thead><tr><th>Estimator</th><th>SOC MAE (pp)</th><th>Post-window MAE (pp)</th><th>Voltage RMSE (mV)</th></tr></thead><tbody>'+
+      Object.entries(cohort.metrics??{}).map(([name,row])=>'<tr><th>'+safeText(name)+'</th><td>'+metric(row,'mae_pp',3)+
+        '</td><td>'+metric(row,'post_mae_pp',3)+'</td><td>'+metric(row,'voltage_rmse_mv',1)+'</td></tr>').join('')+
+      '</tbody></table></div></details>';
+  }).join('');
+  $('robust-capacity').innerHTML='<table><thead><tr><th>Model or cohort</th><th>MAE (Ah)</th><th>Clipped</th><th>Raw in range</th></tr></thead><tbody>'+
+    (robust.capacity??[]).map(row=>'<tr><th>'+safeText(row.name)+'</th><td>'+metric(row,'mae_ah',3)+
+      '</td><td>'+reported(row.clip_rate,pct)+'</td><td>'+reported(row.in_range_rate,pct)+'</td></tr>').join('')+'</tbody></table>';
 }
 function renderEkf(){
   const c=active(), run=trial(), k=state.k;
@@ -530,6 +610,7 @@ $('ml-controls').append(select('Estimator',mlNames,0,index=>{mlIndex=index;rende
 $('ml-controls').insertAdjacentHTML('beforeend','<label>Rotate surface <input id="angle" type="range" min="10" max="80" value="35"></label>');
 $('angle').oninput=event=>{surfaceAngle=Number(event.target.value);renderMl();};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+renderRobustValidation();
 render();
 }
 startWorkbench().catch(error=>{

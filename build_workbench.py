@@ -111,13 +111,15 @@ def build(full=False, refresh=False):
     sources = [ROOT / name for name in (
         "build_workbench.py", "capacity_experiment.py", "soc_estimation.py", "battery_sim.py",
         "workbench_template.html", "requirements-lock.txt", "synthetic_battery.py",
-        "parameter_estimation.py")]
+        "parameter_estimation.py", "robust_validation.py", "validation_population.py")]
     fingerprint = _cache_key(sources + sorted(raw.glob("B*.mat")), full)
     if not refresh and all(path.exists() for path in (output, summary, marker)):
         if marker.read_text(encoding="utf-8") == fingerprint:
             return output
     started = perf_counter()
     from capacity_experiment import run_experiment
+    from robust_validation import run_validation
+    from validation_population import run_capacity_study
 
     experiment = run_experiment(full)
     playback = experiment.pop("scenarios")
@@ -127,13 +129,28 @@ def build(full=False, refresh=False):
         for trial in case["trials"].values():
             for name in ("Hybrid A", "Hybrid B"):
                 del trial["soc"][name]
+    robust = run_validation(full)
+    robust_playback = robust.pop("scenarios")
+    capacity_study = run_capacity_study()
+    development_capacity = [
+        {"name": f"Development v1.5 {plant} · {label}", "mae_ah": stats["mae_ah"],
+         "clip_rate": (stats["above_bound"] + stats["below_bound"]) / stats["count"],
+         "in_range_rate": stats["in_range"] / stats["count"]}
+        for plant, models in capacity_study["old_cohort_scores"].items()
+        for key, label in (("original", "Original"), ("revised", "Revised"), ("prior", "Fixed prior"))
+        for stats in (models[key],)
+    ]
+    experiment["robust_validation"] = robust
+    experiment["capacity_generalisation"] = capacity_study
     payload = {
-        "scenarios": playback, "surfaces": surfaces, "ml_details": experiment.pop("ml_details"),
+        "scenarios": playback + robust_playback, "surfaces": surfaces, "ml_details": experiment.pop("ml_details"),
         "selected_model": experiment["selected_model"], "window_s": experiment["window_s"],
         "mode": experiment["mode"], "nominal_c": experiment["nominal_c"],
         "nasa": nasa_replay(raw), "physics": physics_lab(),
         "validation": experiment["validation_soh_mae"], "test": experiment["test_soh_mae"],
         "identifiability": experiment["identifiability"], "hybrid_b": experiment["hybrid_b"],
+        "robust": {key: robust[key] for key in ("cohorts", "window_s", "policy")}
+        | {"capacity": development_capacity + robust["capacity"]},
     }
     experiment["demonstrations"] = [
         {key: case[key] for key in ("name", "plant", "truth_soh", "parameter_estimates", "inference_ms")}
